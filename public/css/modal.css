@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Estilos para Modais
+   ========================================================================== */
+
+.modal {
+    display: none; /* Começa oculto por padrão */
+    position: fixed; /* Fica fixo na tela */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo escurecido */
+    z-index: 1050; /* z-index alto para ficar sobre outros elementos */
+    opacity: 0; /* Começa invisível para transição suave */
+    visibility: hidden; /* Garante que não seja interagível quando oculto */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
+    overflow-y: auto; /* Permite scroll se o conteúdo for maior que a tela */
+    align-items: center; /* Centraliza verticalmente (requer display: flex) */
+    justify-content: center; /* Centraliza horizontalmente (requer display: flex) */
+}
+
+/* Estilos quando o modal está ativo */
+.modal.active {
+    display: flex; /* MUITO IMPORTANTE: Mudar para flex para exibir e centralizar */
+    opacity: 1; /* Torna visível */
+    visibility: visible; /* Torna interagível */
+}
+
+.modal-dialog { /* Renomeado de .modal-content para evitar conflito com Bootstrap e dar mais clareza */
+    background-color: #fff;
+    border-radius: var(--border-radius-lg, 10px); /* Usa variável ou fallback */
+    box-shadow: var(--shadow-lg, 0 5px 15px rgba(0,0,0,.5)); /* Usa variável ou fallback */
+    width: 90%; /* Largura responsiva */
+    max-width: 600px; /* Largura máxima */
+    margin: 30px auto; /* Margem para espaçamento e centralização (fallback se flex falhar) */
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Para posicionamento do botão de fechar */
+    animation: slideInDown 0.3s ease forwards; /* Animação de entrada */
+}
+
+/* Animação de entrada */
+@keyframes slideInDown {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa; /* Fundo leve para o header */
+    border-top-left-radius: var(--border-radius-lg, 10px);
+    border-top-right-radius: var(--border-radius-lg, 10px);
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+}
+.modal-title i {
+    margin-right: 10px;
+    color: var(--primary);
+}
+
+.modal-close { /* Renomeado de .close-button */
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 25px 30px; /* Mais padding */
+    flex-grow: 1; /* Permite que o corpo cresça */
+    overflow-y: auto; /* Scroll interno se necessário */
+    max-height: calc(100vh - 200px); /* Limita altura máxima para caber na tela */
+}
+
+/* Ajuste para formulários dentro do modal */
+.modal-body .form-group {
+    margin-bottom: 15px; /* Menos margem dentro do modal */
+}
+.modal-body .form-label {
+    font-size: 13px; /* Labels menores */
+    margin-bottom: 5px;
+}
+.modal-body .form-control {
+    font-size: 14px; /* Inputs com tamanho padrão */
+    padding: 10px 12px; /* Padding ajustado */
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end; /* Alinha botões à direita */
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    background-color: #f8f9fa; /* Fundo leve para o footer */
+    border-bottom-left-radius: var(--border-radius-lg, 10px);
+    border-bottom-right-radius: var(--border-radius-lg, 10px);
+    gap: 10px; /* Espaço entre botões */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: 95%;
+        margin: 15px auto; /* Menos margem vertical no mobile */
+        max-height: calc(100vh - 30px); /* Garante que caiba na tela */
+    }
+    .modal-body {
+        padding: 20px;
+        max-height: calc(100vh - 180px); /* Ajusta altura máxima no mobile */
+    }
+    .modal-header, .modal-footer {
+        padding: 12px 15px;
+    }
+    .modal-title {
+        font-size: 16px;
+    }
+}

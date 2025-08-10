@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promoções - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/promocoes.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral (Será preenchido via JS baseado no Nível) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-level-up-alt"></i>
+                Análise de Promoções
+            </h1>
+            <p class="page-subtitle">Verifique a elegibilidade dos funcionários para promoção com base na trilha de carreira, desempenho e vagas.</p>
+        </div>
+
+        <!-- Área de Mensagem -->
+        <div id="mensagem" class="message" style="display: none;"></div>
+
+        <!-- Tabela de Análise de Promoções -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Elegibilidade para Promoção
+                </div>
+                 <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar por Nick ou Cargo...">
+                 </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table status-table">
+                    <thead>
+                        <tr>
+                            <th>Nick Habbo</th>
+                            <th>Cargo Atual</th>
+                            <th>Status</th>
+                            <th>Próximo Cargo</th>
+                            <th>Novo Salário (c)</th>
+                            <th>Justificativa / Pendências</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="promocoesBody">
+                        <!-- Estado de Carregamento Inicial -->
+                        <tr id="loadingRowPromocoes">
+                            <td colspan="7" class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando e analisando funcionários...</p>
+                            </td>
+                        </tr>
+                        <!-- Linhas preenchidas via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+             <div class="pagination" id="paginacaoPromocoes" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Scripts Firebase e Lógica da Página -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- Include external config and UI scripts -->
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            // Poderia mostrar um erro na tela
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Variáveis Globais ---
+        let currentUser = null;
+        let currentUserLevel = 0; // Nível de acesso do sistema (0, 1, 2, 3...)
+        let currentUserHierarchicalLevel = "N0"; // Nível hierárquico do cargo (N1, N2...)
+        let orcamentoCache = null;
+        let funcionariosAtivosCache = {};
+        let todosFuncionariosDados = []; // Para guardar os dados para filtro
+
+        // --- Elementos DOM ---
+        const promocoesBody = document.getElementById('promocoesBody');
+        const loadingRowPromocoes = document.getElementById('loadingRowPromocoes');
+        const mensagemDiv = document.getElementById('mensagem');
+        const searchInput = document.getElementById('searchInput');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        // Sidebar elements are now handled by shared-ui.js
+
+        // --- Funções Utilitárias (Reutilizadas e Novas) ---
+        function mostrarMensagem(mensagem, tipo) {
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+            mensagemDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`;
+            mensagemDiv.className = `message ${tipo}-message`;
+            mensagemDiv.style.display = 'block';
+            mensagemDiv.style.opacity = '1';
+            setTimeout(() => {
+                mensagemDiv.style.opacity = '0';
+                setTimeout(() => { mensagemDiv.style.display = 'none'; }, 500);
+            }, 5000);
+        }
+
+        function formatarData(timestamp) {
+            if (!timestamp) return 'N/A';
+            try {
+                const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            } catch (e) { return 'Inválida'; }
+        }
+
+        function calcularTempoDeCasa(dataAdmissao) {
+            if (!dataAdmissao) return 0;
+            try {
+                const admissaoDate = dataAdmissao.toDate ? dataAdmissao.toDate() : new Date(dataAdmissao);
+                const hoje = new Date();
+                const diffTime = Math.abs(hoje - admissaoDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays;
+            } catch (e) { return 0; }
+        }
+
+        function getDataHabboHotel() {
+            const dataAtual = new Date();
+            const dia = dataAtual.getDate();
+            const mes = obterNomeDoMes(dataAtual.getMonth());
+            const ano = dataAtual.getFullYear();
+            return `Habbo Hotel, ${dia} de ${mes} de ${ano}`;
+        }
+
+        function obterNomeDoMes(numeroDoMes) {
+            const nomesDosMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return nomesDosMeses[numeroDoMes];
+        }
+
+        // --- Configuração da Trilha de Carreira (Revisar!) ---
+        const trilhaConfig = { N1: { exp: 0, proximo: 'N2' }, N2: { exp: 15, proximo: 'N3' }, N3: { exp: 45, proximo: 'N4' }, N4: { exp: 60, proximo: 'N5' }, N5: { exp: 90, proximo: 'N6' }, N6: { exp: 120, proximo: 'N7' }, N7: { exp: 150, proximo: 'N8' }, N8: { exp: 180, proximo: 'N9' }, N9: { exp: 210, proximo: null }, N10: { exp: null, proximo: null } };
+        const mapaCargos = { // DECLIN
+            "Clinica Geral": { nivel: "N1", proximoCargo: "Chefe de Clínica Geral", salarioProx: 35 }, "Cirurgia": { nivel: "N1", proximoCargo: "Chefe de Cirurgia", salarioProx: 35 }, "Enfermagem": { nivel: "N1", proximoCargo: "Chefe de Enfermagem", salarioProx: 35 }, "Pediatria": { nivel: "N1", proximoCargo: "Chefe de Pediatria", salarioProx: 35 }, "Obstetrícia": { nivel: "N1", proximoCargo: "Chefe de Obstetrícia", salarioProx: 35 },
+            "Chefe de Clínica Geral": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Cirurgia": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Enfermagem": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Pediatria": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Obstetrícia": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 },
+            // DOPH
+            "Psicologia": { nivel: "N1", proximoCargo: "Chefe de Psicologia", salarioProx: 35 }, "Psiquiatria": { nivel: "N1", proximoCargo: "Chefe de Psiquiatria", salarioProx: 35 }, "Segurança": { nivel: "N1", proximoCargo: "Chefe de Segurança", salarioProx: 35 }, "Recepção": { nivel: "N1", proximoCargo: "Chefe de Recepção", salarioProx: 35 },
+            "Chefe de Psicologia": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Psiquiatria": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Segurança": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 }, "Chefe de Recepção": { nivel: "N2", proximoCargo: "Analista", salarioProx: 40 },
+            // N3 -> N4 (Exige revisão!)
+            "Analista": { nivel: "N3", proximoCargo: "Supervisor de Operações", salarioProx: 45 },
+            // N4 -> N5
+            "Supervisor Clínico": { nivel: "N4", proximoCargo: "Coordenador Clinico", salarioProx: 50 }, "Supervisor Materno-Infantil": { nivel: "N4", proximoCargo: "Coordenador Clinico", salarioProx: 50 }, "Supervisor de Saúde Mental": { nivel: "N4", proximoCargo: "Coordenador de Operações e Saúde Mental", salarioProx: 50 }, "Supervisor de Operações": { nivel: "N4", proximoCargo: "Coordenador de Operações e Saúde Mental", salarioProx: 50 },
+            // N5 -> N6
+            "Coordenador Clinico": { nivel: "N5", proximoCargo: "Vice-Diretor", salarioProx: 55 }, "Coordenador de Operações e Saúde Mental": { nivel: "N5", proximoCargo: "Vice-Diretor", salarioProx: 55 },
+            // DEX
+            "Vice-Diretor": { nivel: "N6", proximoCargo: "Diretor", salarioProx: 60 }, "Diretor": { nivel: "N7", proximoCargo: "Vice-Presidente", salarioProx: 65 }, "Vice-Presidente": { nivel: "N8", proximoCargo: "Presidente", salarioProx: 70 }, "Presidente": { nivel: "N9", proximoCargo: null, salarioProx: null }, "Fundador": { nivel: "N10", proximoCargo: null, salarioProx: null }
+        };
+
+        function findProximoCargoInfo(cargoAtual) { return mapaCargos[cargoAtual] || { nivel: null, proximoCargo: null, salarioProx: null }; }
+
+        // --- Funções Principais ---
+
+        // Autenticação e Verificação de Permissão
+        auth.onAuthStateChanged(async (user) => {
+             if (!user) { window.location.href = 'login.html'; return; }
+             currentUser = user;
+             try {
+                 // 1. BUSCAR DADOS DO USUÁRIO LOGADO ('usuarios')
+                 const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                 if (!userDoc.exists) { throw new Error("Usuário não encontrado."); }
+                 const userData = userDoc.data();
+                 currentUserLevel = parseInt(userData.nivel || 0); // Nível de acesso do sistema
+
+                 // 2. PERMISSÃO DA PÁGINA (Promoções é para Nível >= 3)
+                 if (currentUserLevel < 3) {
+                     console.warn(`Usuário Nível ${currentUserLevel} tentou acessar Promoções. Redirecionando.`);
+                     window.location.href = 'dashboard_user.html'; // Ou outra página apropriada
+                     return;
+                 }
+
+                 // 3. BUSCAR NÍVEL HIERÁRQUICO ('funcionarios') PARA O MENU
+                 let userCargo = userData.cargo || "N/A";
+                 currentUserHierarchicalLevel = "N0"; // Reset default
+                 if (userData.nickHabbo) {
+                      try {
+                          const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", userData.nickHabbo).where("ativo", "==", true).limit(1).get();
+                          if (!funcQuery.empty) {
+                              const funcData = funcQuery.docs[0].data();
+                              currentUserHierarchicalLevel = funcData.nivel || "N0";
+                              userCargo = funcData.cargo || userCargo;
+                          } else if (currentUserLevel >= 3) { currentUserHierarchicalLevel = "N10"; userCargo = "Fundador/Superuser"; } // Admin/Superuser sem func = N10
+                      } catch (funcError) {
+                          console.warn("Erro ao buscar dados do funcionário para o menu, assumindo N10 para admin:", funcError);
+                          if (currentUserLevel >= 3) { currentUserHierarchicalLevel = "N10"; userCargo = "Fundador/Superuser"; }
+                      }
+                  } else if (currentUserLevel >= 3) {
+                      currentUserHierarchicalLevel = "N10"; // Admin/Superuser sem nick = N10
+                      userCargo = "Fundador/Superuser";
+                  }
+
+                 // 4. ATUALIZAR HEADER DA SIDEBAR
+                 welcomeHeader.textContent = userData.nome || "Usuário";
+                 userRoleEl.textContent = userCargo;
+
+                 // 5. GERAR E INSERIR O MENU DA SIDEBAR (usando shared-ui.js)
+                 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                 if (typeof generateSidebarMenu === 'function') {
+                      const menuHtml = generateSidebarMenu(currentUserHierarchicalLevel, currentPage);
+                      sidebarMenu.innerHTML = menuHtml;
+                 } else {
+                      console.error("Erro: generateSidebarMenu() não encontrada.");
+                      sidebarMenu.innerHTML = '<p style="color:red;">Erro ao carregar menu.</p>';
+                 }
+
+                 // 6. CARREGAR DADOS ESPECÍFICOS DA PÁGINA
+                 await carregarDadosIniciais();
+                 await carregarPromocoes();
+
+             } catch (error) {
+                 console.error("Erro na autenticação ou carregamento:", error);
+                 mostrarMensagem("Erro ao verificar suas permissões ou carregar dados.", "error");
+                 if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico.</p>';
+                 // Consider redirecting to login or an error page after a delay
+                 // setTimeout(() => { window.location.href = 'login.html'; }, 3000);
+             }
+         });
+
+        // Carregar dados iniciais (Orçamento e Contagem)
+        async function carregarDadosIniciais() {
+            try {
+                const orcamentoDoc = await db.collection("orcamento").doc("estrutura").get();
+                orcamentoCache = orcamentoDoc.exists ? orcamentoDoc.data() : null;
+                if (!orcamentoCache) console.warn("Documento de orçamento não encontrado.");
+
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "!=", false).get();
+                funcionariosAtivosCache = {};
+                funcionariosSnapshot.forEach(doc => {
+                    const cargo = doc.data().cargo;
+                    if (cargo) { funcionariosAtivosCache[cargo] = (funcionariosAtivosCache[cargo] || 0) + 1; }
+                });
+                console.log("Cache de orçamento e contagem de ativos carregados.");
+            } catch (error) {
+                console.error("Erro ao carregar dados iniciais:", error);
+                mostrarMensagem("Erro ao carregar dados de orçamento.", "error");
+                orcamentoCache = null; funcionariosAtivosCache = {};
+            }
+        }
+
+        // Carregar e analisar promoções
+        async function carregarPromocoes() {
+            if (!promocoesBody || !loadingRowPromocoes) return;
+            loadingRowPromocoes.style.display = 'table-row';
+            promocoesBody.innerHTML = '';
+            promocoesBody.appendChild(loadingRowPromocoes);
+
+            try {
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "!=", false).get();
+                if (funcionariosSnapshot.empty) { loadingRowPromocoes.style.display = 'none'; promocoesBody.innerHTML = '<tr class="empty-state"><td colspan="7">Nenhum funcionário ativo encontrado.</td></tr>'; return; }
+
+                const avaliacoesSnapshot = await db.collection("historicoAvaliacoes").get();
+                const avaliacoesPorFuncionario = {};
+                avaliacoesSnapshot.forEach(doc => { const avaliacao = doc.data(); if (!avaliacoesPorFuncionario[avaliacao.funcionarioId]) { avaliacoesPorFuncionario[avaliacao.funcionarioId] = []; } avaliacoesPorFuncionario[avaliacao.funcionarioId].push(avaliacao.nota); });
+
+                todosFuncionariosDados = []; // Limpa antes de preencher
+                for (const doc of funcionariosSnapshot.docs) {
+                    const funcionario = { id: doc.id, ...doc.data() };
+                    if (funcionario.nivel === "N9" || funcionario.nivel === "N10") continue;
+                    const cargoAtualInfo = findProximoCargoInfo(funcionario.cargo);
+                    const proximoCargo = cargoAtualInfo.proximoCargo;
+                    const salarioProposto = cargoAtualInfo.salarioProx;
+                    const nivelAtual = cargoAtualInfo.nivel;
+                    const proximoNivel = nivelAtual ? trilhaConfig[nivelAtual]?.proximo : null;
+                    const tempoMinimoNecessario = proximoNivel ? (trilhaConfig[proximoNivel]?.exp ?? 9999) : 9999;
+
+                    if (!proximoCargo || !nivelAtual) { todosFuncionariosDados.push({ ...funcionario, status: 'na', proximoCargo: 'N/A', salarioProposto: '-', justificativa: 'Fim da trilha ou cargo não mapeado.', isApto: false }); continue; }
+
+                    const tempoCasa = calcularTempoDeCasa(funcionario.dataAdmissao);
+                    const tempoOk = tempoCasa >= tempoMinimoNecessario;
+                    const notasFuncionario = avaliacoesPorFuncionario[funcionario.id] || [];
+                    const somaNotas = notasFuncionario.reduce((acc, nota) => acc + (parseFloat(nota) || 0), 0);
+                    const mediaAvd = notasFuncionario.length > 0 ? somaNotas / notasFuncionario.length : 0;
+                    const mediaOk = mediaAvd >= 4.0;
+                    let vagaOk = false; let vagasDisponiveis = 0; let vagasTotal = 0;
+                    if (orcamentoCache) { let cargoOrcamento = null; for(const deptKey in orcamentoCache){ const deptCargos = orcamentoCache[deptKey]; if(Array.isArray(deptCargos)){ cargoOrcamento = deptCargos.find(c => c.cargo === proximoCargo); if(cargoOrcamento) break; } } if (cargoOrcamento) { vagasTotal = cargoOrcamento.vagas || 0; const vagasPreenchidas = funcionariosAtivosCache[proximoCargo] || 0; vagasDisponiveis = Math.max(0, vagasTotal - vagasPreenchidas); vagaOk = vagasDisponiveis > 0; } else { vagaOk = false; } } else { vagaOk = false; }
+                    const isApto = tempoOk && mediaOk && vagaOk;
+                    let justificativa = [];
+                    if (!tempoOk) { justificativa.push(`Tempo (${tempoCasa}/${tempoMinimoNecessario}d)`); }
+                    if (!mediaOk) { justificativa.push(`Média AVD (${mediaAvd.toFixed(1)}<4.0)`); }
+                    if (!vagaOk) { justificativa.push(`Vagas (${vagasDisponiveis}/${vagasTotal})`); }
+                    todosFuncionariosDados.push({ ...funcionario, status: isApto ? 'apto' : 'nao-apto', proximoCargo: proximoCargo, salarioProposto: salarioProposto ?? '-', justificativa: isApto ? 'Todos os critérios atendidos.' : 'Pendente: ' + justificativa.join(', '), isApto: isApto });
+                }
+                todosFuncionariosDados.sort((a, b) => { if (a.isApto !== b.isApto) return a.isApto ? -1 : 1; return (a.nickHabbo || '').localeCompare(b.nickHabbo || ''); });
+                popularTabelaPromocoes(todosFuncionariosDados);
+                implementarFiltroBusca(); // Configura filtro após carregar dados completos
+
+            } catch (error) {
+                console.error("Erro ao carregar/analisar promoções:", error);
+                loadingRowPromocoes.style.display = 'none';
+                promocoesBody.innerHTML = `<tr class="empty-state"><td colspan="7">Erro ao carregar dados: ${error.message}</td></tr>`;
+                mostrarMensagem("Erro ao processar elegibilidade.", "error");
+            }
+        }
+
+        // Popular a tabela com os dados processados
+        function popularTabelaPromocoes(data) {
+            if (!promocoesBody || !loadingRowPromocoes) return;
+            loadingRowPromocoes.style.display = 'none';
+            promocoesBody.innerHTML = '';
+
+            if (data.length === 0) {
+                 const termo = searchInput.value.trim();
+                 promocoesBody.innerHTML = `<tr class="empty-state"><td colspan="7">${termo ? `Nenhum funcionário encontrado para "${termo}".` : 'Nenhum funcionário ativo encontrado para análise.'}</td></tr>`;
+                 return;
+             }
+
+            data.forEach(func => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = func.id;
+
+                const statusClass = func.status === 'apto' ? 'status-apto' : (func.status === 'na' ? 'status-na' : 'status-nao-apto');
+                const statusIcon = func.status === 'apto' ? 'fa-check-circle' : (func.status === 'na' ? 'fa-ban' : 'fa-times-circle');
+                const statusText = func.status === 'apto' ? 'Apto' : (func.status === 'na' ? 'N/A' : 'Não Apto');
+
+                const acoesContainer = document.createElement('div');
+                acoesContainer.classList.add('action-buttons-column');
+
+                const btnPromover = document.createElement('button');
+                btnPromover.classList.add('btn', 'btn-success', 'btn-sm', 'btn-promover');
+                btnPromover.innerHTML = '<i class="fas fa-arrow-up"></i> Promover';
+                btnPromover.onclick = () => confirmarPromocao(func.id, func.proximoCargo, func.salarioProposto);
+                btnPromover.disabled = !func.isApto;
+                btnPromover.title = !func.isApto ? "Funcionário não apto" : "Promover funcionário";
+                acoesContainer.appendChild(btnPromover);
+
+                if (func.isApto) {
+                    const btnImprimir = document.createElement('button');
+                    btnImprimir.classList.add('btn', 'btn-info', 'btn-sm', 'btn-imprimir-proposta');
+                    btnImprimir.innerHTML = '<i class="fas fa-print"></i> Imprimir Proposta';
+                    btnImprimir.onclick = () => gerarCartaProposta(
+                        func.id, func.nome, func.nickHabbo, func.cargo, func.nivel, func.proximoCargo, func.salarioProposto
+                    );
+                    btnImprimir.title = "Gerar carta proposta";
+                    acoesContainer.appendChild(btnImprimir);
+                }
+
+                const tdAcoes = document.createElement('td');
+                tdAcoes.appendChild(acoesContainer);
+
+                tr.innerHTML = `
+                    <td>${func.nickHabbo || 'N/A'}</td>
+                    <td>${func.cargo || 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}"><i class="fas ${statusIcon}"></i> ${statusText}</span></td>
+                    <td>${func.proximoCargo || 'N/A'}</td>
+                    <td>${func.salarioProposto === '-' ? '-' : func.salarioProposto + 'c'}</td>
+                    <td class="justificativa-col">${func.justificativa || '-'}</td>
+                `;
+                tr.appendChild(tdAcoes);
+                promocoesBody.appendChild(tr);
+            });
+        }
+
+         // Função para implementar o filtro de busca na tabela
+         function implementarFiltroBusca() {
+             searchInput.addEventListener('input', () => {
+                 const termoBusca = searchInput.value.toLowerCase().trim();
+                 const dadosFiltrados = todosFuncionariosDados.filter(func => { // Usa a variável global com todos os dados
+                     const nick = (func.nickHabbo || '').toLowerCase();
+                     const cargo = (func.cargo || '').toLowerCase();
+                     return nick.includes(termoBusca) || cargo.includes(termoBusca);
+                 });
+                 popularTabelaPromocoes(dadosFiltrados); // Repopula apenas com os filtrados
+             });
+         }
+
+
+        // Confirmar e Processar Promoção
+        async function confirmarPromocao(funcionarioId, proximoCargo, novoSalario) {
+            if (currentUserLevel < 3) { mostrarMensagem("Apenas Fundadores/Superusuários podem promover.", "error"); return; }
+
+            const funcionarioDoc = await db.collection("funcionarios").doc(funcionarioId).get();
+            if (!funcionarioDoc.exists) { mostrarMensagem("Funcionário não encontrado.", "error"); return; }
+            const funcionarioAtual = funcionarioDoc.data();
+
+            let novoNivel = null;
+            const proximoCargoInfo = mapaCargos[proximoCargo];
+            if (proximoCargoInfo) { novoNivel = proximoCargoInfo.nivel; }
+
+            if (!novoNivel) { mostrarMensagem(`Erro: Nível não encontrado para o cargo "${proximoCargo}".`, "error"); return; }
+
+            Swal.fire({ title: 'Confirmar Promoção?', html: `Promover <strong>${funcionarioAtual.nickHabbo || 'Funcionário'}</strong><br>De: ${funcionarioAtual.cargo} (${funcionarioAtual.nivel})<br>Para: ${proximoCargo} (${novoNivel} | ${novoSalario}c)?`, icon: 'question', showCancelButton: true, confirmButtonColor: '#2ecc71', cancelButtonColor: '#d33', confirmButtonText: 'Sim, Promover!', cancelButtonText: 'Cancelar' }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const btn = document.querySelector(`tr[data-id="${funcionarioId}"] .btn-promover`);
+                    const originalHtml = btn ? btn.innerHTML : '';
+                    if(btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+                    try {
+                        await db.collection("funcionarios").doc(funcionarioId).update({
+                            cargo: proximoCargo, nivel: novoNivel, salario: novoSalario,
+                            dataUltimaPromocao: firebase.firestore.FieldValue.serverTimestamp(),
+                            ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        await db.collection("historicoPromocoes").add({ funcionarioId: funcionarioId, nickHabbo: funcionarioAtual.nickHabbo, cargoAnterior: funcionarioAtual.cargo, nivelAnterior: funcionarioAtual.nivel, cargoNovo: proximoCargo, nivelNovo: novoNivel, salarioNovo: novoSalario, dataPromocao: firebase.firestore.FieldValue.serverTimestamp(), promovidoPorId: currentUser.uid, promovidoPorNome: welcomeHeader.textContent || 'Admin' });
+                        mostrarMensagem(`Funcionário ${funcionarioAtual.nickHabbo} promovido para ${proximoCargo}!`, "success");
+                        await carregarDadosIniciais(); await carregarPromocoes(); // Recarrega TUDO
+                    } catch (error) { console.error("Erro ao promover:", error); mostrarMensagem(`Erro: ${error.message}`, "error"); if(btn) { btn.disabled = false; btn.innerHTML = originalHtml; } }
+                }
+            });
+        }
+
+        // Gerar Carta Proposta (Corrigido e Refinado)
+        async function gerarCartaProposta(funcionarioId, nomeCompleto, nickHabbo, cargoAtual, nivelAtual, proximoCargo, novoSalario) {
+            if (currentUserLevel < 3) { mostrarMensagem("Apenas Fundadores/Superusuários podem gerar cartas.", "error"); return; }
+            console.log("DEBUG Carta Proposta - Dados Recebidos:", { funcionarioId, nomeCompleto, nickHabbo, cargoAtual, nivelAtual, proximoCargo, novoSalario });
+
+            let nomeParaCarta = nomeCompleto || nickHabbo;
+            if (!nomeCompleto) { try { const userQuery = await db.collection("usuarios").where("nickHabbo", "==", nickHabbo).limit(1).get(); if (!userQuery.empty) { nomeParaCarta = userQuery.docs[0].data().nome || nickHabbo; } else { const funcDoc = await db.collection("funcionarios").doc(funcionarioId).get(); if (funcDoc.exists) { nomeParaCarta = funcDoc.data().nome || nickHabbo; } } } catch (e) { console.error("Erro ao buscar nome:", e); } }
+
+            // Container principal com dimensões A4 fixas e overflow hidden
+            const content = document.createElement('div');
+            content.style.width = '210mm';
+            content.style.height = '297mm'; // Altura EXATA do A4
+            content.style.margin = '0 auto'; // Centraliza se a tela for maior
+            content.style.padding = '0';
+            content.style.position = 'relative';
+            content.style.backgroundColor = 'white';
+            content.style.boxSizing = 'border-box';
+            content.style.fontFamily = 'Montserrat, Arial, sans-serif';
+            content.style.overflow = 'hidden'; // ESSENCIAL para cortar conteúdo extra
+
+            // **CORREÇÃO:** Usar as variáveis corretas passadas para a função
+            content.innerHTML = `
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding: 0; margin: 0;">
+                    <div style="background: linear-gradient(135deg, #1e90ff, #4682b4); height: 35mm; border-radius: 0 0 40% 0; display: flex; align-items: center; padding: 0 20mm;"> <div style="color: white; padding: 10px 0;"> <h1 style="margin: 0; font-size: 22pt; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Hospital Santorini Prime</h1> <p style="margin: 5px 0 0; font-size: 14pt; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">Proposta de Promoção</p> </div> </div>
+                    <div style="flex: 1; padding: 15mm 20mm; display: flex; flex-direction: column;"> <div>
+                        <p style="text-align: right; color: #4682b4; font-style: italic; font-size: 11pt; margin: 0 0 10mm 0;">${getDataHabboHotel()}</p>
+                        <p style="font-weight: 600; margin: 0 0 8mm 0; font-size: 12pt; color: #333;">Prezado(a) ${nomeParaCarta},</p>
+                        <p style="margin: 0 0 6mm 0; font-size: 11pt; line-height: 1.6; color: #333; text-align: justify;">É com grande satisfação que o <span style="color: #1e90ff; font-weight: 600;">Hospital Santorini Prime</span> reconhece seu excelente desempenho (${nivelAtual}) e dedicação como ${cargoAtual}. Em virtude de suas contribuições, temos o prazer de lhe oferecer a promoção para o cargo de:</p>
+                        <div style="background: #e9f5ff; padding: 6mm; border-radius: 4mm; margin: 7mm 0; border-left: 4px solid var(--primary);"> <h3 style="color: var(--primary); font-size: 13pt; margin-top: 0; margin-bottom: 5mm; text-align: center;">Detalhes da Promoção</h3> <table style="width: 100%; border-collapse: collapse; font-size: 11pt;"> <tr> <td style="padding: 4mm; border-bottom: 1px solid #d6eaff; width: 40%;"><strong>Novo Cargo:</strong></td> <td style="padding: 4mm; border-bottom: 1px solid #d6eaff; font-weight: 600; color: var(--primary-dark);">${proximoCargo}</td> </tr> <tr> <td style="padding: 4mm;"><strong>Novo Salário Quinzenal:</strong></td> <td style="padding: 4mm; font-weight: 600;">${novoSalario}c</td> </tr> </table> </div>
+                        <p style="margin: 6mm 0; font-size: 11pt; line-height: 1.6; color: #333; text-align: justify;">Esta promoção reflete nossa confiança em seu potencial. Esperamos que aceite esta nova oportunidade e continue a crescer conosco. Solicitamos que confirme seu aceite formalmente.</p>
+                        <p style="margin: 8mm 0; font-size: 11pt;">Atenciosamente,</p>
+                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8mm 15mm; max-width: 100%; margin-top: 8mm;"> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dr. Bryan dos Ouros</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundador</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Nyxalis Nogueira</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Mia Deusa</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Rafaela Schaefer</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> </div>
+                     </div> </div>
+                    <div style="position: absolute; bottom: 5mm; left: 0; right: 0; text-align: center;"> <div style="display: flex; justify-content: space-evenly; width: 90%; margin: 0 auto; font-size: 8pt; color: #6c757d; border-top: 1px solid #eee; padding-top: 3mm;"> <span>Hospital Santorini Prime © ${new Date().getFullYear()}</span> <span style="color: #1e90ff; font-weight: 600; letter-spacing: 1px;">PROPOSTA DE PROMOÇÃO</span> <span>Habbo Hotel</span> </div> </div>
+                </div>
+                 <div style="position: absolute; bottom: 60mm; right: 25mm; width: 28mm; height: 28mm; border: 1px solid #1e90ff; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0.15; transform: rotate(-15deg); pointer-events: none;"> <div style="text-align: center;"> <div style="color: #1e90ff; font-weight: bold; font-size: 8pt;">HSP</div> <div style="color: #1e90ff; font-weight: bold; font-size: 7pt;">PROMOÇÃO</div> <div style="color: #4682b4; font-size: 6pt; margin-top: 1px;">${new Date().toLocaleDateString('pt-BR')}</div> </div> </div>
+             `;
+
+            // Configuração do PDF (Ajustada)
+            const opt = {
+                margin: 0, // Zerar margem, controlar pelo CSS interno
+                filename: `Proposta Promoção - ${nickHabbo}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    // Definir explicitamente as dimensões A4 em pixels (aprox. 96 DPI)
+                    width: 794, // 210mm * 3.78px/mm
+                    height: 1123, // 297mm * 3.78px/mm
+                    windowWidth: 794,
+                    windowHeight: 1123,
+                    scrollY: 0,
+                    scrollX: 0,
+                    x:0,
+                    y:0
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
+
+            // Gerar e salvar PDF
+            try {
+                 // Gerar PDF e salvar diretamente
+                 await html2pdf().from(content).set(opt).save();
+                 mostrarMensagem("Carta proposta gerada com sucesso!", "success");
+
+             } catch (error) {
+                 console.error('Erro ao gerar PDF:', error);
+                 mostrarMensagem('Erro ao gerar PDF da proposta: ' + error.message, 'error');
+             }
+        }
+
+
+        // --- Inicialização ---
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("DOM Carregado para promocoes.html");
+
+             // Inicializa interações da sidebar (do shared-ui.js)
+             if (typeof initializeSidebarInteractions === 'function') {
+                  initializeSidebarInteractions();
+             } else {
+                  console.error("Erro: initializeSidebarInteractions() não encontrada.");
+             }
+
+             // A verificação de auth e carregamento inicial ocorrem em auth.onAuthStateChanged
+             // O listener do input de busca é adicionado dentro de carregarPromocoes após os dados estarem prontos
+         });
+
+    </script>
+</body>
+</html>

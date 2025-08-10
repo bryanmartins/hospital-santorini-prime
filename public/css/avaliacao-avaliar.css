@@ -1,0 +1,237 @@
+/* public/css/avaliacao-avaliar.css */
+/* Estilos específicos para a página avaliar.html */
+
+/* Container da Avaliação (Estrelas + Valor) */
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre estrelas e texto da nota */
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Permite quebra se não couber */
+}
+
+/* Container APENAS das estrelas */
+.stars-container {
+    /* direction: rtl; */ /* REMOVIDO - Lógica agora é LTR via JS */
+    display: inline-flex; /* Alinha estrelas na mesma linha */
+}
+
+/* Esconde o input radio original */
+.star-rating {
+    display: none;
+}
+
+/* Estilo do Label (Estrela Visual) */
+.star-label {
+    font-size: 2.5rem;      /* Tamanho da estrela */
+    color: #ccc;            /* Cor padrão (cinza/vazia) */
+    cursor: pointer;
+    transition: color 0.1s ease-in-out; /* Transição suave */
+    padding: 0 2px;         /* Pequeno espaçamento lateral */
+}
+
+/* Classe adicionada via JS para estrelas selecionadas e anteriores */
+.star-label.selected {
+    color: var(--primary) !important; /* Cor primária (azul) */
+}
+
+/* Efeito Hover será tratado via JavaScript */
+
+/* Texto que mostra a nota ("Nota: 3 de 5 estrelas") */
+.rating-value {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 150px; /* Garante espaço */
+    font-size: 0.95rem;
+    margin-top: 5px; /* Ajusta alinhamento vertical */
+}
+
+/* Caixa de Feedback (Excelente, Bom, etc.) */
+.feedback-box {
+    margin-top: 15px; /* Aumenta espaço superior */
+    padding: 12px 15px;
+    border-radius: 6px;
+    background-color: #f0f4f8;
+    border: 1px solid #e0e6ed;
+    display: none; /* Começa escondido */
+    width: 100%;
+    transition: all 0.3s ease; /* Adiciona transição */
+}
+
+.feedback-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.feedback-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
+/* Caixa de Informação (Aviso sobre substituir avaliação) */
+.info-box {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-left: 4px solid var(--info);
+    padding: 15px;
+    margin-bottom: 25px; /* Aumenta espaço inferior */
+    border-radius: 6px; /* Ajusta borda */
+    color: #2a7ab0;
+    font-size: 14px;
+}
+.info-box p { margin: 0; }
+.info-box strong { font-weight: 600; }
+
+/* Container dos Botões Voltar/Enviar */
+.btn-container {
+    display: flex;
+    justify-content: space-between; /* Mantém afastados */
+    gap: 15px;
+    margin-top: 30px; /* Aumenta espaço superior */
+    flex-wrap: wrap;
+}
+/* Estilos de .btn vem de estilo-principal.css */
+
+/* Estilos para Mensagem de Período Inativo */
+#periodoInativoContainer {
+    width: 100%;
+}
+.period-inactive {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    margin-top: 30px;
+    border: 1px solid #eee;
+}
+.period-inactive-icon i {
+    font-size: 3.5rem;
+    color: var(--warning);
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+.period-inactive-title {
+    font-size: 1.6rem;
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.period-inactive-message {
+    font-size: 1rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+#voltarBtnInativo { /* Estilo específico para o botão dentro da msg */
+     margin-top: 25px !important;
+}
+
+/* Style for the info button next to the label */
+.form-label .info-btn {
+    background: none;
+    border: none;
+    color: var(--info); /* Use info color */
+    font-size: 1rem; /* Adjust size as needed */
+    padding: 0 5px;
+    margin-left: 5px; /* Space from label text */
+    cursor: pointer;
+    vertical-align: middle; /* Align with label text */
+    transition: color 0.2s ease;
+}
+.form-label .info-btn:hover {
+    color: var(--primary); /* Darker blue on hover */
+}
+
+/* Styles for the Rating Guide Modal Content */
+#ratingGuideModal .modal-body {
+    text-align: left;
+    line-height: 1.6;
+}
+#ratingGuideModal .modal-body h4 {
+    color: var(--primary);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+#ratingGuideModal .modal-body h4:first-of-type {
+    margin-top: 0; /* No top margin for the first heading */
+}
+#ratingGuideModal .modal-body p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+#ratingGuideModal .modal-body p strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+#ratingGuideModal .modal-body ul {
+    list-style: disc;
+    margin-left: 20px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+#ratingGuideModal .modal-body li {
+    margin-bottom: 5px;
+}
+#ratingGuideModal .modal-body hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+}
+
+/* Ensure the large modal class works (if not already defined in modal.css) */
+.modal-content.large {
+    max-width: 800px; /* Adjust width as needed */
+}
+
+/* Ensure Modal is on top and has transitions */
+/* If these styles exist in modal.css, ensure they have high enough z-index */
+.modal {
+    /* display: none; /* Controlled by JS */
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    z-index: 1050; /* High z-index to be above other content (adjust if needed) */
+    opacity: 0; /* Start hidden */
+    visibility: hidden; /* Start hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+    display: flex; /* Use flex to center content */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Styles for when the modal is shown via JS */
+.modal[style*="display: flex"] { /* More specific selector for when JS makes it flex */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ensure modal content is also visible */
+.modal-content {
+    /* Add other modal content styles if needed */
+    z-index: 1051; /* Above the modal background */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px; /* Or your desired max-width */
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustes responsivos específicos se necessário */
+@media (max-width: 480px) {
+    .star-label { font-size: 2rem; /* Menor em telas pequenas */ }
+    .rating-value { min-width: 120px; }
+}

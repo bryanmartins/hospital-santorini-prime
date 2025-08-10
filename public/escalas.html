@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalas de Trabalho - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/gantt.css">
+    <link rel="stylesheet" href="./css/cards.css">
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state"><span style="color: rgba(255,255,255,0.7); padding:20px;">Carregando...</span></div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button>
+            <a href="#" id="logoutBtn" class="menu-item"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-calendar-alt"></i> Escalas de Trabalho</h1>
+            <p class="page-subtitle">Gerencie as escalas de trabalho dos funcionários por ala/departamento</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+
+        <div class="card selection-card" id="selectionContainer">
+             <div class="card-header"><h2 class="card-title"><i class="fas fa-building"></i> Selecione uma Ala/Cargo</h2></div>
+             <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label" for="ala">Ala/Cargo:</label>
+                    <div class="select-wrapper">
+                        <select id="ala" class="form-control">
+                            <option value="">Carregando alas...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="loadScaleBtn">
+                        <i class="fas fa-calendar-check"></i> Carregar Escala
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="gantt-container" id="ganttContainer" style="display: none;">
+             <div class="gantt-card">
+                 <h3 class="gantt-title"><i class="fas fa-business-time"></i> Escala de Segunda a Sexta</h3>
+                 <div class="gantt-table-wrapper"><table class="gantt-table" id="ganttSemana"><thead id="ganttHeaderSemana"></thead><tbody id="ganttBodySemana"></tbody></table></div>
+             </div>
+             <div class="gantt-card">
+                 <h3 class="gantt-title"><i class="fas fa-umbrella-beach"></i> Escala de Finais de Semana</h3>
+                 <div class="gantt-table-wrapper"><table class="gantt-table" id="ganttFimSemana"><thead id="ganttHeaderFimSemana"></thead><tbody id="ganttBodyFimSemana"></tbody></table></div>
+             </div>
+             <div class="form-actions">
+                 <button class="btn btn-success" id="saveBtn" style="display: none;">
+                     <i class="fas fa-save"></i> Salvar Escala
+                 </button>
+              </div>
+        </div>
+
+        <div class="card summary-container" id="summaryContainer" style="display: none;">
+             <div class="card-header"><h2 class="card-title"><i class="fas fa-clipboard-list"></i> Resumo da Escala</h2></div>
+             <div class="card-body"><ul id="summaryList"></ul></div>
+        </div>
+
+    </div> <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // --- Variáveis Globais ---
+        let currentUser = null;
+        let currentUserData = null;
+        let currentUserHierarchicalLevel = 'N0';
+
+        // --- Cache DOM ---
+        const alertaContainer = document.getElementById('alertaContainer');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const selectAla = document.getElementById('ala');
+        const loadScaleBtn = document.getElementById('loadScaleBtn');
+        const selectionContainer = document.getElementById('selectionContainer');
+        const ganttContainer = document.getElementById('ganttContainer');
+        const saveBtn = document.getElementById('saveBtn');
+        const summaryContainer = document.getElementById('summaryContainer');
+        const summaryList = document.getElementById('summaryList');
+        const headerSemana = document.getElementById('ganttHeaderSemana');
+        const bodySemana = document.getElementById('ganttBodySemana');
+        const headerFimSemana = document.getElementById('ganttHeaderFimSemana');
+        const bodyFimSemana = document.getElementById('ganttBodyFimSemana');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Específicas ---
+
+        // Carrega alas (cargos) no dropdown
+        async function carregarAlas() {
+            console.log("Carregando alas...");
+            selectAla.innerHTML = '<option value="">Carregando...</option>';
+            selectAla.disabled = true;
+            try {
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get();
+                const alas = new Set();
+                funcionariosSnapshot.forEach((doc) => { if (doc.data().cargo) alas.add(doc.data().cargo); });
+                selectAla.innerHTML = '<option value="">Escolha uma ala/cargo</option>';
+                if (alas.size === 0) { showGlobalMessage("info", "Nenhum cargo ativo."); selectAla.innerHTML = '<option value="">Nenhum cargo</option>'; return; }
+                Array.from(alas).sort().forEach(ala => { const option = document.createElement('option'); option.value = ala; option.textContent = ala; selectAla.appendChild(option); });
+                selectAla.disabled = false;
+            } catch (error) { console.error("Erro carregarAlas:", error); showGlobalMessage("error", "Erro ao carregar alas: " + error.message); selectAla.innerHTML = '<option value="">Erro</option>'; }
+        }
+
+        // Gera horários para as tabelas
+        function gerarHorarios(periodo) {
+            const ehFimDeSemana = periodo === 'Fim de Semana';
+            const inicio = ehFimDeSemana ? '11:00' : '08:00'; const fim = ehFimDeSemana ? '17:00' : '22:00'; const horarios = [];
+            let [horaInicio, minInicio] = inicio.split(':').map(Number); let [horaFim, minFim] = fim.split(':').map(Number);
+            let horaAtual = horaInicio; let minAtual = minInicio;
+            while (horaAtual < horaFim || (horaAtual === horaFim && minAtual < minFim)) {
+                const inicioBloco = `${horaAtual.toString().padStart(2, '0')}:${minAtual.toString().padStart(2, '0')}`;
+                minAtual += 30; if (minAtual >= 60) { minAtual -= 60; horaAtual++; }
+                const fimBloco = `${horaAtual.toString().padStart(2, '0')}:${minAtual.toString().padStart(2, '0')}`;
+                horarios.push({ inicio: inicioBloco, label: `${inicioBloco} / ${fimBloco}` });
+            } return horarios;
+        }
+
+        // Carrega escala salva e funcionários da ala
+        async function carregarEscala() {
+            const ala = selectAla.value; if (!ala) { showGlobalMessage("warning", "Selecione uma ala!"); return; }
+            console.log(`Carregando escala para: ${ala}`);
+            showGlobalMessage("info", `Carregando escala para ${ala}...`, "alertaContainer");
+            selectionContainer.style.display = 'none'; ganttContainer.style.display = 'none'; summaryContainer.style.display = 'none'; saveBtn.style.display = 'none';
+
+            try {
+                const escalaDocId = ala.replace(/[^a-zA-Z0-9]/g, '_');
+                // ***** CORREÇÃO AQUI: USA A COLEÇÃO "escalas" *****
+                const escalaRef = db.collection("escalas").doc(escalaDocId);
+                // ************************************************
+
+                const [funcionariosSnapshot, escalaDoc] = await Promise.all([
+                    db.collection("funcionarios").where("cargo", "==", ala).where("ativo", "==", true).orderBy("nickHabbo").get(),
+                    escalaRef.get() // Tenta ler a escala
+                ]);
+
+                // Verifica permissão de LEITURA (após tentar ler) - Regra: request.auth != null (qualquer logado)
+                // Não precisamos de verificação extra aqui no JS para leitura, a regra do Firestore controla
+
+                if (!funcionariosSnapshot || !Array.isArray(funcionariosSnapshot.docs)) {
+                    throw new Error("Falha ao obter lista de funcionários.");
+                }
+                const funcionariosAla = funcionariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                if (funcionariosAla.length === 0) { showGlobalMessage("info", `Nenhum funcionário ativo em ${ala}.`); selectionContainer.style.display = 'block'; return; }
+
+                const escalaSalva = escalaDoc.exists ? (escalaDoc.data().escala || {}) : {};
+                console.log(`Escala salva: ${escalaDoc.exists ? 'Encontrada' : 'Não encontrada'}`);
+
+                const horariosSemana = gerarHorarios('Semana'); const horariosFimSemana = gerarHorarios('Fim de Semana');
+
+                // Renderiza Tabelas (usando createElement)
+                headerSemana.innerHTML = '<tr><th class="funcionario-col">Segunda a Sexta</th>' + horariosSemana.map(h => `<th>${h.label}</th>`).join('') + '</tr>';
+                bodySemana.innerHTML = '';
+                funcionariosAla.forEach((func) => { const tr = document.createElement('tr'); const tdNick = document.createElement('td'); tdNick.className = 'funcionario-col'; tdNick.textContent = func.nickHabbo; tr.appendChild(tdNick); horariosSemana.forEach(h => { const td = document.createElement('td'); const key = `Semana_${ala}_${func.nickHabbo}_${h.inicio}`; td.dataset.funcionario = func.nickHabbo; td.dataset.horario = h.inicio; td.dataset.periodo = 'Semana'; td.onclick = () => toggleHorario(td); if (escalaSalva[key]) { td.classList.add('active'); } tr.appendChild(td); }); bodySemana.appendChild(tr); });
+
+                headerFimSemana.innerHTML = '<tr><th class="funcionario-col">Finais de Semana</th>' + horariosFimSemana.map(h => `<th>${h.label}</th>`).join('') + '</tr>';
+                bodyFimSemana.innerHTML = '';
+                funcionariosAla.forEach((func) => { const tr = document.createElement('tr'); const tdNick = document.createElement('td'); tdNick.className = 'funcionario-col'; tdNick.textContent = func.nickHabbo; tr.appendChild(tdNick); horariosFimSemana.forEach(h => { const td = document.createElement('td'); const key = `Fim de Semana_${ala}_${func.nickHabbo}_${h.inicio}`; td.dataset.funcionario = func.nickHabbo; td.dataset.horario = h.inicio; td.dataset.periodo = 'Fim de Semana'; td.onclick = () => toggleHorario(td); if (escalaSalva[key]) { td.classList.add('active'); } tr.appendChild(td); }); bodyFimSemana.appendChild(tr); });
+
+                // Mostra containers
+                ganttContainer.style.display = 'block'; summaryContainer.style.display = 'block';
+                if (currentUserHierarchicalLevel === 'N10') { saveBtn.style.display = 'inline-flex'; } // Botão Salvar SÓ para N10
+                atualizarResumo();
+                showGlobalMessage("success", `Escala para ${ala} carregada.`);
+
+            } catch (error) {
+                console.error("Erro ao carregar escala:", error);
+                if (error.code === 'permission-denied') {
+                     showGlobalMessage("error", `Erro de permissão ao carregar escala da ala ${ala}. Verifique as regras do Firestore para 'escalas'.`);
+                } else {
+                    showGlobalMessage("error", `Erro ao carregar escala: ${error.message}.`);
+                }
+                selectionContainer.style.display = 'block'; // Volta para seleção
+            }
+        }
+
+        // Marca/Desmarca horário (com permissão N10)
+        function toggleHorario(tdElement) {
+             if (!tdElement) return;
+             if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("warning", "Apenas Nível 10 (Fundador) pode alterar as escalas."); return; }
+             const funcionario = tdElement.dataset.funcionario; const periodo = tdElement.dataset.periodo;
+             const tdsFuncionarioPeriodo = document.querySelectorAll(`td[data-funcionario="${funcionario}"][data-periodo="${periodo}"]`);
+             let horasMarcadasPeriodo = 0; tdsFuncionarioPeriodo.forEach(t => { if (t.classList.contains('active')) { horasMarcadasPeriodo += 0.5; } });
+             if (!tdElement.classList.contains('active') && horasMarcadasPeriodo >= 8) { showGlobalMessage("warning", `${funcionario} já atingiu 8 horas em ${periodo}!`); return; }
+             tdElement.classList.toggle('active');
+             atualizarResumo();
+         }
+
+        // Atualiza o resumo
+        function atualizarResumo() {
+             if(!summaryList) return;
+             summaryList.innerHTML = ''; const horasPorFuncionario = new Map();
+             const todasAsCelulas = document.querySelectorAll('#ganttBodySemana td[data-funcionario], #ganttBodyFimSemana td[data-funcionario]');
+             todasAsCelulas.forEach(td => { const func = td.dataset.funcionario; const periodo = td.dataset.periodo; if (!horasPorFuncionario.has(func)) { horasPorFuncionario.set(func, { semana: 0, fimSemana: 0 }); } if (td.classList.contains('active')) { if (periodo === 'Semana') { horasPorFuncionario.get(func).semana += 0.5; } else if (periodo === 'Fim de Semana') { horasPorFuncionario.get(func).fimSemana += 0.5; } } });
+             if (horasPorFuncionario.size === 0 && todasAsCelulas.length > 0) { summaryList.innerHTML = '<li>Nenhum horário marcado.</li>'; }
+             else if (todasAsCelulas.length === 0){ summaryList.innerHTML = '<li>Carregue uma escala.</li>'; }
+             else { const funcionariosOrdenados = Array.from(horasPorFuncionario.keys()).sort(); funcionariosOrdenados.forEach(funcionario => { const horas = horasPorFuncionario.get(funcionario); const horasSemanaTotal = horas.semana * 5; const horasFimSemanaTotal = horas.fimSemana * 2; const horasTotaisSemanal = horasSemanaTotal + horasFimSemanaTotal; const li = document.createElement('li'); li.innerHTML = `<strong>${funcionario}</strong><br> Seg-Sex: ${horas.semana}h/dia (${horasSemanaTotal.toFixed(1)}h/sem)<br> FDS: ${horas.fimSemana}h/dia (${horasFimSemanaTotal.toFixed(1)}h/sem)<br> <span style="font-weight: bold;">Total Semanal: ${horasTotaisSemanal.toFixed(1)}h</span>`; if (horas.semana > 8 || horas.fimSemana > 8) { li.classList.add('conflict'); li.innerHTML += '<br><span style="color: var(--danger); font-weight: bold;">⚠️ Excede 8h/dia!</span>'; } if (horasTotaisSemanal > 40) { li.classList.add('conflict'); li.innerHTML += '<br><span style="color: var(--warning); font-weight: bold;">⚠️ Excede 40h semanais!</span>'; } summaryList.appendChild(li); }); }
+             summaryContainer.style.display = 'block';
+         }
+
+        // Salva a escala no Firestore (com permissão N10)
+        async function salvarEscala() {
+            if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("error", "Apenas N10 pode salvar."); return; }
+            const ala = selectAla.value; if (!ala) { showGlobalMessage("error", "Ala não selecionada."); return; }
+            const user = auth.currentUser; if (!user) { showGlobalMessage("error", "Autenticação necessária."); return; }
+            console.log(`Salvando escala para: ${ala}`); saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            const tdsAtivos = document.querySelectorAll('#ganttBodySemana td.active, #ganttBodyFimSemana td.active');
+            const escalaParaSalvar = {}; tdsAtivos.forEach(td => { const key = `${td.dataset.periodo}_${ala}_${td.dataset.funcionario}_${td.dataset.horario}`; escalaParaSalvar[key] = true; });
+            await salvarEscalaNoFirebase(ala, escalaParaSalvar, user.uid);
+            saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Escala';
+        }
+
+        // Função auxiliar para salvar no Firestore (coleção "escalas")
+        async function salvarEscalaNoFirebase(ala, escalaObj, usuarioId) {
+             console.log("Salvando no Firebase para ala:", ala);
+             const escalaDocId = ala.replace(/[^a-zA-Z0-9]/g, '_'); if (!escalaDocId) { showGlobalMessage("error", "Nome da ala inválido."); return; }
+             // ***** CORREÇÃO: Usar a coleção "escalas" *****
+             const escalaRef = db.collection("escalas").doc(escalaDocId);
+             // ***********************************************
+             try {
+                 const dadosParaSalvar = { ala: ala, ultimaModificacao: firebase.firestore.FieldValue.serverTimestamp(), modificadoPor: usuarioId, modificadoPorNome: currentUserData?.nome || 'Admin', escala: escalaObj };
+                 await escalaRef.set(dadosParaSalvar, { merge: true });
+                 console.log(`Escala '${ala}' salva com sucesso!`); showGlobalMessage('success', `Escala para ${ala} salva com sucesso!`);
+             } catch (error) { console.error("Erro ao salvar no Firebase:", error); showGlobalMessage("error", `Erro ao salvar escala: ${error.message}. Verifique permissões para 'escalas'.`); }
+        }
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando escalas.html ===");
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+                currentUser = user;
+                try {
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    currentUserData = result.userData; currentUserHierarchicalLevel = result.hierarchicalLevel;
+                    console.log(`--- Usuário: ${currentUserData.nome}, Nível Hierárquico: ${currentUserHierarchicalLevel}`);
+                    // Permissão
+                    const allowedLevelsToView = ['N2', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10'];
+                    if (!allowedLevelsToView.includes(currentUserHierarchicalLevel)) { console.warn("Acesso Negado."); document.body.innerHTML = `<h1>Acesso Negado</h1>`; return; }
+                    // UI Sidebar
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Usuário";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Colaborador";
+                    const currentPage = window.location.pathname.split('/').pop();
+                    if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(currentUserHierarchicalLevel, currentPage); } else { console.error("generateSidebarMenu não encontrada"); }
+                    if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); } else { console.error("initializeSidebarInteractions não encontrada"); }
+                    // Dados e Listeners da Página
+                    await carregarAlas();
+                    if(loadScaleBtn) loadScaleBtn.addEventListener('click', carregarEscala);
+                    if(saveBtn) saveBtn.addEventListener('click', salvarEscala);
+                    if (currentUserHierarchicalLevel !== 'N10') { saveBtn.style.display = 'none'; } // Esconde Salvar se não for N10
+
+                } catch (error) { console.error("Erro inicialização:", error); showGlobalMessage("error", "Erro: " + error.message); }
+            });
+        });
+
+    </script>
+</body>
+</html>

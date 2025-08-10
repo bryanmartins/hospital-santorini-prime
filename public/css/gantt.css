@@ -1,0 +1,186 @@
+/* ==========================================================================
+   Estilos Específicos para Escalas / Gantt Chart
+   ========================================================================== */
+
+/* Container Principal do Gantt */
+.gantt-container {
+    display: none; /* Controlado por JS */
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease; /* Requer @keyframes fadeIn */
+}
+
+/* Título da seção Gantt */
+.gantt-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);                 /* Usa variável */
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.gantt-title i {
+    margin-right: 10px;
+    color: var(--primary);              /* Usa variável */
+}
+
+/* Card que envolve a tabela Gantt */
+.gantt-card {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-md);       /* Usa variável */
+    padding: 20px;
+    margin-bottom: 30px;
+    overflow: hidden; /* Importante para o wrapper de rolagem */
+}
+
+/* Wrapper para permitir rolagem horizontal da tabela */
+.gantt-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 20px; /* Espaço antes do botão de salvar, se houver */
+     /* Adicionar :::-webkit-scrollbar aqui se quiser customizar SÓ esta rolagem */
+}
+
+/* Tabela Gantt */
+.gantt-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Garante largura mínima para rolagem fazer sentido */
+}
+
+.gantt-table th,
+.gantt-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #e0e7ff; /* Borda azul clara */
+    font-size: 13px;
+    font-family: 'Montserrat', sans-serif;
+    white-space: nowrap; /* Evita quebra de linha no conteúdo da célula */
+}
+
+.gantt-table th { /* Cabeçalho dos dias/horas */
+    background: linear-gradient(to right, var(--primary), var(--secondary)); /* Usa variáveis */
+    color: white;
+    font-weight: 600;
+    position: sticky; /* Cabeçalho fixo no topo durante rolagem vertical */
+    top: 0;
+    z-index: 2; /* Acima das células e coluna fixa */
+}
+
+.gantt-table .funcionario-col { /* Coluna do nome do funcionário */
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);              /* Usa variável */
+    position: sticky; /* Coluna fixa na esquerda durante rolagem horizontal */
+    left: 0;
+    background: white; /* Fundo branco para cobrir células que passam por baixo */
+    z-index: 1; /* Acima das células normais, abaixo do header fixo */
+    min-width: 150px; /* Largura mínima para nomes */
+    border-right: 2px solid #c0d3ff; /* Borda um pouco mais forte para separar */
+}
+ /* Garante que o TH da coluna fixa também seja sticky e tenha fundo */
+ .gantt-table th.funcionario-col {
+     left: 0;
+     z-index: 3; /* Acima de tudo */
+     background: linear-gradient(to right, var(--primary), var(--secondary)); /* Mantém fundo do header */
+ }
+
+
+.gantt-table td { /* Células de horário */
+    cursor: pointer; /* Indica que são clicáveis */
+    transition: background 0.2s ease;
+}
+
+.gantt-table td:hover {
+    background: #f0f5ff; /* Azul bem claro no hover */
+}
+
+/* Estilo para célula ativa (quando funcionário está escalado) */
+.gantt-table .active {
+    background: var(--success);         /* Usa variável */
+    color: white;
+    font-weight: bold;
+}
+/* Adicionar outros estados se necessário (ex: .folga, .licenca) */
+/* .gantt-table .folga { background: #ccc; color: #666; } */
+
+
+/* Card de Resumo/Conflitos */
+.summary-container {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-md);       /* Usa variável */
+    padding: 25px;
+    margin-bottom: 30px;
+    display: none; /* Controlado por JS */
+    animation: fadeIn 0.5s ease; /* Requer @keyframes fadeIn */
+}
+
+.summary-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);                 /* Usa variável */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.summary-title i {
+    margin-right: 10px;
+    color: var(--primary);              /* Usa variável */
+}
+
+.summary-container ul {
+    list-style: none; /* Remove bolinhas da lista */
+    padding: 0;
+    margin: 0; /* Remove margem padrão da lista */
+}
+
+.summary-container li {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--text-main);            /* Usa variável */
+    font-size: 14px;
+}
+
+.summary-container li:last-child {
+    border-bottom: none; /* Remove borda do último item */
+}
+
+/* Destaque para conflitos */
+.summary-container .conflict {
+    color: var(--danger);               /* Usa variável */
+    font-weight: 600;
+}
+
+
+/* ==========================================================================
+   Estilos Responsivos Específicos para Escalas/Gantt
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .gantt-table th,
+    .gantt-table td {
+        padding: 10px 8px; /* Menos padding */
+        font-size: 12px;   /* Fonte menor */
+    }
+
+    .gantt-table .funcionario-col {
+         min-width: 120px; /* Coluna de nome um pouco menor */
+    }
+
+    .gantt-table {
+         min-width: 600px; /* Reduz um pouco a largura mínima geral */
+    }
+
+    .summary-container li {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+/* Animação fadeIn (Idealmente definida uma vez no estilo-principal.css) */
+/* @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+} */

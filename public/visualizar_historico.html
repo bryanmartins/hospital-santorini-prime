@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Avaliações - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/widgets.css">
+    <link rel="stylesheet" href="./css/modal.css">
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"> <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime"> <h2 id="welcomeHeader">Usuário</h2> <span class="user-role">Carregando...</span> </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer"> <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button> <a href="#" id="logoutBtn" class="menu-item"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a> </div>
+    </div>
+    <div class="main-content" id="mainContent">
+        <div class="page-header"> <h1 class="page-title"> <i class="fas fa-history"></i> Histórico de Avaliações </h1> <p class="page-subtitle">Consulte e analise o histórico de avaliações de desempenho dos funcionários</p> </div>
+        <div id="successMessage" class="message success-message" style="display: none;"></div> <div id="errorMessage" class="message error-message" style="display: none;"></div>
+
+        <div class="card animate-in">
+            <div class="card-header"> <div class="card-title"> <i class="fas fa-filter"></i> Filtros de Pesquisa </div> </div>
+            <div class="card-body">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="periodoSelect">Período (Quinzena):</label>
+                        <div class="select-wrapper">  <select id="periodoSelect" class="form-control">
+                                <option value="todos">Todas as Quinzenas</option>
+                                </select>
+                        </div> </div>
+                    <div class="filter-group">
+                        <label for="funcionarioSelect">Funcionário:</label>
+                        <div class="select-wrapper">  <select id="funcionarioSelect" class="form-control">
+                                <option value="todos">Todos</option>
+                                </select>
+                        </div> </div>
+                </div>
+                <div class="buttons-container"> <button class="btn btn-primary" id="btnFiltrar"> <i class="fas fa-search"></i> Filtrar </button> <button class="btn btn-secondary" id="btnLimpar"> <i class="fas fa-eraser"></i> Limpar Filtros </button> <button class="btn btn-success" id="btnExportar"> <i class="fas fa-file-export"></i> Exportar </button> </div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card animate-in" style="animation-delay: 0.1s;">
+                <h3 class="stat-title"><i class="fas fa-chart-line"></i> Média Geral</h3>
+                <div class="stat-value" id="statMediaValor">-</div>
+                <div class="stat-subtitle" id="statMediaSubtitulo">No período filtrado</div>
+            </div>
+            <div class="stat-card animate-in" style="animation-delay: 0.2s;">
+                <h3 class="stat-title"><i class="fas fa-clipboard-list"></i> Total de Avaliações</h3>
+                <div class="stat-value" id="statTotalValor">-</div>
+                <div class="stat-subtitle" id="statTotalSubtitulo">No período filtrado</div>
+            </div>
+            <div class="stat-card animate-in" style="animation-delay: 0.3s;">
+                <h3 class="stat-title"><i class="fas fa-trophy"></i> Destaque do Período</h3>
+                <div class="stat-value" id="statDestaqueNome">-</div>
+                <div class="stat-subtitle" id="statDestaqueValor">Maior média no período</div>
+            </div>
+        </div>
+
+        <div class="card animate-in" style="animation-delay: 0.4s;">
+            <div class="card-header"> <div class="card-title"> <i class="fas fa-list-alt"></i> Histórico Detalhado </div> </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Funcionário (Nick)</th>
+                                <th>Cargo</th>
+                                <th>Nota</th>
+                                <th>Avaliador</th>
+                                <th>Data Avaliação</th>
+                                <th>Data Consolidação</th>
+                                <th>Período</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoTableBody">
+                            <tr class="empty-row"> <td colspan="8"> <i class="fas fa-spinner fa-spin"></i> Carregando histórico... </td> </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="paginacao"> </div>
+                <div class="buttons-container" style="margin-top: 20px;"> <a href="avaliacao_desempenho.html" class="btn btn-secondary"> <i class="fas fa-arrow-left"></i> Voltar para Avaliação </a> </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="avaliacaoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"> <h2><i class="fas fa-info-circle"></i> Detalhes da Avaliação Histórica</h2> <button class="modal-close close" onclick="fecharModal('avaliacaoModal')">&times;</button> </div>
+            <div class="modal-body" id="modalBody"> <p>Carregando detalhes...</p> </div>
+            <div class="modal-footer"> <button class="btn btn-secondary modal-close" onclick="fecharModal('avaliacaoModal')">Fechar</button> </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicialização Firebase
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px;">Erro crítico na configuração. Contacte o suporte.</p>';
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Cache de Elementos DOM
+        const historicoTableBody = document.getElementById('historicoTableBody');
+        const periodoSelect = document.getElementById('periodoSelect');
+        const funcionarioSelect = document.getElementById('funcionarioSelect');
+        const btnFiltrar = document.getElementById('btnFiltrar');
+        const btnLimpar = document.getElementById('btnLimpar');
+        const btnExportar = document.getElementById('btnExportar');
+        const paginacaoContainer = document.getElementById('paginacao');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const statMediaValor = document.getElementById('statMediaValor');
+        const statMediaSubtitulo = document.getElementById('statMediaSubtitulo');
+        const statTotalValor = document.getElementById('statTotalValor');
+        const statTotalSubtitulo = document.getElementById('statTotalSubtitulo');
+        const statDestaqueNome = document.getElementById('statDestaqueNome');
+        const statDestaqueValor = document.getElementById('statDestaqueValor');
+        
+        // Variáveis Globais
+        let currentUser = null;
+        let currentUserLevel = 0;
+        let currentUserHierarchicalLevel = "N0";
+        let dadosFiltradosParaExportar = [];
+
+        // --- Funções Auxiliares (formatarData, modais, etc.) ---
+        function mostrarMensagem(elId, mensagem, tipo) { /* ... (Mantida) ... */ const messageEl = document.getElementById(elId); if (!messageEl) return; const iconClass = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'; messageEl.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`; messageEl.className = `message ${tipo}-message`; messageEl.style.display = 'flex'; setTimeout(() => { messageEl.style.display = 'none'; }, 5000); }
+        function formatarData(timestamp, includeTime = false) { /* ... (Mantida) ... */ if (!timestamp) return 'N/A'; try { const data = timestamp.toDate ? timestamp.toDate() : new Date(timestamp); const optionsDate = { day: '2-digit', month: '2-digit', year: 'numeric' }; let formatted = data.toLocaleDateString('pt-BR', optionsDate); if (includeTime) { const optionsTime = { hour: '2-digit', minute: '2-digit' }; formatted += ' às ' + data.toLocaleTimeString('pt-BR', optionsTime); } return formatted; } catch (e) { console.error("Erro ao formatar data:", e, timestamp); return 'Inválida'; } }
+        function formatarPeriodoString(inicioStr, fimStr) { /* ... (Mantida) ... */ if (!inicioStr || !fimStr) return 'Período N/A'; try { const inicioParts = inicioStr.split('-'); const fimParts = fimStr.split('-'); const inicioFormatado = `${inicioParts[2]}/${inicioParts[1]}/${inicioParts[0]}`; const fimFormatado = `${fimParts[2]}/${fimParts[1]}/${fimParts[0]}`; return `${inicioFormatado} - ${fimFormatado}`; } catch (e) { console.error("Erro ao formatar período string:", e, inicioStr, fimStr); return 'Período Inválido'; } }
+        function fecharModal(modalId) { /* ... (Mantida) ... */ const modal = document.getElementById(modalId); if (modal) modal.style.display = 'none'; }
+        function abrirModal(modalId) { /* ... (Mantida) ... */ const modal = document.getElementById(modalId); if (modal) modal.style.display = 'flex'; }
+        function criarBotaoAcao(iconeHtml, titulo, classeTipo, callbackOnClick) { /* ... (Mantida) ... */ const btn = document.createElement('button'); btn.className = `acao-icon ${classeTipo}`; btn.innerHTML = iconeHtml; btn.title = titulo; btn.onclick = callbackOnClick; return btn; }
+function logout() { /* ... (Mantida) ... */ auth.signOut().then(() => { window.location.href = 'login.html'; }).catch((error) => { console.error("Erro ao fazer logout:", error); mostrarMensagem("errorMessage", "Erro ao sair: " + error.message, "danger"); }); } // Usar ID do elemento de erro
+
+        // --- Lógica da Página de Histórico ---
+
+        // Popula os dropdowns de filtro
+        async function popularFiltros() {
+            console.log("Populando filtros...");
+            try {
+                // Popula Períodos (Quinzenas)
+                const periodos = new Map(); // Usar Map para garantir unicidade e guardar datas
+                const avaliacoesSnapshot = await db.collection("historicoAvaliacoes").orderBy("dataConsolidacao", "desc").get();
+
+                avaliacoesSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.quinzenaIdHistorico) {
+                         const periodoFormatado = formatarPeriodoString(data.periodoInicio, data.periodoFim);
+                         if (!periodos.has(data.quinzenaIdHistorico) && periodoFormatado !== 'Período Inválido') {
+                            periodos.set(data.quinzenaIdHistorico, periodoFormatado);
+                         }
+                    }
+                });
+
+                // Limpa opções antigas (exceto a primeira "Todas")
+                while (periodoSelect.options.length > 1) { periodoSelect.remove(1); }
+                // Adiciona novas opções ordenadas (opcionalmente)
+                 // Convertendo Map para array, ordenando pela data de início (implícita no ID ou pela string formatada)
+                 // Aqui ordena pela string formatada DD/MM/YYYY - DD/MM/YYYY
+                 const periodosOrdenados = Array.from(periodos.entries()).sort(([, valA], [, valB]) => {
+                    // Extrai a data de início para ordenar
+                    const dateA = valA.split(' - ')[0].split('/').reverse().join('-');
+                    const dateB = valB.split(' - ')[0].split('/').reverse().join('-');
+                    return dateB.localeCompare(dateA); // Mais recente primeiro
+                 });
+
+                 periodosOrdenados.forEach(([id, texto]) => {
+                     const option = document.createElement('option');
+                     option.value = id;
+                     option.textContent = texto;
+                     periodoSelect.appendChild(option);
+                 });
+
+                // Popula Funcionários
+                const funcionarios = new Map(); // Usar Map para unique ID -> Nick
+                avaliacoesSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.funcionarioId && data.funcionarioNick && !funcionarios.has(data.funcionarioId)) {
+                        funcionarios.set(data.funcionarioId, data.funcionarioNick);
+                    }
+                });
+
+                while (funcionarioSelect.options.length > 1) { funcionarioSelect.remove(1); }
+                // Ordena por Nick
+                const funcionariosOrdenados = Array.from(funcionarios.entries()).sort(([, nickA], [, nickB]) => nickA.localeCompare(nickB));
+
+                funcionariosOrdenados.forEach(([id, nick]) => {
+                     const option = document.createElement('option');
+                     option.value = id;
+                     option.textContent = nick;
+                     funcionarioSelect.appendChild(option);
+            });
+
+                console.log("Filtros populados.");
+
+            } catch (error) {
+                console.error("Erro ao popular filtros:", error);
+                mostrarMensagem('errorMessage', 'Erro ao carregar opções de filtro.', 'danger');
+            }
+        }
+
+        // Aplica os filtros selecionados
+        function aplicarFiltros() {
+             const periodoId = periodoSelect.value;
+             const funcionarioId = funcionarioSelect.value;
+             console.log(`Filtrando por Período: ${periodoId}, Funcionário: ${funcionarioId}`);
+             carregarHistorico({ periodoId, funcionarioId }); // Passa os filtros para a função de carregamento
+        }
+
+        // Limpa os filtros e recarrega tudo
+        function limparFiltros() {
+             console.log("Limpando filtros...");
+             periodoSelect.value = 'todos';
+             funcionarioSelect.value = 'todos';
+             carregarHistorico({}); // Chama sem filtros para carregar tudo
+        }
+
+        // Carrega os dados do histórico, aplicando filtros se fornecidos
+        async function carregarHistorico(filtros = {}) {
+            historicoTableBody.innerHTML = `<tr class="empty-row"><td colspan="8"><i class="fas fa-spinner fa-spin"></i> Carregando histórico...</td></tr>`;
+            paginacaoContainer.innerHTML = ''; // Limpa paginação antiga
+            dadosFiltradosParaExportar = []; // Limpa dados anteriores
+
+            try {
+                let query = db.collection("historicoAvaliacoes");
+
+                // Aplica filtros à query
+                if (filtros.periodoId && filtros.periodoId !== 'todos') {
+                    query = query.where("quinzenaIdHistorico", "==", filtros.periodoId);
+                }
+                if (filtros.funcionarioId && filtros.funcionarioId !== 'todos') {
+                    query = query.where("funcionarioId", "==", filtros.funcionarioId);
+                }
+
+                // Ordena sempre pela data de consolidação (mais recente primeiro)
+                query = query.orderBy("dataConsolidacao", "desc");
+
+                const snapshot = await query.get();
+
+                if (snapshot.empty) {
+                    historicoTableBody.innerHTML = `<tr class="empty-row"><td colspan="8"><i class="fas fa-info-circle"></i> Nenhum registro encontrado para os filtros selecionados.</td></tr>`;
+                    atualizarStatsCards([]); // Atualiza cards com dados vazios
+                    return;
+                }
+
+                historicoTableBody.innerHTML = ''; // Limpa a tabela
+                const avaliacoesFiltradas = []; // Array para guardar os dados filtrados
+
+                snapshot.forEach(doc => {
+                    const avaliacaoHist = { id: doc.id, ...doc.data() }; // Adiciona ID ao objeto
+                    avaliacoesFiltradas.push(avaliacaoHist); // Guarda para calcular stats
+
+                    const row = document.createElement('tr');
+                    const nick = avaliacaoHist.funcionarioNick || 'N/A';
+                    const cargo = avaliacaoHist.funcionarioCargo || 'N/A';
+                    const nota = avaliacaoHist.nota !== undefined ? avaliacaoHist.nota : '-';
+                    const avaliador = avaliacaoHist.avaliadorNome || 'N/A';
+                    const dataAvaliacao = formatarData(avaliacaoHist.dataAvaliacaoOriginal);
+                    const dataConsolidacao = formatarData(avaliacaoHist.dataConsolidacao);
+                    const periodo = formatarPeriodoString(avaliacaoHist.periodoInicio, avaliacaoHist.periodoFim);
+
+                    let notaClasse = '';
+                     if (typeof nota === 'number') {
+                        if (nota >= 4.5) notaClasse = 'avaliacao-excelente';
+                        else if (nota >= 3.5) notaClasse = 'avaliacao-bom';
+                        else if (nota >= 2.5) notaClasse = 'avaliacao-regular';
+                        else if (nota >= 1) notaClasse = 'avaliacao-insatisfatorio';
+                     }
+
+                    row.innerHTML = `
+                        <td>${nick}</td>
+                        <td>${cargo}</td>
+                        <td><span class="avaliacao-nota ${notaClasse}">${typeof nota === 'number' ? nota.toFixed(1) + '/5' : nota}</span></td>
+                        <td>${avaliador}</td>
+                        <td>${dataAvaliacao}</td>
+                        <td>${dataConsolidacao}</td>
+                        <td>${periodo}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="acao-icon view" title="Visualizar Detalhes" onclick="abrirDetalhes('${doc.id}')">📋</button>
+                            </div>
+                        </td>
+                    `;
+                    historicoTableBody.appendChild(row);
+                });
+
+                dadosFiltradosParaExportar = avaliacoesFiltradas; // Armazena os dados filtrados para exportação
+                atualizarStatsCards(avaliacoesFiltradas); // Calcula e exibe os stats dos dados filtrados
+                // Implementar paginação se necessário (com base em avaliacoesFiltradas)
+
+            } catch (error) {
+                console.error("Erro ao carregar histórico:", error);
+                historicoTableBody.innerHTML = `<tr class="empty-row"><td colspan="8" class="text-danger"><i class="fas fa-exclamation-circle"></i> Erro ao carregar dados: ${error.message}</td></tr>`;
+                mostrarMensagem('errorMessage', `Erro ao carregar histórico: ${error.message}`, 'danger');
+                atualizarStatsCards([]); // Limpa stats em caso de erro
+                dadosFiltradosParaExportar = []; // Limpa dados em caso de erro
+            }
+        }
+
+        // Calcula e atualiza os cards de estatísticas
+        function atualizarStatsCards(avaliacoes) {
+            const total = avaliacoes.length;
+            statTotalValor.textContent = total;
+
+            if (total === 0) {
+                statMediaValor.textContent = '-';
+                statMediaSubtitulo.textContent = 'Sem dados no período';
+                statDestaqueNome.textContent = '-';
+                statDestaqueValor.textContent = 'Nenhum destaque';
+                return;
+                        }
+                    
+            // Calcula Média Geral
+            let somaNotas = 0;
+            let countValidas = 0;
+            avaliacoes.forEach(av => {
+                if (typeof av.nota === 'number') {
+                    somaNotas += av.nota;
+                    countValidas++;
+                }
+            });
+            const mediaGeral = countValidas > 0 ? (somaNotas / countValidas) : 0;
+            statMediaValor.textContent = `${mediaGeral.toFixed(1)}/5`;
+            statMediaSubtitulo.textContent = `Baseado em ${countValidas} avaliações`;
+
+            // Calcula Funcionário Destaque (Maior Média no período filtrado)
+            const notasPorFuncionario = {};
+            avaliacoes.forEach(av => {
+                 if (av.funcionarioId && typeof av.nota === 'number') {
+                     if (!notasPorFuncionario[av.funcionarioId]) {
+                         notasPorFuncionario[av.funcionarioId] = { soma: 0, count: 0, nick: av.funcionarioNick || 'N/A' };
+                     }
+                     notasPorFuncionario[av.funcionarioId].soma += av.nota;
+                     notasPorFuncionario[av.funcionarioId].count++;
+                 }
+            });
+
+            let melhorMedia = -1;
+            let destaqueNick = '-';
+            let destaqueMediaStr = 'Nenhum destaque';
+
+            for (const funcId in notasPorFuncionario) {
+                 const dados = notasPorFuncionario[funcId];
+                 if (dados.count > 0) { // Considera apenas quem foi avaliado
+                      const mediaFunc = dados.soma / dados.count;
+                      if (mediaFunc > melhorMedia) {
+                          melhorMedia = mediaFunc;
+                          destaqueNick = dados.nick;
+                          destaqueMediaStr = `Média: ${mediaFunc.toFixed(1)}/5 (${dados.count} av.)`;
+                      } else if (mediaFunc === melhorMedia) {
+                          // Em caso de empate, pode concatenar ou escolher um critério
+                          destaqueNick += `, ${dados.nick}`; // Exemplo: Concatena nicks
+                      }
+                 }
+            }
+
+            statDestaqueNome.textContent = destaqueNick;
+            statDestaqueValor.textContent = destaqueMediaStr;
+        }
+
+
+        // Abre o modal com os detalhes da avaliação histórica
+        async function abrirDetalhes(id) {
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = '<p><i class="fas fa-spinner fa-spin"></i> Carregando...</p>';
+            abrirModal('avaliacaoModal');
+            try {
+                const doc = await db.collection("historicoAvaliacoes").doc(id).get();
+                if (!doc.exists) { mostrarMensagem('errorMessage', 'Registro histórico não encontrado.', 'danger'); modalBody.innerHTML = '<p class="text-danger">Erro: Registro não encontrado.</p>'; return; }
+                const avaliacaoHist = doc.data();
+                const nick = avaliacaoHist.funcionarioNick || 'N/A';
+                const cargo = avaliacaoHist.funcionarioCargo || 'N/A';
+                const nota = avaliacaoHist.nota !== undefined ? avaliacaoHist.nota : '-';
+                const avaliador = avaliacaoHist.avaliadorNome || 'N/A';
+                const dataAvaliacao = formatarData(avaliacaoHist.dataAvaliacaoOriginal, true);
+                const dataConsolidacao = formatarData(avaliacaoHist.dataConsolidacao, true);
+                const periodo = formatarPeriodoString(avaliacaoHist.periodoInicio, avaliacaoHist.periodoFim);
+                const justificativa = avaliacaoHist.justificativa || 'Sem justificativa registrada.';
+                const consolidadoPor = avaliacaoHist.consolidadoPorNome || 'N/A';
+                let notaClasse = '';
+                 if (typeof nota === 'number') { if (nota >= 4.5) notaClasse = 'avaliacao-excelente'; else if (nota >= 3.5) notaClasse = 'avaliacao-bom'; else if (nota >= 2.5) notaClasse = 'avaliacao-regular'; else if (nota >= 1) notaClasse = 'avaliacao-insatisfatorio'; }
+                modalBody.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                        <div><strong>Funcionário:</strong> ${nick}</div>
+                        <div><strong>Cargo:</strong> ${cargo}</div>
+                        <div><strong>Nota:</strong> <span class="avaliacao-nota ${notaClasse}">${typeof nota === 'number' ? nota.toFixed(1) + '/5' : nota}</span></div>
+                        <div><strong>Avaliador:</strong> ${avaliador}</div>
+                        <div><strong>Data da Avaliação:</strong> ${dataAvaliacao}</div>
+                        <div><strong>Período Avaliado:</strong> ${periodo}</div>
+                        <div><strong>Data Consolidação:</strong> ${dataConsolidacao}</div>
+                        <div><strong>Consolidado por:</strong> ${consolidadoPor}</div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--primary); margin-bottom: 5px;">Justificativa:</h4>
+                        <p style="background-color: #f9f9f9; border-left: 3px solid var(--info); padding: 10px; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word;">${justificativa}</p>
+                    </div>`;
+            } catch (error) {
+                console.error("Erro ao abrir detalhes do histórico:", error);
+                mostrarMensagem('errorMessage', `Erro ao carregar detalhes: ${error.message}`, 'danger');
+                modalBody.innerHTML = `<p class="text-danger">Erro ao carregar detalhes: ${error.message}</p>`;
+            }
+        }
+
+        // --- Exportação ---
+        function exportarParaCSV(data, filename = 'historico_avaliacoes.csv') {
+            if (!data || data.length === 0) {
+                mostrarMensagem('errorMessage', 'Não há dados filtrados para exportar.', 'warning');
+                return;
+            }
+
+            // Define headers (adjust as needed)
+            const headers = [
+                "ID Avaliacao", "ID Funcionario", "Nick Habbo", "Cargo", "Nota",
+                "Avaliador Nome", "Data Avaliacao", "Data Consolidacao",
+                "Periodo Inicio", "Periodo Fim", "Quinzena ID", "Justificativa",
+                "Consolidado Por Nome"
+            ];
+            const csvRows = [headers.join(',')]; // Header row
+
+            // Map data to CSV rows
+            data.forEach(item => {
+                const values = [
+                    item.id || '',
+                    item.funcionarioId || '',
+                    `"${(item.funcionarioNick || '').replace(/"/g, '""')}"`, // Escape quotes
+                    `"${(item.funcionarioCargo || '').replace(/"/g, '""')}"`,
+                    item.nota !== undefined ? item.nota : '',
+                    `"${(item.avaliadorNome || '').replace(/"/g, '""')}"`,
+                    item.dataAvaliacaoOriginal ? formatarData(item.dataAvaliacaoOriginal) : '',
+                    item.dataConsolidacao ? formatarData(item.dataConsolidacao) : '',
+                    item.periodoInicio || '',
+                    item.periodoFim || '',
+                    item.quinzenaIdHistorico || '',
+                    `"${(item.justificativa || '').replace(/"/g, '""')}"`,
+                    `"${(item.consolidadoPorNome || '').replace(/"/g, '""')}"`
+                ];
+                csvRows.push(values.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+
+            // Trigger download
+            const link = document.createElement("a");
+            if (link.download !== undefined) { // Feature detection
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url); // Clean up
+            } else {
+                mostrarMensagem('errorMessage', 'Seu navegador não suporta download automático. Tente copiar os dados.', 'warning');
+            }
+        }
+
+        async function exportarRelatorio() {
+            console.log("Exportar relatório chamado.");
+            exportarParaCSV(dadosFiltradosParaExportar);
+        }
+
+        // --- Inicialização e Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Autenticação
+            auth.onAuthStateChanged(async (user) => {
+                if (!user) { window.location.href = 'login.html'; return; }
+                try {
+                    const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                    if (!userDoc.exists) { console.error("Usuário não encontrado."); logout(); return; }
+                    const userData = userDoc.data();
+                    welcomeHeader.textContent = userData.nome || "Usuário";
+                    userRoleEl.textContent = userData.cargo || "Administrador";
+
+                    // Carrega dados iniciais
+                    await popularFiltros(); // Popula os filtros PRIMEIRO
+                    carregarHistorico(); // Carrega o histórico inicial (sem filtros)
+
+                    // Sidebar Menu
+                    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                    console.log(`[DEBUG] Preparando para gerar menu. Nível Hierárquico: ${currentUserHierarchicalLevel}, Página: ${currentPage}, Nível Sistema: ${currentUserLevel}`);
+                    if (typeof generateSidebarMenu === 'function') {
+                        console.log("[DEBUG] Função generateSidebarMenu encontrada. Chamando...");
+                        const menuHtml = generateSidebarMenu(currentUserHierarchicalLevel, currentPage, currentUserLevel);
+                        console.log("[DEBUG] generateSidebarMenu retornou:", menuHtml ? menuHtml.substring(0, 150) + '...' : menuHtml);
+                        if (sidebarMenu) {
+                            console.log("[DEBUG] Elemento sidebarMenu encontrado. Atribuindo innerHTML...");
+                            sidebarMenu.innerHTML = menuHtml || '<p style="color:orange;">Menu indisponível (retorno vazio).</p>';
+                            console.log("[DEBUG] innerHTML atribuído.");
+                        } else {
+                            console.error("[DEBUG] Elemento sidebarMenu NÃO encontrado no DOM!");
+                        }
+                    } else {
+                        console.error("Erro Crítico: Função generateSidebarMenu() não encontrada em shared-ui.js.");
+                        if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro: Função de menu não encontrada.</p>';
+                    }
+
+                } catch (error) {
+                    console.error("Erro na inicialização:", error);
+                    mostrarMensagem('errorMessage', `Erro na inicialização: ${error.message}`, 'danger');
+                }
+            });
+
+            // Listeners dos botões
+            if(btnFiltrar) btnFiltrar.addEventListener('click', aplicarFiltros);
+            if(btnLimpar) btnLimpar.addEventListener('click', limparFiltros);
+            if(btnExportar) btnExportar.addEventListener('click', exportarRelatorio);
+            if(logoutBtn) logoutBtn.addEventListener('click', logout);
+
+            // Lógica da Sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const collapseMenuBtn = document.getElementById('collapseMenuBtn');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (collapseMenuBtn) { collapseMenuBtn.addEventListener('click', () => { sidebar.classList.toggle('collapsed'); mainContent.classList.toggle('expanded'); const icon = collapseMenuBtn.querySelector('i'); icon.classList.toggle('fa-chevron-left'); icon.classList.toggle('fa-chevron-right'); }); }
+            if (sidebarToggle && sidebar && overlay) { sidebarToggle.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); sidebarToggle.classList.toggle('menu-open'); }); overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); sidebarToggle.classList.remove('menu-open'); }); window.addEventListener('resize', () => { if (window.innerWidth > 768) { sidebar.classList.remove('active'); overlay.classList.remove('active'); sidebarToggle.classList.remove('menu-open'); } }); }
+
+        }); // Fim DOMContentLoaded
+
+        // --- Autenticação e Carregamento ---
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = user;
+            console.log(`[AUTH] User authenticated: ${user.uid}`); // Log user ID
+
+            try {
+                // 1. BUSCAR DADOS DO USUÁRIO LOGADO ('usuarios')
+                console.log("[AUTH] Fetching user data from 'usuarios' collection...");
+                const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                if (!userDoc.exists) {
+                    console.error("[AUTH ERROR] User document not found in Firestore. Logging out.");
+                    auth.signOut();
+                    return;
+                }
+                const userData = userDoc.data();
+                console.log("[AUTH] User data fetched:", userData); // Log all user data
+
+                currentUserLevel = parseInt(userData.nivel || 0); // Nível de acesso do sistema
+                console.log(`[AUTH] Determined System Level (currentUserLevel): ${currentUserLevel} (from userData.nivel: ${userData.nivel})`); // Log system level determination
+
+                // 2. PERMISSÃO DA PÁGINA (Exemplo: Nível >= 2 para visualizar histórico)
+                const nivelMinimo = 2;
+                console.log(`[AUTH] Checking page permission. Required: ${nivelMinimo}, User has: ${currentUserLevel}`);
+                if (currentUserLevel < nivelMinimo) {
+                    // ... (permission denied logic remains the same) ...
+                    return;
+                }
+
+                // 3. BUSCAR NÍVEL HIERÁRQUICO ('funcionarios') PARA O MENU
+                let userCargo = userData.cargo || "Colaborador";
+                currentUserHierarchicalLevel = "N0"; // Reset default
+                console.log(`[AUTH] Determining Hierarchical Level. Initial Nick: ${userData.nickHabbo}, Initial Cargo: ${userCargo}`);
+
+                if (userData.nickHabbo) {
+                     console.log(`[AUTH] User has nickHabbo (${userData.nickHabbo}). Querying 'funcionarios' collection...`);
+                     try {
+                         const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", userData.nickHabbo).where("ativo", "==", true).limit(1).get();
+                         if (!funcQuery.empty) {
+                             const funcData = funcQuery.docs[0].data();
+                             console.log("[AUTH] Found active employee in 'funcionarios':", funcData);
+                             currentUserHierarchicalLevel = funcData.nivel || "N0";
+                             userCargo = funcData.cargo || userCargo;
+                             console.log(`[AUTH] Updated Hierarchical Level to ${currentUserHierarchicalLevel} and Cargo to ${userCargo} from 'funcionarios'.`);
+                         } else {
+                             console.log("[AUTH] No active employee found in 'funcionarios' for this nick.");
+                             // Check if high-level user fallback applies
+                             if (currentUserLevel >= 3) {
+                                 console.log(`[AUTH] Applying fallback for System Level >= 3. Setting Hierarchical Level to N10.`);
+                                 currentUserHierarchicalLevel = "N10";
+                                 userCargo = "Fundador/Superuser";
+                             }
+                         }
+                     } catch (funcError) {
+                         console.warn("[AUTH WARNING] Error querying 'funcionarios'. Applying fallback if applicable.", funcError);
+                         if (currentUserLevel >= 3) {
+                             console.log(`[AUTH] Applying fallback due to error for System Level >= 3. Setting Hierarchical Level to N10.`);
+                             currentUserHierarchicalLevel = "N10"; userCargo = "Fundador/Superuser";
+                         }
+                     }
+                 } else {
+                     console.log("[AUTH] User does not have nickHabbo in 'usuarios' data.");
+                     // Check if high-level user fallback applies
+                     if (currentUserLevel >= 3) {
+                         console.log(`[AUTH] Applying fallback for System Level >= 3 (no nickHabbo). Setting Hierarchical Level to N10.`);
+                         currentUserHierarchicalLevel = "N10";
+                         userCargo = "Fundador/Superuser";
+                     }
+                 }
+                 console.log(`[AUTH] Final Determined Hierarchical Level: ${currentUserHierarchicalLevel}, Final Cargo: ${userCargo}`); // Log final levels before menu generation
+
+                // 4. ATUALIZAR HEADER DA SIDEBAR
+                welcomeHeader.textContent = userData.nome || "Usuário";
+                userRoleEl.textContent = userCargo;
+
+                // 5. GERAR E INSERIR O MENU DA SIDEBAR (usando shared-ui.js)
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                // Logs from previous step are sufficient here now
+                console.log(`[MENU] Calling generateSidebarMenu with Hierarchical: ${currentUserHierarchicalLevel}, Page: ${currentPage}, System: ${currentUserLevel}`);
+                if (typeof generateSidebarMenu === 'function') {
+                     const menuHtml = generateSidebarMenu(currentUserHierarchicalLevel, currentPage, currentUserLevel);
+                     console.log("[MENU] generateSidebarMenu returned:", menuHtml ? menuHtml.substring(0, 150) + '...' : menuHtml);
+                     if (sidebarMenu) {
+                         sidebarMenu.innerHTML = menuHtml || '<p style="color:orange;">Menu indisponível (retorno vazio).</p>';
+                         console.log("[MENU] Menu HTML inserted.");
+                     } else {
+                         console.error("[MENU ERROR] sidebarMenu element not found!");
+                     }
+                } else {
+                     console.error("Erro Crítico: Função generateSidebarMenu() não encontrada.");
+                     if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro: Função de menu não encontrada.</p>';
+                }
+
+                // 6. CARREGAR DADOS ESPECÍFICOS DA PÁGINA
+                console.log("[PAGE LOAD] Loading page specific data (filters and history)...");
+                await popularFiltros();
+                carregarHistorico();
+                console.log("[PAGE LOAD] Page specific data loading initiated.");
+
+            } catch (error) {
+                console.error("Erro GERAL na autenticação ou carregamento:", error); // Log the general error
+                mostrarMensagem(`Erro crítico: ${error.message}`, 'danger');
+                if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico ao carregar.</p>';
+            }
+        });
+
+    </script>
+</body>
+</html>

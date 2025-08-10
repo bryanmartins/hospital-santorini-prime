@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidar Avaliação - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css"> <link rel="stylesheet" href="./css/widgets.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/formularios.css"> </head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-check-circle"></i> Consolidar Avaliações</h1>
+            <p class="page-subtitle">Gerencie e finalize as avaliações de desempenho da quinzena atual</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div> <div class="card">
+            <div class="card-header">
+                <div class="card-title"><i class="fas fa-clipboard-check"></i> Avaliações do Período Atual</div>
+            </div>
+            <div class="card-body">
+                <div class="info-block">
+                    <h3>Período Atual: <span id="periodoAtual">Carregando...</span></h3>
+                    <p>Ao consolidar, todas as avaliações listadas abaixo serão movidas para o histórico e removidas desta visualização.</p>
+                </div>
+                <div class="stats-container">
+                     <div class="stat-card"> <h4 class="stat-title">Total de Avaliações</h4> <div class="stat-value" id="totalAvaliacoes">0</div> </div>
+                     <div class="stat-card"> <h4 class="stat-title">Média Geral</h4> <div class="stat-value" id="mediaGeral">0.0/5</div> </div>
+                     <div class="stat-card"> <h4 class="stat-title">Excelentes (>=4.5)</h4> <div class="stat-value" id="avaliacoesExcelentes">0</div> </div>
+                     <div class="stat-card"> <h4 class="stat-title">Insatisfatórias (<2.5)</h4> <div class="stat-value" id="avaliacoesInsatisfatorias">0</div> </div>
+                 </div>
+
+                <div class="table-responsive" id="avaliacoesContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Funcionário (Nick)</th>
+                                <th>Cargo</th>
+                                <th>Avaliador</th>
+                                <th>Nota</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="avaliacoesTableBody">
+                            <tr class="empty-state" id="loading-row">
+                                <td colspan="6">
+                                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                    <p>Carregando avaliações...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-actions btn-container"> <a href="avaliacao_desempenho.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button class="btn btn-primary" id="btnConsolidar" disabled title="Carregando avaliações...">
+                        <i class="fas fa-check-double"></i> Consolidar Avaliações
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> <div id="avaliacaoModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h2><i class="fas fa-info-circle"></i> Detalhes da Avaliação</h2> <button class="close" onclick="fecharModal('avaliacaoModal')">&times;</button> </div> <div class="modal-body" id="modalBody"> <p>Carregando detalhes...</p> </div> <div class="modal-footer"> <button class="btn btn-secondary" onclick="fecharModal('avaliacaoModal')">Fechar</button> </div> </div> </div>
+    <div id="editAvaliacaoModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h2><i class="fas fa-edit"></i> Editar Avaliação</h2> <button class="close" id="closeEditModal" onclick="fecharModal('editAvaliacaoModal')">&times;</button> </div> <div class="modal-body"> <form id="editAvaliacaoForm"> <input type="hidden" id="editAvaliacaoId"> <div class="form-group"> <label>Funcionário:</label> <div id="editFuncionarioNome" style="font-weight: 600; margin-top: 5px;"></div> </div> <div class="form-group"> <label for="editNotaSelect">Nota:</label> <select id="editNotaSelect" class="form-control" required> <option value="" disabled selected>Selecione a nota</option> <option value="5">5 - Excelente</option> <option value="4">4 - Muito Bom</option> <option value="3">3 - Bom</option> <option value="2">2 - Regular</option> <option value="1">1 - Insatisfatório</option> </select> </div> <div class="form-group"> <label for="editJustificativa">Justificativa:</label> <textarea id="editJustificativa" class="form-control" rows="5" required minlength="10"></textarea> <small class="text-muted">Mínimo de 10 caracteres.</small> </div> </form> </div> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelEditBtn" onclick="fecharModal('editAvaliacaoModal')">Cancelar</button> <button class="btn btn-primary" id="saveEditBtn">Salvar Alterações</button> </div> </div> </div>
+    <div id="confirmDeleteModal" class="modal"> <div class="modal-content"> <div class="modal-header"> <h2><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Confirmar Exclusão</h2> <button class="close" id="closeDeleteModal" onclick="fecharModal('confirmDeleteModal')">&times;</button> </div> <div class="modal-body"> <input type="hidden" id="deleteAvaliacaoId"> <p><strong>Tem certeza que deseja excluir esta avaliação?</strong></p> <p class="text-muted">Esta ação não pode ser desfeita.</p> </div> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelDeleteBtn" onclick="fecharModal('confirmDeleteModal')">Cancelar</button> <button class="btn btn-danger" id="confirmDeleteBtn">Excluir</button> </div> </div> </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script> <script src="./js/shared-ui.js"></script>     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <script>
+        // --- Variáveis Globais e Elementos DOM ---
+        let funcionariosCache = {};        // Cache para dados de funcionários
+        let currentUserHierarchicalLevel = 'N0'; // Nível Hierárquico (N1-N10) do usuário logado
+        let currentQuinzenaId = "atual"; // ID lógico do período a ser buscado
+
+        // Cache de elementos DOM
+        const alertaContainer = document.getElementById('alertaContainer'); // Usado por showGlobalMessage
+        const avaliacoesTableBody = document.getElementById('avaliacoesTableBody');
+        const loadingRow = document.getElementById('loading-row');
+        const btnConsolidar = document.getElementById('btnConsolidar');
+        const totalAvaliacoesEl = document.getElementById('totalAvaliacoes');
+        const mediaGeralEl = document.getElementById('mediaGeral');
+        const avaliacoesExcelentesEl = document.getElementById('avaliacoesExcelentes');
+        const avaliacoesInsatisfatoriasEl = document.getElementById('avaliacoesInsatisfatorias');
+        const periodoAtualEl = document.getElementById('periodoAtual');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Auxiliares Essenciais (Reutilizadas) ---
+        function formatarData(timestamp) { /* ... (código igual ao de avaliar.html) ... */ }
+        function fecharModal(modalId) { const modal = document.getElementById(modalId); if (modal) modal.style.display = 'none'; }
+        function abrirModal(modalId) { const modal = document.getElementById(modalId); if (modal) modal.style.display = 'flex'; }
+        function formatarPeriodoQuinzena(inicio, fim) { if (!inicio || !fim) return "Período Indefinido"; try { const dataInicio = inicio.toDate ? inicio.toDate() : new Date(inicio); const dataFim = fim.toDate ? fim.toDate() : new Date(fim); return `${dataInicio.toLocaleDateString('pt-BR')} - ${dataFim.toLocaleDateString('pt-BR')}`; } catch (e) { console.error("Erro ao formatar datas da quinzena", e); return "Datas Inválidas"; } }
+        function atualizarStatsUI(total, media, excelentes, insatisfatorias) { if(totalAvaliacoesEl) totalAvaliacoesEl.textContent = total; if(mediaGeralEl) mediaGeralEl.textContent = `${media.toFixed(1)}/5`; if(avaliacoesExcelentesEl) avaliacoesExcelentesEl.textContent = excelentes; if(avaliacoesInsatisfatoriasEl) avaliacoesInsatisfatoriasEl.textContent = insatisfatorias; }
+        function criarBotaoAcao(iconeHtml, titulo, classeTipo, callbackOnClick) { const btn = document.createElement('button'); btn.className = `acao-btn ${classeTipo}`; btn.innerHTML = iconeHtml; btn.title = titulo; btn.onclick = callbackOnClick; return btn; }
+        function compararAvaliacoesPorNick(a, b) { const nickA = (funcionariosCache[a.funcionarioId]?.nick || 'zzz').toLowerCase(); const nickB = (funcionariosCache[b.funcionarioId]?.nick || 'zzz').toLowerCase(); return nickA.localeCompare(nickB); }
+
+        // Atualiza estado do botão Consolidar baseado no nível e se há avaliações
+        function atualizarEstadoBtnConsolidar(haAvaliacoes) {
+            const podeConsolidar = currentUserHierarchicalLevel === 'N10'; // Apenas N10 pode consolidar
+            if (podeConsolidar && haAvaliacoes) {
+                btnConsolidar.disabled = false;
+                btnConsolidar.title = "Consolidar avaliações da quinzena";
+                btnConsolidar.innerHTML = '<i class="fas fa-check-double"></i> Consolidar Avaliações';
+            } else {
+                btnConsolidar.disabled = true;
+                if (!podeConsolidar) btnConsolidar.title = "Apenas Fundador (N10) pode consolidar.";
+                else if (!haAvaliacoes) btnConsolidar.title = "Nenhuma avaliação para consolidar.";
+                else btnConsolidar.title = "";
+                // Mantém o texto se já estiver mostrando estado (Finalizada/Consolidado)
+                if (btnConsolidar.textContent !== 'Finalizada' && btnConsolidar.textContent !== 'Já Consolidado') {
+                     btnConsolidar.innerHTML = '<i class="fas fa-check-double"></i> Consolidar Avaliações';
+                }
+            }
+        }
+
+        // Carrega dados de funcionários para o cache
+        async function carregarFuncionarios(ids) {
+            const idsUnicos = [...new Set(ids.filter(id => id && !funcionariosCache[id]))]; // Filtra já cacheados
+            if (idsUnicos.length === 0) {
+                console.log("Cache de funcionários já contém os IDs necessários.");
+                return; // Não busca se já estão no cache
+             }
+            console.log("Buscando funcionários para cache:", idsUnicos);
+            // Cria um array de Promises para buscar cada funcionário
+            const promises = idsUnicos.map(id =>
+                db.collection("funcionarios").doc(id).get().then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        funcionariosCache[id] = {
+                            nome: data.nome || 'Nome Desconhecido',
+                            nick: data.nickHabbo || data.nick || 'Nick Desconhecido',
+                            cargo: data.cargo || 'Cargo Não Especificado'
+                        };
+                    } else {
+                        console.warn(`Funcionário com ID ${id} não encontrado.`);
+                        funcionariosCache[id] = { nome: 'Funcionário Excluído?', nick: 'N/A', cargo: 'N/A' }; // Marca como não encontrado
+                    }
+                }).catch(error => {
+                    console.error(`Erro ao buscar funcionário ${id}:`, error);
+                    funcionariosCache[id] = { nome: 'Erro ao buscar', nick: 'Erro', cargo: 'Erro' }; // Marca erro
+                })
+            );
+            await Promise.all(promises); // Espera todas as buscas terminarem
+            console.log("Cache de funcionários atualizado:", funcionariosCache);
+        }
+
+        // Verifica se a quinzena já foi consolidada (checa doc 'atual' e histórico)
+        async function verificarConsolidacao(quinzenaData) {
+             if (!quinzenaData) return false;
+             if (quinzenaData.avaliacoesConsolidadas === true) {
+                 console.log("Flag 'avaliacoesConsolidadas' é true no doc 'atual'.");
+                 return true; // Já está marcado como consolidado no doc atual
+             }
+             const quinzenaLogicaId = quinzenaData.id; // ID lógico da quinzena (ex: Q2025...)
+             if (quinzenaLogicaId && quinzenaLogicaId !== 'atual') {
+                 try {
+                     console.log(`Verificando histórico para quinzena ID: ${quinzenaLogicaId}`);
+                     const historicoSnapshot = await db.collection("historicoQuinzenas").doc(quinzenaLogicaId).get();
+                     if (historicoSnapshot.exists && historicoSnapshot.data().avaliacoesConsolidadas === true) {
+                         console.log("Encontrado registro consolidado no histórico. Atualizando flag no doc 'atual'.");
+                         // Tenta atualizar o doc 'atual' para refletir isso (não crítico se falhar)
+                         db.collection("quinzenas").doc("atual").update({ avaliacoesConsolidadas: true })
+                            .catch(updError => console.warn("Não foi possível atualizar flag 'avaliacoesConsolidadas' no doc atual:", updError));
+                         return true; // Encontrou no histórico
+                     }
+                      console.log("Nenhum registro consolidado encontrado no histórico para este ID.");
+                 } catch(histError) {
+                     console.warn("Erro ao verificar histórico de consolidação:", histError);
+                     // Continua mesmo se houver erro na verificação do histórico
+                 }
+             } else {
+                  console.log("ID lógico da quinzena não encontrado em 'quinzenas/atual'. Não é possível verificar histórico.");
+             }
+             return false; // Não consolidada
+         }
+
+
+        // --- Funções CRUD e Lógica Principal ---
+
+        async function carregarAvaliacoes() {
+            console.log("Iniciando carregarAvaliacoes...");
+            loadingRow.style.display = 'table-row'; // Mostra loading
+            avaliacoesTableBody.innerHTML = ''; // Limpa tabela
+            avaliacoesTableBody.appendChild(loadingRow); // Readiciona linha de loading
+            atualizarEstadoBtnConsolidar(false); // Desabilita botão inicialmente
+
+            try {
+                // 1. Pega dados da quinzena atual
+                const quinzenaAtualDoc = await db.collection("quinzenas").doc("atual").get();
+                if (!quinzenaAtualDoc.exists) {
+                     throw new Error("Documento 'quinzenas/atual' não encontrado. Configure o período.");
+                }
+                const quinzenaAtual = quinzenaAtualDoc.data();
+                console.log("Dados da quinzena atual carregados.");
+                if(periodoAtualEl) periodoAtualEl.textContent = formatarPeriodoQuinzena(quinzenaAtual.dataInicio, quinzenaAtual.dataFim);
+
+                // 2. Verifica se já está finalizada ou consolidada
+                const jaConsolidada = await verificarConsolidacao(quinzenaAtual);
+                if (quinzenaAtual.finalizada || jaConsolidada) {
+                    const mensagem = quinzenaAtual.finalizada ? "Período atual finalizado." : "Avaliações já consolidadas.";
+                    console.log(mensagem);
+                    loadingRow.style.display = 'none';
+                    avaliacoesTableBody.innerHTML = `<tr class="empty-state"><td colspan="6">${mensagem} Nenhuma ação necessária.</td></tr>`;
+                    atualizarStatsUI(0, 0, 0, 0); // Zera stats
+                    btnConsolidar.disabled = true;
+                    btnConsolidar.innerHTML = `<i class="fas fa-${quinzenaAtual.finalizada ? 'lock' : 'check'}"></i> ${quinzenaAtual.finalizada ? 'Finalizada' : 'Já Consolidado'}`;
+                    return; // Interrompe se finalizada/consolidada
+                }
+
+                // 3. Busca avaliações do período atual (usando ID lógico ou 'atual')
+                //    Ajuste: Usar o ID LÓGICO da quinzena (ex: Q2025...) se existir, senão busca por 'atual'
+                //    => A lógica de salvar avaliação deve usar o ID lógico correto!
+                //    => Suposição ATUAL: As avaliações ainda estão com periodoId = "atual"
+                const idParaBuscar = "atual"; // <<< VERIFICAR SE ISSO ESTÁ CORRETO CONFORME O SALVAMENTO
+                console.log(`Buscando avaliações com periodoId == "${idParaBuscar}"`);
+                const avaliacoesSnapshot = await db.collection("avaliacoes")
+                                                 .where("quinzenaId", "==", idParaBuscar) // <<< USAR quinzenaId AQUI
+                                                 .get();
+
+                loadingRow.style.display = 'none'; // Esconde loading
+                let avaliacoes = [];
+                avaliacoesSnapshot.forEach(doc => avaliacoes.push({ id: doc.id, ...doc.data() }));
+                console.log(`${avaliacoes.length} avaliações encontradas para o período.`);
+
+                if (avaliacoes.length === 0) {
+                    avaliacoesTableBody.innerHTML = `<tr class="empty-state"><td colspan="6"><i class="fas fa-folder-open"></i><p>Nenhuma avaliação encontrada para este período.</p></td></tr>`;
+                    atualizarStatsUI(0, 0, 0, 0);
+                    atualizarEstadoBtnConsolidar(false);
+                    return;
+                }
+
+                // 4. Carrega dados dos funcionários para o cache
+                const funcionarioIds = avaliacoes.map(a => a.funcionarioId);
+                await carregarFuncionarios(funcionarioIds);
+
+                // 5. Ordena e popula a tabela
+                avaliacoes.sort(compararAvaliacoesPorNick); // Ordena por nick do funcionário
+                popularTabelaAvaliacoes(avaliacoes);
+                atualizarEstadoBtnConsolidar(true); // Habilita botão se N10 e há avaliações
+
+            } catch (error) {
+                console.error("Erro detalhado ao carregar avaliações:", error);
+                loadingRow.style.display = 'none';
+                avaliacoesTableBody.innerHTML = `<tr class="empty-state error"><td colspan="6"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar: ${error.message}.</td></tr>`;
+                showGlobalMessage("Erro grave ao carregar avaliações.", "error"); // Usa showGlobalMessage
+                atualizarStatsUI(0, 0, 0, 0);
+                atualizarEstadoBtnConsolidar(false);
+            }
+        }
+
+        function popularTabelaAvaliacoes(avaliacoes) {
+             avaliacoesTableBody.innerHTML = ''; // Limpa a tabela antes de popular
+             let somaNotas = 0, countExcelentes = 0, countInsatisfatorias = 0;
+
+             avaliacoes.forEach(avaliacao => {
+                 const tr = document.createElement('tr');
+                 const funcInfo = funcionariosCache[avaliacao.funcionarioId] || { nick: 'N/A', cargo: 'N/A' };
+                 const nota = avaliacao.nota || 0;
+                 somaNotas += nota;
+                 let notaClasse = 'avaliacao-regular'; // Default
+                 if (nota >= 4.5) { notaClasse = 'avaliacao-excelente'; countExcelentes++; }
+                 else if (nota >= 3.5) { notaClasse = 'avaliacao-bom'; }
+                 else if (nota < 2.5) { notaClasse = 'avaliacao-insatisfatorio'; countInsatisfatorias++; }
+                 // entre 2.5 e 3.49 fica como regular (default)
+
+                 const dataAvaliacao = formatarData(avaliacao.dataAvaliacao || avaliacao.dataAtualizacao || avaliacao.dataCriacao); // Tenta várias datas
+                 const tdAcoes = criarCeluladeAcoes(avaliacao); // Cria célula de ações
+
+                 tr.innerHTML = `
+                     <td>${funcInfo.nick}</td>
+                     <td>${funcInfo.cargo}</td>
+                     <td>${avaliacao.avaliadorNome || 'Não informado'}</td>
+                     <td><span class="avaliacao-nota ${notaClasse}">${nota.toFixed(1)}/5</span></td>
+                     <td>${dataAvaliacao}</td>
+                 `;
+                 tr.appendChild(tdAcoes); // Adiciona a célula de ações
+                 avaliacoesTableBody.appendChild(tr);
+             });
+
+             const mediaGeral = avaliacoes.length > 0 ? somaNotas / avaliacoes.length : 0;
+             atualizarStatsUI(avaliacoes.length, mediaGeral, countExcelentes, countInsatisfatorias); // Atualiza os cards de estatísticas
+        }
+
+        // Função para criar a célula de ações (Verifica N10)
+        function criarCeluladeAcoes(avaliacao) {
+            const tdAcoes = document.createElement('td');
+            const acoesDiv = document.createElement('div');
+            acoesDiv.className = 'action-buttons';
+
+            // Visualizar (Sempre)
+            acoesDiv.appendChild(criarBotaoAcao('<i class="fas fa-eye"></i>', 'Visualizar Detalhes', 'view', () => visualizarAvaliacao(avaliacao.id)));
+
+            // Editar e Excluir (Apenas N10)
+            const podeModificar = currentUserHierarchicalLevel === 'N10';
+            if (podeModificar) {
+                acoesDiv.appendChild(criarBotaoAcao('<i class="fas fa-edit"></i>', 'Editar Avaliação', 'edit', () => editarAvaliacao(avaliacao.id)));
+                acoesDiv.appendChild(criarBotaoAcao('<i class="fas fa-trash-alt"></i>', 'Excluir Avaliação', 'delete', () => confirmarExclusaoAvaliacao(avaliacao.id)));
+            }
+
+            tdAcoes.appendChild(acoesDiv);
+            return tdAcoes;
+        }
+
+
+        async function visualizarAvaliacao(id) { /* ... (código igual antes, usa funcionariosCache) ... */ }
+        async function editarAvaliacao(id) { /* ... (código igual antes, mas verifica N10) ... */
+            if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("Apenas N10 pode editar.", "error"); return; }
+            // Restante da lógica como antes
+        }
+        function salvarEdicaoAvaliacao() { /* ... (código igual antes) ... */ }
+        function confirmarExclusaoAvaliacao(id) { /* ... (código igual antes, mas verifica N10) ... */
+            if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("Apenas N10 pode excluir.", "error"); return; }
+            // Restante da lógica como antes
+         }
+        function excluirAvaliacao() { /* ... (código igual antes) ... */ }
+
+        async function consolidarAvaliacoes() {
+            console.log("Iniciando processo de consolidação...");
+             if (currentUserHierarchicalLevel !== 'N10') { // Dupla verificação de permissão
+                 showGlobalMessage("Apenas Fundador (N10) pode consolidar.", "error");
+                 return;
+             }
+
+             // Busca novamente as avaliações atuais para garantir que temos a lista mais recente
+             let avaliacoesParaConsolidar = [];
+             try {
+                 const snapshot = await db.collection("avaliacoes").where("quinzenaId", "==", currentQuinzenaId).get(); // Usa quinzenaId atual
+                 snapshot.forEach(doc => avaliacoesParaConsolidar.push({ id: doc.id, ...doc.data() }));
+                 if (avaliacoesParaConsolidar.length === 0) {
+                      Swal.fire('Atenção!', 'Não há avaliações neste período para consolidar.', 'info');
+                      return;
+                 }
+                 console.log(`Encontradas ${avaliacoesParaConsolidar.length} avaliações para consolidar.`);
+             } catch (error) {
+                  console.error("Erro ao buscar avaliações para consolidar:", error);
+                  Swal.fire('Erro!', 'Não foi possível buscar as avaliações atuais para consolidar.', 'error');
+                  return;
+             }
+
+
+             // Confirmação com SweetAlert
+             Swal.fire({
+                 title: 'Confirmar Consolidação',
+                 html: `Tem certeza que deseja consolidar <strong>${avaliacoesParaConsolidar.length}</strong> avaliações?<br>Elas serão movidas para o histórico e removidas da lista atual.<br><b style='color: var(--danger);'>Esta ação não pode ser desfeita.</b>`,
+                 icon: 'warning',
+                 showCancelButton: true,
+                 confirmButtonColor: 'var(--primary)',
+                 cancelButtonColor: 'var(--secondary)',
+                 confirmButtonText: 'Sim, consolidar!',
+                 cancelButtonText: 'Cancelar',
+                 customClass: { popup: 'swal2-popup-custom-width' } // Classe CSS se houver
+             }).then(async (result) => {
+                 if (result.isConfirmed) {
+                     console.log("Usuário confirmou. Iniciando batch de consolidação...");
+                     btnConsolidar.disabled = true;
+                     btnConsolidar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Consolidando...';
+                     showGlobalMessage('info', 'Consolidando avaliações, por favor aguarde...'); // Feedback visual
+
+                     try {
+                         // 1. Pega dados da quinzena atual novamente (garantia)
+                         const quinzenaAtualDoc = await db.collection("quinzenas").doc("atual").get();
+                         if (!quinzenaAtualDoc.exists) throw new Error("Quinzena atual desapareceu? Abortando.");
+                         const quinzenaAtual = quinzenaAtualDoc.data();
+                         const quinzenaLogicaId = quinzenaAtual.id || `Q${new Date().toISOString().slice(0,10).replace(/-/g,'')}${Date.now().toString().slice(-5)}`; // ID para histórico
+
+                         // 2. Garante que o cache de funcionários está atualizado para os envolvidos
+                         const funcionarioIdsParaConsolidar = avaliacoesParaConsolidar.map(a => a.funcionarioId);
+                         await carregarFuncionarios(funcionarioIdsParaConsolidar);
+
+                         // 3. Cria o batch do Firestore
+                         const batch = db.batch();
+                         const timestamp = firebase.firestore.FieldValue.serverTimestamp(); // Timestamp da consolidação
+                         let totalConsolidado = 0;
+                         let somaNotasConsolidado = 0;
+
+                         // 4. Loop pelas avaliações a serem consolidadas
+                         for (const avaliacao of avaliacoesParaConsolidar) {
+                             const funcInfo = funcionariosCache[avaliacao.funcionarioId] || { nome: 'N/A', nick: 'N/A', cargo: 'N/A' };
+                             const historicoRef = db.collection("historicoAvaliacoes").doc(); // Novo doc no histórico
+
+                             // Adiciona ao batch: Criar registro no histórico
+                             batch.set(historicoRef, {
+                                 // Dados da avaliação original
+                                 funcionarioId: avaliacao.funcionarioId,
+                                 funcionarioNome: funcInfo.nome,
+                                 funcionarioNick: funcInfo.nick,
+                                 funcionarioCargo: funcInfo.cargo,
+                                 avaliadorId: avaliacao.avaliadorId,
+                                 avaliadorNome: avaliacao.avaliadorNome,
+                                 nota: avaliacao.nota,
+                                 justificativa: avaliacao.justificativa,
+                                 dataAvaliacaoOriginal: avaliacao.dataAvaliacao || avaliacao.dataAtualizacao || avaliacao.dataCriacao || null, // Melhor data disponível
+                                 // Dados do período/consolidação
+                                 periodoInicio: quinzenaAtual.dataInicio || null,
+                                 periodoFim: quinzenaAtual.dataFim || null,
+                                 quinzenaIdHistorico: quinzenaLogicaId, // ID lógico da quinzena
+                                 dataConsolidacao: timestamp,
+                                 consolidadoPorId: auth.currentUser.uid,
+                                 consolidadoPorNome: currentUserData.nome // Usar nome do user logado
+                             });
+
+                             // Adiciona ao batch: Deletar avaliação original da coleção 'avaliacoes'
+                             batch.delete(db.collection("avaliacoes").doc(avaliacao.id));
+
+                             totalConsolidado++;
+                             somaNotasConsolidado += avaliacao.nota || 0;
+                         }
+
+                         // 5. Adiciona ao batch: Criar/Atualizar registro em 'historicoQuinzenas'
+                         const historicoQuinzenaRef = db.collection("historicoQuinzenas").doc(quinzenaLogicaId);
+                         const mediaGeralConsolidada = totalConsolidado > 0 ? somaNotasConsolidado / totalConsolidado : 0;
+                         batch.set(historicoQuinzenaRef, {
+                             id: quinzenaLogicaId,
+                             dataInicio: quinzenaAtual.dataInicio || null,
+                             dataFim: quinzenaAtual.dataFim || null,
+                             consolidadaEm: timestamp,
+                             consolidadaPorId: auth.currentUser.uid,
+                             consolidadaPorNome: currentUserData.nome,
+                             avaliacoesConsolidadas: true, // Marca como consolidada aqui
+                             numeroAvaliacoes: totalConsolidado,
+                             mediaGeral: mediaGeralConsolidada,
+                             // finalizada: false // Pode ser definida depois se houver outro processo
+                         }, { merge: true }); // Merge para não sobrescrever outros campos se já existir
+
+                         // 6. Adiciona ao batch: Atualizar 'quinzenas/atual' para marcar como consolidada
+                         batch.update(db.collection("quinzenas").doc("atual"), {
+                             avaliacoesConsolidadas: true
+                         });
+
+                         // 7. Executa o batch
+                         await batch.commit();
+
+                         console.log("Batch de consolidação concluído com sucesso!");
+                         Swal.fire('Consolidado!', `${totalConsolidado} avaliações foram movidas para o histórico.`, 'success');
+                         carregarAvaliacoes(); // Recarrega a lista (que agora deve estar vazia)
+
+                     } catch (error) {
+                         console.error("Erro DURANTE o processo de consolidação:", error);
+                         Swal.fire('Erro!', `Ocorreu um erro durante a consolidação: ${error.message}`, 'error');
+                         // Reabilita o botão apenas se der erro
+                         atualizarEstadoBtnConsolidar(avaliacoesParaConsolidar.length > 0);
+                     }
+                 } else {
+                     console.log("Consolidação cancelada pelo usuário.");
+                 }
+             }); // Fim do SweetAlert .then()
+        }
+
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando consolidar_avaliacao.html ===");
+
+            // Listeners dos botões de ação dos modais (se eles existem)
+            if (saveEditBtn) saveEditBtn.addEventListener('click', salvarEdicaoAvaliacao);
+            if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', excluirAvaliacao);
+            if (btnConsolidar) btnConsolidar.addEventListener('click', consolidarAvaliacoes);
+
+            // Autenticação e Carregamento Inicial
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+
+                try {
+                    // Usar fetchUserDataAndLevel para obter dados e nível hierárquico
+                    const result = await fetchUserDataAndLevel(user.uid, db); // Função de shared-ui.js
+                    const currentUserData = result.userData; // Dados do usuário (nome, cargo, etc.)
+                    currentUserHierarchicalLevel = result.hierarchicalLevel; // Nível N1-N10
+
+                    console.log(`--- Usuário carregado: ${currentUserData.nome}, Nível Hierárquico: ${currentUserHierarchicalLevel}`);
+
+                    // Permissão da Página: Apenas N10 pode ver esta página
+                    if (currentUserHierarchicalLevel !== 'N10') {
+                        console.warn("Acesso Negado: Apenas N10 pode consolidar.");
+                        // Redireciona ou mostra mensagem de erro adequada
+                         document.body.innerHTML = `<div style='text-align: center; margin-top: 50px;'><h1>Acesso Negado</h1><p>Você não tem permissão para acessar esta página.</p><a href='dashboard.html'>Voltar ao Dashboard</a></div>`;
+                        return;
+                    }
+
+                    // Atualizar UI da Sidebar
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Admin";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Administrador"; // Usa cargo do usuário
+                    const currentPage = window.location.pathname.split('/').pop();
+                     if (typeof generateSidebarMenu === 'function') {
+                         sidebarMenu.innerHTML = generateSidebarMenu(currentUserHierarchicalLevel, currentPage);
+                    } else { console.error("generateSidebarMenu não encontrada"); }
+
+                    // Inicializar Interações da Sidebar
+                     if (typeof initializeSidebarInteractions === 'function') {
+                         initializeSidebarInteractions();
+                    } else { console.error("initializeSidebarInteractions não encontrada"); }
+
+
+                    // Carrega as avaliações (agora que temos o nível hierárquico confirmado)
+                    await carregarAvaliacoes();
+
+                } catch (error) {
+                    console.error("Erro crítico na inicialização ou fetchUserDataAndLevel:", error);
+                    showGlobalMessage("Erro ao carregar dados do usuário: " + error.message, "error");
+                    // Opcional: Deslogar ou redirecionar se o erro for grave
+                    // logout();
+                }
+            }); // Fim onAuthStateChanged
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

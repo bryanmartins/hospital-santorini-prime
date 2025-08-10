@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Estilos Específicos para a Página de Orçamentos (orcamentos.html)
+   ========================================================================== */
+
+/* Container/Card para Status do Orçamento */
+.status-container {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-md);       /* Usa variável */
+    margin-bottom: 30px; /* Igual aos outros cards */
+    overflow: hidden; /* Garante que fundo e borda funcionem */
+    transition: var(--transition);      /* Usa variável */
+    animation: fadeInUp 0.5s ease forwards; /* Requer @keyframes fadeInUp */
+    opacity: 0; /* Começa invisível */
+    animation-delay: 0.1s; /* Pode ajustar */
+}
+
+.status-header {
+    padding: 15px 20px; /* Padding interno */
+    display: flex;
+    align-items: center;
+    background: #f8f9fa; /* Fundo padrão de header */
+    border-bottom: 1px solid #eee;
+}
+
+.status-title {
+    font-size: 16px; /* Tamanho do título */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    color: var(--dark); /* Usa variável */
+    margin: 0;
+}
+
+.status-title i {
+    margin-right: 10px;
+    color: var(--primary); /* Usa variável */
+    font-size: 18px; /* Tamanho ícone */
+}
+
+.status-body {
+    padding: 20px; /* Padding do corpo */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Para alinhar status e botões/info */
+    flex-wrap: wrap; /* Permite quebrar linha */
+    gap: 15px;
+}
+
+.status-info {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre badge e texto */
+}
+
+.status-badge {
+    padding: 6px 15px; /* Padding interno badge */
+    border-radius: 20px; /* Badge arredondado */
+    font-size: 13px;
+    font-weight: 600; /* Negrito */
+    text-transform: uppercase; /* Maiúsculas */
+    letter-spacing: 0.5px;
+}
+
+/* Cores específicas do badge de status */
+.status-badge.success {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success);
+}
+
+.status-badge.warning {
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--warning);
+}
+ .status-badge.danger { /* Adicionado para caso de 'Rejeitado' */
+     background: rgba(231, 76, 60, 0.1);
+     color: var(--danger);
+ }
+ .status-badge.info { /* Adicionado para caso de 'Enviado' etc. */
+     background: rgba(52, 152, 219, 0.1);
+     color: var(--info);
+ }
+
+.status-text {
+    font-size: 14px;
+    color: var(--text-light); /* Usa variável */
+}
+.status-text strong {
+    color: var(--text-main); /* Usa variável */
+    font-weight: 600;
+}
+
+/* Estilo para a tabela principal de orçamentos */
+#budgetBody input[type="number"] {
+    width: 70px; /* Reduz a largura do input */
+    text-align: center; /* Centraliza o texto dentro do input */
+    padding: 6px 8px; /* Ajusta o padding interno */
+    margin: 0 auto; /* Centraliza o próprio input na célula (se display for block) */
+    display: block; /* Garante que margin: auto funcione */
+    box-sizing: border-box;
+    border: 1px solid #ccc; /* Adiciona uma borda sutil */
+    border-radius: 4px;
+}

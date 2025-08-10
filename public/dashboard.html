@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Executivo - Hospital Santorini Prime</title> <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/widgets.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/admin-dashboard.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button>
+            <a href="#" id="logoutBtn" class="menu-item"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title"><i class="fas fa-chart-pie"></i> Dashboard Executivo</h1>
+            <p class="dashboard-subtitle">Bem-vindo ao painel de controle administrativo do Hospital Santorini Prime</p>
+        </div>
+        <div class="quick-stats">
+             <div class="stat-card"> <div class="stat-icon"><i class="fas fa-users"></i></div> <div class="stat-content"> <div class="stat-value" id="totalFuncionarios">0</div> <div class="stat-label">Total de Funcionários</div> </div> <span class="stat-change stat-up"><i class="fas fa-arrow-up"></i> --%</span> </div>
+             <div class="stat-card"> <div class="stat-icon"><i class="fas fa-coins"></i></div> <div class="stat-content"> <div class="stat-value" id="custoTotal">0c</div> <div class="stat-label">Custos Estimados Quinzena</div> </div> <span class="stat-change stat-down"><i class="fas fa-arrow-down"></i> --%</span> </div>
+             <div class="stat-card"> <div class="stat-icon"><i class="fas fa-percentage"></i></div> <div class="stat-content"> <div class="stat-value" id="taxaOcupacao">0%</div> <div class="stat-label">Taxa de Ocupação (Vagas)</div> </div> <span class="stat-change stat-up"><i class="fas fa-arrow-up"></i> --%</span> </div>
+             <div class="stat-card"> <div class="stat-icon"><i class="fas fa-check-circle"></i></div> <div class="stat-content"> <div class="stat-value" id="custoAptos">0c</div> <div class="stat-label">Custo Atual de Aptos</div> </div> <span class="stat-change stat-up" id="custoAptosChange"><i class="fas fa-check"></i> --%</span> </div>
+         </div>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"> <div class="card-header"> <div class="card-title"> <i class="fas fa-sitemap"></i> Status dos Departamentos </div> <div class="card-actions"> <button class="card-action" title="Atualizar" onclick="atualizarDashboard()"><i class="fas fa-sync-alt"></i></button> </div> </div> <div class="card-body"> <div class="table-responsive"> <table class="status-table"> <thead> <tr> <th>Departamento</th> <th>Funcionários</th> <th>Vagas</th> <th>Ocupação</th> </tr> </thead> <tbody id="statusTableBody"> <tr class="empty-state"><td colspan="4"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr> </tbody> </table> </div> </div> </div>
+            <div class="dashboard-card"> <div class="card-header"> <div class="card-title"> <i class="fas fa-trophy"></i> Top Funcionários (Pontos)</div> <div class="card-actions"> <button class="card-action" title="Atualizar" onclick="atualizarDashboard()"><i class="fas fa-sync-alt"></i></button> </div> </div> <div class="card-body"> <div class="table-responsive"> <table class="ranking-table"> <thead> <tr> <th>#</th> <th>Funcionário</th> <th>Pontos</th> </tr> </thead> <tbody id="rankingBody"> <tr class="empty-state"><td colspan="3"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr> </tbody> </table> </div> </div> </div>
+        </div>
+        <div class="dashboard-grid">
+             <div class="dashboard-card chart-card"> <div class="card-header chart-header"> <h3 class="card-title chart-title"><i class="fas fa-chart-pie"></i> Distribuição por Departamento</h3> </div> <div class="card-body chart-body"> <canvas id="deptoChart"></canvas> <div id="deptoChartEmpty" class="chart-no-data" style="display:none;"><i class="fas fa-chart-pie"></i><p>Sem dados</p></div> </div> </div>
+             <div class="dashboard-card chart-card"> <div class="card-header chart-header"> <h3 class="card-title chart-title"><i class="fas fa-chart-line"></i> Evolução de Contratações (Últimas 12 Semanas)</h3> </div> <div class="card-body chart-body"> <div id="evolutionChart"></div> <div id="evolutionChartEmpty" class="chart-no-data" style="display:none;"><i class="fas fa-chart-line"></i><p>Sem dados</p></div> </div> </div>
+        </div>
+    </div> <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // --- Cache de Elementos DOM ---
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const alertaContainer = document.getElementById('alertaContainer'); // Para showGlobalMessage
+        // Adicione outros elementos específicos do dashboard se precisar referenciá-los frequentemente
+        const totalFuncionariosEl = document.getElementById('totalFuncionarios');
+        const custoTotalEl = document.getElementById('custoTotal');
+        const taxaOcupacaoEl = document.getElementById('taxaOcupacao');
+        const custoAptosEl = document.getElementById('custoAptos');
+        const custoAptosChangeEl = document.getElementById('custoAptosChange');
+        const statusTableBody = document.getElementById('statusTableBody');
+        const rankingBody = document.getElementById('rankingBody');
+        const deptoChartCanvas = document.getElementById('deptoChart');
+        const deptoChartEmpty = document.getElementById('deptoChartEmpty');
+        const evolutionChartEl = document.getElementById('evolutionChart');
+        const evolutionChartEmpty = document.getElementById('evolutionChartEmpty');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Configuração de Departamentos e Custos (Mantida do original) ---
+        const departamentosConfig = { DEX: { nome: "Departamento Executivo", sigla: "DEX", cargos: { N6: [{cargo: "Vice-Diretor", salario: 55, pontos: 50, exp: 120, vagas: 1, custo: 58}], N7: [{cargo: "Diretor", salario: 60, pontos: 50, exp: 150, vagas: 1, custo: 63}], N8: [{cargo: "Vice-Presidente", salario: 65, pontos: 55, exp: 180, vagas: 1, custo: 69}], N9: [{cargo: "Presidente", salario: 70, pontos: 55, exp: 210, vagas: 1, custo: 74}], N10: [{cargo: "Fundador", salario: 70, pontos: null, exp: null, vagas: 4, custo: 74}] } }, DECLIN: { nome: "Departamento Clínico", sigla: "DECLIN", cargos: { N1: [ {cargo: "Clinica Geral", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32}, {cargo: "Cirurgia", salario: 30, pontos: 15, exp: 0, vagas: 5, custo: 32}, {cargo: "Enfermagem", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32}, {cargo: "Pediatria", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32}, {cargo: "Obstetrícia", salario: 30, pontos: 15, exp: 0, vagas: 5, custo: 32} ], N2: [ {cargo: "Chefe de Clínica Geral", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Cirurgia", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Enfermagem", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Pediatria", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Obstetrícia", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38} ], N4: [ {cargo: "Supervisor Clínico", salario: 45, pontos: 40, exp: 60, vagas: 1, custo: 48}, {cargo: "Supervisor Materno-Infantil", salario: 45, pontos: 40, exp: 60, vagas: 1, custo: 48} ], N5: [ {cargo: "Coordenador Clinico", salario: 50, pontos: 45, exp: 90, vagas: 1, custo: 52} ] } }, DOPH: { nome: "Departamento de Operações e Performance Humana", sigla: "DOPH", cargos: { N1: [ {cargo: "Psicologia", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32}, {cargo: "Psiquiatria", salario: 30, pontos: 15, exp: 0, vagas: 5, custo: 32}, {cargo: "Segurança", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32}, {cargo: "Recepção", salario: 30, pontos: 15, exp: 0, vagas: 10, custo: 32} ], N2: [ {cargo: "Chefe de Psicologia", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Psiquiatria", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Segurança", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38}, {cargo: "Chefe de Recepção", salario: 35, pontos: 25, exp: 15, vagas: 1, custo: 38} ], N3: [ {cargo: "Analista", salario: 40, pontos: 35, exp: 45, vagas: 6, custo: 42} ], N4: [ {cargo: "Supervisor de Saúde Mental", salario: 45, pontos: 40, exp: 60, vagas: 1, custo: 48}, {cargo: "Supervisor de Operações", salario: 45, pontos: 40, exp: 60, vagas: 1, custo: 48} ], N5: [ {cargo: "Coordenador de Operações e Saúde Mental", salario: 50, pontos: 45, exp: 90, vagas: 1, custo: 52} ] } } };
+        function calcularCusto(salario) { /* ... (função mantida do original) ... */ switch (salario) { case 30: return 32; case 35: return 38; case 40: return 42; case 45: return 48; case 50: return 52; case 55: return 58; case 60: return 63; case 65: return 69; case 70: return 74; default: return salario; } }
+
+        // --- Função Principal de Atualização do Dashboard (Mantida e Adaptada) ---
+        async function atualizarDashboard() {
+             console.log("Atualizando dashboard executivo...");
+             // Mostrar loading inicial nas tabelas/gráficos
+             if (statusTableBody) statusTableBody.innerHTML = '<tr class="empty-state"><td colspan="4"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+             if (rankingBody) rankingBody.innerHTML = '<tr class="empty-state"><td colspan="3"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+             // Limpar gráficos antigos
+             if (window.deptoChart instanceof Chart) { window.deptoChart.destroy(); }
+             if (window.evolutionChart) { if (typeof window.evolutionChart.destroy === 'function') { window.evolutionChart.destroy(); } else { evolutionChartEl.innerHTML = ''; } }
+             if(deptoChartEmpty) deptoChartEmpty.style.display = 'flex';
+             if(evolutionChartEmpty) evolutionChartEmpty.style.display = 'flex';
+             if(deptoChartCanvas) deptoChartCanvas.style.display = 'none';
+             if(evolutionChartEl) evolutionChartEl.style.display = 'none';
+
+
+             try {
+                 // 1. Buscar todos os funcionários ativos
+                 const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get();
+                 console.log(`Encontrados ${funcionariosSnapshot.size} funcionários ativos.`);
+
+                 // 2. Calcular Estatísticas por Departamento
+                 const statsDepartamentos = {}; // Objeto para armazenar stats por sigla
+                 let custoTotalEstimado = 0;
+                 let totalVagasSistema = 0;
+                 let custoAptosQuinzena = 0;
+                 let totalAptosQuinzena = 0;
+
+                 // Inicializar stats para cada departamento definido na config
+                 Object.entries(departamentosConfig).forEach(([deptoKey, depto]) => {
+                     statsDepartamentos[depto.sigla] = { nome: depto.nome, func: 0, vagas: 0, custosAtuais: 0 };
+                     Object.values(depto.cargos).flat().forEach(cargo => { // Itera por todos cargos na config
+                         statsDepartamentos[depto.sigla].vagas += cargo.vagas || 0;
+                         totalVagasSistema += cargo.vagas || 0;
+                     });
+                 });
+
+                 // Processar cada funcionário ativo
+                 funcionariosSnapshot.forEach(doc => {
+                     const funcionario = doc.data();
+                     let deptoFuncionario = null;
+                     let custoCargo = 0;
+
+                     // Encontra o departamento e o custo do cargo do funcionário
+                     for (const [deptoKey, depto] of Object.entries(departamentosConfig)) {
+                         let cargoEncontrado = false;
+                         for (const nivelCargos of Object.values(depto.cargos)) {
+                             const cargoConfig = nivelCargos.find(c => c.cargo === funcionario.cargo);
+                             if (cargoConfig) {
+                                 deptoFuncionario = depto.sigla;
+                                 custoCargo = cargoConfig.custo || calcularCusto(parseFloat(funcionario.salario || 0)); // Usa custo da config ou calcula
+                                 cargoEncontrado = true;
+                                 break;
+                             }
+                         }
+                         if (cargoEncontrado) break;
+                     }
+
+                     // Atualiza stats do departamento encontrado
+                     if (deptoFuncionario && statsDepartamentos[deptoFuncionario]) {
+                         statsDepartamentos[deptoFuncionario].func++;
+                         statsDepartamentos[deptoFuncionario].custosAtuais += custoCargo;
+                         custoTotalEstimado += custoCargo;
+                     } else {
+                         console.warn(`Departamento não encontrado ou não mapeado para o cargo: ${funcionario.cargo}`);
+                     }
+
+                     // Calcula custo dos aptos (lógica similar a pagamentos_salarios)
+                     let pontosMinimos = 0;
+                     switch(funcionario.nivel) { case 'N1': pontosMinimos = 15; break; case 'N2': pontosMinimos = 25; break; case 'N3': pontosMinimos = 35; break; case 'N4': pontosMinimos = 40; break; case 'N5': pontosMinimos = 45; break; case 'N6': case 'N7': pontosMinimos = 50; break; case 'N8': case 'N9': pontosMinimos = 55; break; case 'N10': pontosMinimos = 0; break; default: pontosMinimos = 15; }
+                     const totalPontos = funcionario.totalPontos || 0;
+                     const isApto = (funcionario.nivel === 'N10' || totalPontos >= pontosMinimos);
+                     if (isApto) {
+                         totalAptosQuinzena++;
+                         custoAptosQuinzena += custoCargo;
+                     }
+                 });
+                 custoTotalEstimado += 35; // Adiciona gratificações fixas
+
+                 // 3. Atualizar Cards Rápidos (Widgets)
+                 if(totalFuncionariosEl) totalFuncionariosEl.textContent = funcionariosSnapshot.size;
+                 if(custoTotalEl) custoTotalEl.textContent = `${custoTotalEstimado}c`;
+                 const taxaOcupacao = totalVagasSistema > 0 ? ((funcionariosSnapshot.size / totalVagasSistema) * 100).toFixed(1) : 0;
+                 if(taxaOcupacaoEl) taxaOcupacaoEl.textContent = `${taxaOcupacao}%`;
+                 if(custoAptosEl) custoAptosEl.textContent = `${custoAptosQuinzena}c`;
+                 const percentAptos = funcionariosSnapshot.size > 0 ? Math.round((totalAptosQuinzena / funcionariosSnapshot.size) * 100) : 0;
+                  if(custoAptosChangeEl){
+                     custoAptosChangeEl.innerHTML = `<i class="fas fa-check"></i> ${percentAptos}% Aptos`;
+                     custoAptosChangeEl.className = 'stat-change ' + (percentAptos >= 70 ? 'stat-up' : 'stat-down'); // Exemplo de lógica para cor
+                  }
+
+
+                 // 4. Atualizar Tabela de Status dos Departamentos
+                 if (statusTableBody) {
+                     statusTableBody.innerHTML = ''; // Limpa loading
+                     Object.entries(statsDepartamentos).forEach(([sigla, data]) => {
+                         const taxa = data.vagas > 0 ? ((data.func / data.vagas) * 100).toFixed(1) : 0;
+                         const row = document.createElement('tr');
+                         row.innerHTML = `
+                             <td>${data.nome} (${sigla})</td>
+                             <td>${data.func}</td>
+                             <td>${data.vagas}</td>
+                             <td class="progress-cell">
+                                 <div class="progress-bar-container">
+                                     <div class="progress-bar" style="width: ${taxa}%"></div>
+                                 </div> ${taxa}%
+                             </td>
+                         `;
+                         statusTableBody.appendChild(row);
+                     });
+                 } else { console.error("Elemento #statusTableBody não encontrado!"); }
+
+                 // 5. Atualizar Tabela de Ranking de Pontos
+                 if (rankingBody) {
+                     rankingBody.innerHTML = ''; // Limpa loading
+                     const funcionariosOrdenados = funcionariosSnapshot.docs
+                         .map(doc => ({ nickHabbo: doc.data().nickHabbo || 'Sem Nick', pontos: doc.data().totalPontos || 0 }))
+                         .sort((a, b) => b.pontos - a.pontos); // Ordena por pontos
+
+                     funcionariosOrdenados.slice(0, 5).forEach((func, index) => { // Limita a Top 5
+                         let rankHtml = `<span class="rank-number">${index + 1}</span>`;
+                         if (index === 0) rankHtml = `<span class="rank-number rank-1">${index + 1}</span>`;
+                         else if (index === 1) rankHtml = `<span class="rank-number rank-2">${index + 1}</span>`;
+                         else if (index === 2) rankHtml = `<span class="rank-number rank-3">${index + 1}</span>`;
+                         const row = document.createElement('tr');
+                         row.innerHTML = `
+                             <td>${rankHtml}</td>
+                             <td>${func.nickHabbo}</td>
+                             <td>${func.pontos}</td>
+                         `;
+                         rankingBody.appendChild(row);
+                     });
+                     if(funcionariosOrdenados.length === 0){
+                        rankingBody.innerHTML = '<tr class="empty-state"><td colspan="3"><p>Nenhum funcionário ativo.</p></td></tr>';
+                     }
+                 } else { console.error("Elemento #rankingBody não encontrado!"); }
+
+                 // 6. Atualizar Gráfico de Pizza (Distribuição por Depto) - Chart.js
+                 const totalFuncionariosGrafico = Object.values(statsDepartamentos).reduce((sum, dept) => sum + dept.func, 0);
+                 if (deptoChartCanvas && totalFuncionariosGrafico > 0) {
+                     if(deptoChartEmpty) deptoChartEmpty.style.display = 'none';
+                     deptoChartCanvas.style.display = 'block';
+                     const ctxDepto = deptoChartCanvas.getContext('2d');
+                     if (window.deptoChart instanceof Chart) { window.deptoChart.destroy(); } // Limpa gráfico anterior
+                     window.deptoChart = new Chart(ctxDepto, {
+                         type: 'doughnut',
+                         data: {
+                             labels: Object.values(statsDepartamentos).map(d => d.nome), // Usa nome completo
+                             datasets: [{
+                                 data: Object.values(statsDepartamentos).map(d => d.func),
+                                 backgroundColor: ['#1e90ff', '#2ecc71', '#4682b4'], // Cores para DEX, DECLIN, DOPH (ajustar ordem)
+                                 borderColor: 'white',
+                                 borderWidth: 2
+                             }]
+                         },
+                         options: {
+                             responsive: true, maintainAspectRatio: false, cutout: '70%',
+                             plugins: { legend: { position: 'bottom', labels: { font: { family: 'Montserrat' }}}, tooltip: { callbacks: { label: function(context) { return `${context.label}: ${context.raw} funcionários`; } } } }
+                         }
+                     });
+                 } else {
+                    if(deptoChartEmpty) deptoChartEmpty.style.display = 'flex';
+                    if(deptoChartCanvas) deptoChartCanvas.style.display = 'none';
+                 }
+
+                 // 7. Atualizar Gráfico de Linha/Área (Evolução) - ApexCharts
+                 const dadosAdmissaoPorSemana = {};
+                 funcionariosSnapshot.forEach(doc => {
+                     const funcionario = doc.data();
+                     if (funcionario.dataAdmissao && funcionario.dataAdmissao.toDate) {
+                         const dataAdmissao = funcionario.dataAdmissao.toDate();
+                         const ano = dataAdmissao.getFullYear();
+                         const inicioAno = new Date(ano, 0, 1);
+                         const diasDesdeInicio = Math.floor((dataAdmissao - inicioAno) / (24 * 60 * 60 * 1000));
+                         const semanaAno = Math.ceil((diasDesdeInicio + inicioAno.getDay() + 1) / 7);
+                         const semanaChave = `${ano}-W${semanaAno.toString().padStart(2, '0')}`; // Formato AAAA-WSS
+                         dadosAdmissaoPorSemana[semanaChave] = (dadosAdmissaoPorSemana[semanaChave] || 0) + 1;
+                     }
+                 });
+
+                 // Ordena as semanas e pega as últimas 12
+                 const semanasOrdenadas = Object.keys(dadosAdmissaoPorSemana).sort();
+                 const ultimasSemanas = semanasOrdenadas.slice(-12);
+
+                 // Calcula o total CUMULATIVO de funcionários ao longo dessas semanas
+                 let totalCumulativo = 0;
+                 // Para calcular o cumulativo corretamente, precisamos do total ANTES da primeira semana no gráfico
+                 const primeiraSemanaGrafico = ultimasSemanas[0];
+                 let totalAntes = 0;
+                  funcionariosSnapshot.forEach(doc => {
+                      const func = doc.data();
+                       if (func.dataAdmissao && func.dataAdmissao.toDate) {
+                           const dataAdmissao = func.dataAdmissao.toDate();
+                            const ano = dataAdmissao.getFullYear();
+                            const inicioAno = new Date(ano, 0, 1);
+                            const diasDesdeInicio = Math.floor((dataAdmissao - inicioAno) / (24 * 60 * 60 * 1000));
+                            const semanaAno = Math.ceil((diasDesdeInicio + inicioAno.getDay() + 1) / 7);
+                            const semanaChave = `${ano}-W${semanaAno.toString().padStart(2, '0')}`;
+                            if(semanaChave < primeiraSemanaGrafico) {
+                                totalAntes++;
+                            }
+                       }
+                  });
+                 totalCumulativo = totalAntes;
+
+                 const dadosGraficoCumulativo = [];
+                 ultimasSemanas.forEach(semana => {
+                     totalCumulativo += dadosAdmissaoPorSemana[semana] || 0; // Adiciona novas contratações da semana
+                     dadosGraficoCumulativo.push(totalCumulativo);
+                 });
+
+
+                 if (evolutionChartEl && dadosGraficoCumulativo.length > 0) {
+                     if(evolutionChartEmpty) evolutionChartEmpty.style.display = 'none';
+                     evolutionChartEl.style.display = 'block';
+                     const optionsApex = {
+                         series: [{ name: 'Total de Funcionários', data: dadosGraficoCumulativo }],
+                         chart: { height: 280, type: 'area', toolbar: { show: false }, fontFamily: 'Montserrat, sans-serif', zoom: { enabled: false } },
+                         dataLabels: { enabled: false },
+                         stroke: { curve: 'smooth', width: 3 }, colors: ['#1e90ff'],
+                         fill: { type: 'gradient', gradient: { shadeIntensity: 0.5, opacityFrom: 0.6, opacityTo: 0.1, stops: [0, 100] } },
+                         xaxis: { categories: ultimasSemanas, labels: { style: { fontFamily: 'Montserrat' }}},
+                         yaxis: { labels: { style: { fontFamily: 'Montserrat' }}},
+                         tooltip: { y: { formatter: function(value) { return value + ' funcionários'; } } }
+                     };
+                     // Limpa gráfico anterior antes de renderizar
+                     if (window.evolutionChart) { if (typeof window.evolutionChart.destroy === 'function') { window.evolutionChart.destroy(); } else { evolutionChartEl.innerHTML = ''; } }
+                     window.evolutionChart = new ApexCharts(evolutionChartEl, optionsApex);
+                     window.evolutionChart.render();
+                 } else {
+                      if(evolutionChartEmpty) evolutionChartEmpty.style.display = 'flex';
+                      if(evolutionChartEl) evolutionChartEl.style.display = 'none';
+                 }
+
+             } catch (error) {
+                 console.error("Erro ao atualizar dashboard:", error);
+                 showGlobalMessage("error", "Erro ao carregar dados do dashboard: " + error.message);
+             }
+         }
+
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("=== DOMContentLoaded: Iniciando dashboard.html ===");
+
+             auth.onAuthStateChanged(async (user) => {
+                  console.log("=== onAuthStateChanged ===");
+                  if (!user) { window.location.href = 'login.html'; return; }
+
+                  try {
+                      const result = await fetchUserDataAndLevel(user.uid, db);
+                      if (!result) { throw new Error("Falha ao carregar dados."); }
+                      const currentUserData = result.userData;
+                      const userHierarchicalLevel = result.hierarchicalLevel;
+
+                      console.log(`--- Usuário: ${currentUserData.nome}, Nível Hierárquico: ${userHierarchicalLevel}, Nível Acesso: ${currentUserData.nivelAcesso}`);
+
+                      // Permissão (Admin/Superuser - Nível >= 3 OU N10)
+                      if (userHierarchicalLevel !== 'N10' && currentUserData.nivelAcesso < 3) {
+                          console.warn("Acesso Negado ao Admin Dashboard.");
+                          window.location.href = 'dashboard_user.html';
+                          return;
+                      }
+
+                      // Atualizar UI Sidebar
+                      if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Admin";
+                      if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Administrador";
+                      const currentPage = window.location.pathname.split('/').pop();
+                      if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(userHierarchicalLevel, currentPage); }
+                      else { console.error("generateSidebarMenu não encontrada"); }
+                      if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); }
+                      else { console.error("initializeSidebarInteractions não encontrada"); }
+
+                      // Carregar Dados do Dashboard
+                      await atualizarDashboard();
+                      // Configura atualização periódica
+                      setInterval(atualizarDashboard, 300000); // Atualiza a cada 5 minutos
+
+                  } catch (error) {
+                      console.error("Erro crítico na inicialização:", error);
+                      showGlobalMessage("error", "Erro ao carregar: " + error.message);
+                  }
+             }); // Fim onAuthStateChanged
+         }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

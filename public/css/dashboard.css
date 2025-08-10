@@ -1,0 +1,321 @@
+/* ==========================================================================
+   Estilos Específicos para Dashboard (dashboard_user.html)
+   ========================================================================== */
+
+/* Grid para os Cards da Dashboard */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Colunas responsivas */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Card de Informação */
+.info-card {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    padding: 25px;
+    box-shadow: var(--shadow-sm);       /* Usa variável */
+    transition: var(--transition);      /* Usa variável */
+    animation: fadeInUp 0.5s ease forwards; /* Requer @keyframes fadeInUp */
+    opacity: 0; /* Inicia invisível para animação */
+    overflow: hidden; /* Para conter o ::after */
+    position: relative; /* Para posicionar ::after e last-update-info */
+}
+
+ /* Efeito decorativo no canto */
+.info-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(30, 144, 255, 0.05) 0%, rgba(30, 144, 255, 0) 60%);
+    border-radius: 0 0 0 100%; /* Canto arredondado */
+}
+
+/* Animação fadeInUp (Idealmente definida uma vez no estilo-principal.css) */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);       /* Usa variável */
+}
+
+/* Delay escalonado para entrada dos cards */
+.info-card:nth-child(1) { animation-delay: 0.1s; }
+.info-card:nth-child(2) { animation-delay: 0.2s; }
+.info-card:nth-child(3) { animation-delay: 0.3s; }
+.info-card:nth-child(4) { animation-delay: 0.4s; }
+
+.info-card h3 {
+    color: var(--primary);              /* Usa variável */
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    position: relative; /* Para ficar acima do ::after */
+    z-index: 1;
+}
+
+.info-card h3 i {
+    margin-right: 10px;
+    color: var(--primary);              /* Usa variável */
+    font-size: 20px;
+}
+
+.info-value {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--dark);                 /* Usa variável */
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.info-value-light {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-light);           /* Usa variável */
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.info-value-light i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    color: var(--primary);              /* Usa variável */
+}
+
+.status-apto { color: var(--success); } /* Usa variável */
+.status-nao-apto { color: var(--danger); } /* Usa variável */
+
+/* Barra de Progresso */
+.progress-text {
+    font-size: 14px;
+    color: var(--text-light);           /* Usa variável */
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: #f0f0f0; /* Fundo da barra */
+    border-radius: 5px;
+    overflow: hidden; /* Para conter a barra interna e animação */
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--primary), var(--secondary)); /* Usa variáveis */
+    border-radius: 5px;
+    transition: width 0.8s ease; /* Anima a mudança de largura */
+    position: relative; /* Para o efeito shimmer */
+}
+
+/* Efeito de brilho na barra de progresso */
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient( to right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 100% );
+    animation: shimmer 1.5s infinite; /* Requer @keyframes shimmer */
+    transform: skewX(-20deg); /* Inclina o brilho */
+}
+
+/* Animação shimmer (Idealmente definida uma vez no estilo-principal.css se usada em outros lugares) */
+@keyframes shimmer {
+    0% { transform: translateX(-100%) skewX(-20deg); }
+    100% { transform: translateX(100%) skewX(-20deg); }
+}
+
+
+/* Informação de Última Atualização */
+.last-update-info {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 8px 15px;
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-sm);       /* Usa variável */
+    font-size: 12px;
+    color: var(--text-light);           /* Usa variável */
+    display: flex;
+    align-items: center;
+    animation: fadeIn 0.5s ease forwards; /* Requer @keyframes fadeIn */
+    animation-delay: 0.5s; /* Entra um pouco depois */
+    opacity: 0; /* Começa invisível */
+    z-index: 10; /* Garante que fique acima do ::after do card */
+}
+
+/* Animação fadeIn (Idealmente definida uma vez no estilo-principal.css) */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.last-update-info i {
+    margin-right: 8px;
+    color: var(--primary);              /* Usa variável */
+}
+
+/* Mensagem de Erro (Usar o padrão .alert ou .message consolidado idealmente) */
+.error-message {
+    background-color: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid var(--danger); /* Usa variável */
+    color: var(--danger);                 /* Usa variável */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius); /* Usa variável */
+    display: flex;
+    align-items: center;
+    animation: fadeIn 0.5s ease forwards; /* Requer @keyframes fadeIn */
+}
+
+.error-message i {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+
+/* Componente de Progresso da Quinzena */
+.quinzena-progress-card {
+    margin-bottom: 30px;
+    /* Aplicar animação fadeInUp se este card também entra animado */
+    /* animation: fadeInUp 0.5s ease forwards; */
+    /* animation-delay: 0.5s; */ /* Ajustar delay conforme necessário */
+    padding-bottom: 25px; /* Espaço extra abaixo se necessário */
+    /* Pode precisar de background: white; border-radius; box-shadow; se for um card separado */
+}
+
+.quinzena-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 15px;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    gap: 10px;
+}
+
+.quinzena-dates {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.quinzena-dates div {
+    display: flex;
+    align-items: center;
+    color: var(--text-light);           /* Usa variável */
+}
+
+.quinzena-dates i {
+    margin-right: 8px;
+    color: var(--primary);              /* Usa variável */
+}
+
+/* Barra de Progresso da Quinzena (Estilo pode variar) */
+.quinzena-progress {
+    height: 12px;
+    margin-bottom: 18px;
+    background: #f0f0f0; /* Fundo da barra */
+    /* Se for usar gradiente de cores, o JS controla a largura */
+     background-image: linear-gradient(to right, #f0f0f0 0%, #f0f0f0 100%); /* Começa cinza */
+     border-radius: 6px;
+     overflow: hidden; /* Para conter a barra interna */
+}
+
+.quinzena-bar { /* Barra colorida interna controlada por JS */
+    height: 100%;
+    /* Gradiente de exemplo - ajuste conforme a lógica de % */
+    background: linear-gradient(to right, #2ecc71, #f39c12, #e74c3c);
+    background-size: 300% 100%; /* Permite 'mover' o gradiente com background-position */
+    border-radius: 6px;
+    transition: all 0.5s ease; /* Anima mudança de largura/posição */
+    width: 0%; /* Começa com 0% */
+}
+
+/* Caixa de Dicas */
+.tip-box {
+    display: flex;
+    align-items: flex-start; /* Alinha ícone com topo do texto */
+    margin-top: 15px;
+    padding: 12px 15px;
+    background: rgba(30, 144, 255, 0.05); /* Fundo azul bem claro */
+    border-radius: 10px;
+    border-left: 3px solid var(--primary); /* Usa variável */
+}
+
+.tip-box i {
+    font-size: 18px;
+    margin-right: 15px;
+    color: var(--primary);              /* Usa variável */
+    margin-top: 2px; /* Pequeno ajuste vertical se necessário */
+}
+
+.tip-box p {
+    color: var(--text-light);           /* Usa variável */
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.tip-box strong {
+    color: var(--primary);              /* Usa variável */
+    font-weight: 600;
+}
+
+.quinzena-tips { /* Container para múltiplas dicas */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+/* ==========================================================================
+   Estilos Responsivos Específicos para Dashboard
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* --- CORREÇÃO HAMBURGUER (REVISAR/INTEGRAR NO GLOBAL DEPOIS) --- */
+    .hamburger-btn {
+       /* display: flex; */ /* REMOVIDO - Conflitava */
+       display: block; /* Ou omitir se já for block */
+    }
+    .hamburger-icon {
+         position: absolute; /* Centraliza o ícone dentro do botão */
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+    }
+    /* --- FIM CORREÇÃO --- */
+
+    /* Ajustes específicos da dashboard */
+    .last-update-info {
+        top: 15px;
+        right: 15px;
+        font-size: 10px;
+        padding: 5px 10px;
+    }
+    .card-grid {
+        grid-template-columns: 1fr; /* Uma coluna */
+    }
+    .quinzena-dates {
+        flex-direction: column; /* Empilha datas */
+        gap: 10px;
+    }
+    /* Ajustes de layout principal já devem estar no estilo-principal.css */
+}

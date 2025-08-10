@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regimento Interno - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/regimento.css">
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral Redesenhado (será preenchido dinamicamente) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal Redesenhado -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-book"></i>
+                Regimento Interno
+            </h1>
+            <p class="page-subtitle">Normas e diretrizes oficiais do Hospital Santorini Prime</p>
+        </div>
+
+        <div id="regimentoContent">
+            <!-- Preâmbulo -->
+            <div class="article">
+                <h2>Preâmbulo</h2>
+                <p>O Hospital Santorini Prime, fundado com o propósito de promover e proteger a saúde de seus pacientes no ambiente do Habbo Hotel, estabelece este Regimento Interno como um guia para a conduta e o funcionamento de todos os seus colaboradores. Inspirados pelos princípios da excelência no atendimento, do respeito à vida e da busca contínua pelo aprimoramento, dedicamo-nos a oferecer serviços de saúde de qualidade, pautados na ética, no profissionalismo e na humanização. Este documento visa garantir um ambiente de trabalho colaborativo, seguro e eficiente, onde cada membro da equipe contribui para o bem-estar de nossa comunidade de pacientes.</p>
+            </div>
+
+            <!-- Título I -->
+            <div class="article">
+                <h2>Título I: Das Disposições Gerais</h2>
+                <p class="article-title">Artigo 1º</p>
+                <p>O presente Regimento Interno estabelece as normas de funcionamento e organização do Hospital Santorini Prime, doravante denominado Hospital.</p>
+
+                <p class="article-title">Artigo 2º</p>
+                <p>O Hospital tem como objetivo principal prestar serviços de saúde de qualidade aos seus pacientes, seguindo os mais altos padrões de ética e profissionalismo.</p>
+
+                <p class="article-title">Artigo 3º</p>
+                <p>Este Regimento Interno é de observância obrigatória por todos os membros da equipe do Hospital, incluindo médicos, enfermeiros, técnicos, recepcionistas, administradores e demais colaboradores.</p>
+            </div>
+
+            <!-- Título II -->
+            <div class="article">
+                <h2>Título II: Da Admissão e Atendimento aos Pacientes</h2>
+                <p class="article-title">Artigo 4º</p>
+                <p>A admissão de pacientes no Hospital será realizada de acordo com os protocolos estabelecidos pela administração e equipe médica.</p>
+
+                <p class="article-title">Artigo 5º</p>
+                <p>Todos os pacientes têm direito a um atendimento humanizado, respeitoso e livre de qualquer forma de discriminação.</p>
+
+                <p class="article-title">Artigo 6º</p>
+                <p>O Hospital garantirá a privacidade e a confidencialidade das informações dos pacientes, em conformidade com a legislação vigente.</p>
+            </div>
+
+            <!-- Título III -->
+            <div class="article">
+                <h2>Título III: Dos Deveres e Direitos dos Colaboradores</h2>
+                <p class="article-title">Artigo 7º</p>
+                <p>São deveres de todos os colaboradores do Hospital:</p>
+                <ol type="I">
+                    <li>Cumprir as normas e regulamentos internos.</li>
+                    <li>Zelar pela qualidade dos serviços prestados.</li>
+                    <li>Manter um ambiente de trabalho respeitoso e colaborativo.</li>
+                    <li>Utilizar os recursos do Hospital de forma consciente e responsável.</li>
+                </ol>
+
+                <p class="article-title">Artigo 8º</p>
+                <p>São direitos de todos os colaboradores do Hospital:</p>
+                <ol type="I">
+                    <li>Receber tratamento justo e respeitoso.</li>
+                    <li>Trabalhar em um ambiente seguro e saudável.</li>
+                    <li>Ter acesso a informações relevantes para o desempenho de suas funções.</li>
+                    <li>Participar de programas de treinamento e desenvolvimento profissional.</li>
+                </ol>
+            </div>
+
+            <!-- Título IV -->
+            <div class="article">
+                <h2>Título IV: Dos Cargos, Salários e Níveis Hierárquicos</h2>
+                <p class="article-title">Artigo 9º</p>
+                <p>Os cargos e salários do Hospital Santorini Prime são definidos conforme os níveis hierárquicos e a complexidade das funções, seguindo a seguinte estrutura:</p>
+
+                <p><strong>I - Cargos Iniciais (Salário 30c):</strong></p>
+                <ol type="a">
+                    <li>Clínica Geral</li>
+                    <li>Cirurgia</li>
+                    <li>Enfermagem</li>
+                    <li>Psicologia</li>
+                    <li>Psiquiatria</li>
+                    <li>Recepção</li>
+                    <li>Segurança</li>
+                    <li>Pediatria</li>
+                    <li>Obstetrícia</li>
+                </ol>
+
+                <p><strong>II - Cargos de Chefia (Salário 35c):</strong></p>
+                <ol type="a">
+                    <li>Chefe de Clínica Geral</li>
+                    <li>Chefe de Cirurgia</li>
+                    <li>Chefe de Enfermagem</li>
+                    <li>Chefe de Pediatria</li>
+                    <li>Chefe de Obstetrícia</li>
+                    <li>Chefe de Psicologia</li>
+                    <li>Chefe de Psiquiatria</li>
+                    <li>Chefe de Segurança</li>
+                    <li>Chefe de Recepção</li>
+                </ol>
+
+                <p><strong>III - Cargos Analistas (Salário 40c):</strong></p>
+                <ol type="a">
+                    <li>Analistas</li>
+                </ol>
+
+                <p><strong>IV - Cargos de Supervisão (Salário 45c):</strong></p>
+                <ol type="a">
+                    <li>Supervisor Clínico</li>
+                    <li>Supervisor Materno-Infantil</li>
+                    <li>Supervisor de Saúde Mental</li>
+                    <li>Supervisor de Operações</li>
+                </ol>
+
+                <p><strong>V - Cargos de Coordenação (Salário 50c):</strong></p>
+                <ol type="a">
+                    <li>Coordenador Clínico</li>
+                    <li>Coordenador de Operações e Saúde Mental</li>
+                </ol>
+
+                <p><strong>VI - Cargos de Alta Gestão:</strong></p>
+                <ol type="a">
+                    <li>Vice-Diretor (Salário 55c)</li>
+                    <li>Diretor (Salário 60c)</li>
+                    <li>Vice-Presidente (Salário 65c)</li>
+                    <li>Presidente (Salário 70c)</li>
+                    <li>Fundador da Rede (Salário a consultar)</li>
+                </ol>
+
+                <p class="article-title">Artigo 10º</p>
+                <p>A progressão nos níveis hierárquicos do Hospital Santorini Prime ocorrerá da seguinte forma:</p>
+
+                <p><strong>I - N1:</strong> Base: Colaboradores em fase inicial, com zero experiência. Recebem o mesmo salário dos Cargos Iniciais (30c).</p>
+                
+                <p><strong>II - N2:</strong> Chefias: Colaboradores que possuem pelo menos 15 dias totais de experiência no Hospital. Recebem salário de 35c. A promoção de N1 para N2 ocorrerá após o cumprimento deste período e avaliação de desempenho.</p>
+                
+                <p><strong>III - N3:</strong> Analista: Para alcançar este nível, o colaborador deve possuir pelo menos 45 dias totais de experiência no Hospital. Salário de 40c.</p>
+                
+                <p><strong>IV - N4:</strong> Supervisor: Para alcançar este nível, o colaborador deve possuir pelo menos 60 dias totais de experiência no Hospital. O salário para este nível é de 45c.</p>
+                
+                <p><strong>V - N5:</strong> Coordenador: A progressão para Coordenador requer pelo menos 90 dias totais de experiência no Hospital. O salário para este nível é de 50c.</p>
+                
+                <p><strong>VI - N6:</strong> Vice-Diretor: A progressão para Vice-Diretor requer pelo menos 120 dias totais de experiência no Hospital. O salário para este nível é de 55c.</p>
+                
+                <p><strong>VII - N7:</strong> Diretor: Este cargo requer pelo menos 150 dias totais de experiência no Hospital, além de mérito e indicação da alta gestão, com salário de 60c.</p>
+                
+                <p><strong>VIII - N8:</strong> Vice-Presidente: Este cargo requer pelo menos 180 dias totais de experiência no Hospital, além de mérito e indicação da alta gestão, com salário de 65c.</p>
+                
+                <p><strong>IX - N9:</strong> Presidente: Este cargo requer pelo menos 210 dias totais de experiência no Hospital, além de mérito e indicação da fundação, com salário de 70c.</p>
+                
+                <p><strong>X - N10:</strong> Fundador da Rede: Este cargo é exclusivo e só pode ser alcançado por meio de indicação e aprovação direta da fundação da Rede Santorini Prime.</p>
+                
+                <p>Parágrafo 1º: Alternativamente, os cargos de alta gestão podem ser adquiridos mediante valores e condições especiais determinados pela fundação.</p>
+                
+                <p>Parágrafo 2º: Não há possibilidade de promoção para o nível N10.</p>
+
+                <p class="article-title">Artigo 11º</p>
+                <p>As promoções dentro do Hospital Santorini Prime seguirão única e exclusivamente a Trilha de Carreira Hospitalar, respeitando os prazos mínimos de experiência estabelecidos para cada cargo, conforme o Artigo 10º. As promoções para os níveis N3 (Analista) e superiores ocorrerão no tempo necessário, mediante avaliação de desempenho e disponibilidade de vagas, não sendo necessariamente realizadas a cada quinzena.</p>
+
+                <p>Parágrafo 1º: Para a promoção aos níveis N3 (Analista) e superiores, além do tempo mínimo de experiência exigido, será também avaliada a demonstração de hard skills (habilidades técnicas específicas) e soft skills (habilidades comportamentais e interpessoais) relevantes para a função.</p>
+
+                <p>Parágrafo 2º: O colaborador terá o direito de recusar uma promoção, caso não se sinta preparado ou não tenha interesse em assumir novas responsabilidades. A recusa da promoção não implicará em qualquer tipo de penalidade.</p>
+
+                <p>Parágrafo 3º: Casos de exceção aos prazos mínimos de experiência para promoção deverão ser analisados e determinados exclusivamente pela fundação da Rede Santorini Prime.</p>
+
+                <p class="article-title">Artigo 12º</p>
+                <p>O processo de contratação de novos funcionários para o Hospital Santorini Prime será conduzido exclusivamente por colaboradores que ocupem os cargos de Recepcionista, Analista ou membros da Alta Gestão (Diretoria de Unidade, Presidente da Rede e Fundador da Rede).</p>
+
+                <p>Parágrafo 1º: Todas as contratações deverão seguir o script de contratação definido pela fundação da Rede Santorini Prime, garantindo um processo isonômico e transparente para todos os candidatos (com exceção de colaboradores mobile, que podem adaptar o script à sua realidade, desde que não comprometa o processo em geral).</p>
+
+                <p>Parágrafo 2º: É expressamente proibido que qualquer membro da equipe do Hospital Santorini Prime seja simultaneamente membro de outra instituição de saúde dentro do Habbo Hotel.</p>
+            </div>
+
+            <!-- Título V -->
+            <div class="article">
+                <h2>Título V: Das Normas Internas</h2>
+                <p class="article-title">Artigo 13º</p>
+                <p>O uso de uniformes designados para cada função dentro do Hospital Santorini Prime é obrigatório durante o horário de trabalho.</p>
+
+                <p class="article-title">Artigo 14º</p>
+                <p>É permitida a utilização de acessórios (como broches, óculos discretos e itens de cabelo) desde que utilizados com bom senso e não comprometam a imagem profissional do Hospital.</p>
+
+                <p>Parágrafo 1º: O uso de quaisquer outros acessórios ou vestimentas temáticas deverá ser previamente aprovado pela fundação da Rede Santorini Prime.</p>
+
+                <p class="article-title">Artigo 15º</p>
+                <p>O uso de balões de fala é livre para todas as cores, visando facilitar a comunicação e a expressão individual.</p>
+
+                <p class="article-title">Artigo 16º</p>
+                <p>É esperado que todos os colaboradores mantenham uma postura profissional e respeitosa em todas as interações dentro do Hospital, tanto com pacientes quanto com outros membros da equipe.</p>
+
+                <p class="article-title">Artigo 17º</p>
+                <p>A movimentação dentro das dependências do Hospital deve ser feita de forma organizada e atenta, evitando aglomerações desnecessárias e respeitando o fluxo de pacientes e outros profissionais.</p>
+
+                <p class="article-title">Artigo 18º</p>
+                <p>É dever de todos zelar pela limpeza e organização dos espaços comuns e das áreas de atendimento, contribuindo para um ambiente agradável e seguro.</p>
+
+                <p class="article-title">Artigo 19º</p>
+                <p>A utilização de equipamentos e recursos do Hospital deve ser feita de maneira responsável e apenas para fins profissionais, seguindo as orientações e protocolos estabelecidos.</p>
+
+                <p class="article-title">Artigo 20º</p>
+                <p>Em caso de dúvidas sobre procedimentos ou normas, o colaborador deverá buscar orientação junto a seus superiores ou à administração do Hospital.</p>
+
+                <p class="article-title">Artigo 21º</p>
+                <p>É vedado o uso de qualquer tipo de linguagem ofensiva, discriminatória ou inadequada dentro das dependências do Hospital e em comunicações relacionadas ao trabalho.</p>
+
+                <p class="article-title">Artigo 22º</p>
+                <p>O colaborador não poderá se ausentar de sua estação de trabalho durante o horário de expediente. Caso necessite se ausentar momentaneamente, deverá dirigir-se aos sofás localizados externamente aos consultórios e comunicar sua ausência a um Analista.</p>
+            </div>
+
+            <!-- Título VI -->
+            <div class="article">
+                <h2>Título VI: Do Sistema de Pontos e Pagamento Quinzenal</h2>
+                <p class="article-title">Artigo 23º</p>
+                <p>O pagamento dos salários no Hospital Santorini Prime é realizado de forma quinzenal. Para receber o salário integral, todo colaborador (com exceção dos membros da fundação) deverá atingir um número mínimo de pontos por quinzena, conforme sua função:</p>
+
+                <p><strong>I - N1:</strong> 15 pontos</p>
+                <p><strong>II - N2:</strong> 25 pontos</p>
+                <p><strong>III - N3:</strong> 35 pontos</p>
+                <p><strong>IV - N4:</strong> 40 pontos</p>
+                <p><strong>V - N5:</strong> 45 pontos</p>
+                <p><strong>VI - N6 e N7:</strong> 50 pontos</p>
+                <p><strong>VII - N8 e N9:</strong> 55 pontos</p>
+                <p><strong>VIII - N10:</strong> Isento de pontuação mínima</p>
+
+                <p>Parágrafo 1º: A fundação poderá aprovar flexibilizações no número de pontos exigidos para colaboradores que ingressarem na última semana da quinzena e estiverem próximos de atingir a pontuação mínima para recebimento do salário. Não haverá flexibilização para outras situações.</p>
+
+                <p>Parágrafo 2º: A contabilização dos pontos será realizada a cada 30 minutos do dia (por exemplo: 10h00, 10h30, 11h00), sendo o momento de "bater o ponto" anunciado por um Analista durante o expediente. A tolerância para registrar o ponto após o anúncio é de 5 minutos, sem possibilidade de flexibilização (com exceção de colaboradores em atendimento). O Analista responsável pela organização da folha de pontos deverá registrar seu próprio ponto após todos os demais colaboradores terem realizado o registro.</p>
+
+                <p>Parágrafo 3º: O colaborador que iniciar o seu horário de trabalho dentro dos primeiros dez minutos de um intervalo de 30 minutos estará apto a registrar o ponto ao final desse intervalo. Caso o início ocorra após os dez minutos iniciais, o registro do ponto só será possível ao final do próximo intervalo de 30 minutos.</p>
+
+                <p>Parágrafo 4º: A fundação da Rede Santorini Prime detém a decisão exclusiva de alterar o horário de registro dos pontos conforme a necessidade (antecipando ou adiando os horários). Esta decisão deverá ser comunicada e cumprida por todos os Analistas e demais colaboradores.</p>
+
+                <p>Parágrafo 5º: Colaboradores que estiverem ausentes de sua estação de trabalho durante todo o intervalo de 30 minutos da rodada de pontos não terão direito ao registro do ponto correspondente, mesmo que apresentem justificativa para a ausência. O registro de pontos corresponde exclusivamente ao período efetivamente trabalhado.</p>
+            </div>
+
+            <!-- Título VII -->
+            <div class="article">
+                <h2>Título VII: Dos Desligamentos</h2>
+                <p class="article-title">Artigo 24º</p>
+                <p>O desligamento de colaboradores do Hospital Santorini Prime poderá ocorrer de duas formas: sem justa causa ou por justa causa.</p>
+
+                <p>Parágrafo 1º: Desligamento sem Justa Causa</p>
+                <p>O desligamento sem justa causa poderá ocorrer por decisão da administração (redução de quadro, reestruturação, etc.) ou por iniciativa do próprio colaborador (desligamento voluntário). No primeiro caso, o colaborador terá direito ao recebimento do salário integral referente à quinzena em que ocorreu o desligamento, desde que tenha atingido a meta de pontos mínima exigida para sua função até o momento do desligamento. Para o desligamento voluntário, o colaborador em questão perde o direito ao recebimento do salário.</p>
+
+                <p>Parágrafo 2º: Desligamento por Justa Causa</p>
+                <p>O desligamento por justa causa ocorrerá em casos de comportamento inadequado ou descumprimento grave das normas e regulamentos internos do Hospital. Em casos de desligamento por justa causa, o colaborador não terá direito ao recebimento do salário referente à quinzena em que ocorreu o desligamento, mesmo que tenha atingido a meta de pontos mínima exigida.</p>
+
+                <p class="article-title">Artigo 25º</p>
+                <p>Antes de ocorrer o desligamento por justa causa em decorrência de comportamentos inadequados ou descumprimento de normas internas que não se enquadrem nas situações de gravidade imediata previstas no Artigo 24º, Parágrafo 2º, o Hospital Santorini Prime adotará o seguinte sistema de advertências formais:</p>
+
+                <p><strong>I -</strong> Serão permitidas no máximo duas (2) advertências formais por colaborador.</p>
+                <p><strong>II -</strong> Ao receber a segunda advertência formal, o colaborador estará sujeito ao desligamento por justa causa em caso de reincidência ou de novas infrações.</p>
+
+                <p class="article-title">Artigo 26º</p>
+                <p>Consideram-se motivos para desligamento por justa causa, incluindo, mas não se limitando a:</p>
+
+                <p><strong>I -</strong> Ausentar-se do posto de trabalho sem comunicação prévia e justificada, de forma reiterada.</p>
+                <p><strong>II -</strong> Prestar atendimento negligente ou inadequado aos pacientes, colocando em risco sua saúde ou bem-estar.</p>
+                <p><strong>III -</strong> Utilizar linguagem ofensiva, discriminatória ou assediar moralmente e/ou de outras formas, os colaboradores ou pacientes da Instituição durante o horário de trabalho.</p>
+                <p><strong>IV -</strong> Divulgar informações confidenciais de pacientes ou do Hospital.</p>
+                <p><strong>V -</strong> Desrespeitar ou desacatar superiores hierárquicos.</p>
+                <p><strong>VI -</strong> Fraudar o sistema de registro de pontos ou manipular informações relacionadas à frequência.</p>
+                <p><strong>VII -</strong> Utilizar os recursos do Hospital (equipamentos, mobília, etc.) para fins particulares ou de forma inadequada.</p>
+                <p><strong>VIII -</strong> Promover discussões, brigas ou tumultos dentro das dependências do Hospital.</p>
+                <p><strong>IX -</strong> Ser membro de outra instituição de saúde no Habbo Hotel, conforme o Artigo 12º, Parágrafo 2º deste Regimento.</p>
+                <p><strong>X -</strong> Cometer atos de conduta ilícita ou imoral dentro do Hospital.</p>
+                <p><strong>XI -</strong> Descumprir reiteradamente as normas internas estabelecidas neste Regimento.</p>
+                <p><strong>XII -</strong> Apresentar conduta inadequada que prejudique a imagem e a reputação do Hospital Santorini Prime.</p>
+            </div>
+
+            <!-- Título VIII -->
+            <div class="article">
+                <h2>Título VIII: Das Disposições Finais</h2>
+                <p class="article-title">Artigo 27º</p>
+                <p>O presente Regimento Interno poderá ser alterado ou complementado mediante proposta da administração ou da equipe médica, devidamente aprovada pela direção do Hospital.</p>
+
+                <p class="article-title">Artigo 28º</p>
+                <p>Os casos omissos neste Regimento Interno serão resolvidos pela direção do Hospital, ouvida a equipe competente.</p>
+
+                <p class="article-title">Artigo 29º</p>
+                <p>Este Regimento Interno entra em vigor na data de sua publicação.</p>
+            </div>
+
+            <div class="signatures">
+                <h2>Assinaturas dos Fundadores</h2>
+                <div class="signature">Dr. Bryan dos Ouros - Fundador da Rede Santorini Prime</div>
+                <div class="signature">Dra. Nyxalis Nogueira - Fundadora da Rede Santorini Prime</div>
+                <div class="signature">Dra. Mia Deusa - Fundadora da Rede Santorini Prime</div>
+                <div class="signature">Dra. Rafaela Schaefer - Fundadora da Rede Santorini Prime</div>
+            </div>
+        </div>
+
+        <!-- Botão de Impressão -->
+        <button onclick="window.print()" class="print-button" title="Imprimir Regimento">
+            <i class="fas fa-print"></i>
+        </button>
+
+        <!-- Botão Voltar ao Topo -->
+        <a href="#" id="backToTop" class="back-to-top" title="Voltar ao topo">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </div>
+
+    <!-- Scripts Firebase e Lógica da Página -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- Include external config and UI scripts -->
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            // Poderia mostrar um erro na tela
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Elementos DOM ---
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const backToTop = document.getElementById('backToTop');
+
+        // --- Funções ---
+
+        // Função para configurar o botão "Voltar ao Topo"
+        function setupBackToTop() {
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                });
+
+                backToTop.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        }
+
+        // --- Autenticação e Carregamento ---
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // 1. BUSCAR DADOS DO USUÁRIO LOGADO ('usuarios')
+                const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                if (!userDoc.exists) {
+                    console.error("Usuário não encontrado no Firestore. Deslogando.");
+                    auth.signOut(); // Força logout se não encontrar dados
+                    return; // Impede a execução do restante do código
+                }
+                const userData = userDoc.data();
+                const userSystemLevel = parseInt(userData.nivel || 0); // Nível de acesso do sistema
+
+                // 2. BUSCAR NÍVEL HIERÁRQUICO E CARGO ('funcionarios') PARA O MENU
+                let userHierarchicalLevel = "N0"; // Default
+                let userCargo = userData.cargo || "Colaborador"; // Usa cargo do 'usuarios' como fallback
+
+                if (userData.nickHabbo) {
+                    try {
+                        const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", userData.nickHabbo).where("ativo", "==", true).limit(1).get();
+                        if (!funcQuery.empty) {
+                            const funcData = funcQuery.docs[0].data();
+                            userHierarchicalLevel = funcData.nivel || "N0";
+                            userCargo = funcData.cargo || userCargo; // Atualiza com cargo do 'funcionarios' se existir
+                        } else if (userSystemLevel >= 3) {
+                            userHierarchicalLevel = "N10"; // Admin/Superuser sem func = N10
+                            userCargo = "Fundador/Superuser";
+                        }
+                    } catch (funcError) {
+                        console.warn("Erro ao buscar dados do funcionário para o menu, usando fallback:", funcError);
+                        if (userSystemLevel >= 3) { userHierarchicalLevel = "N10"; userCargo = "Fundador/Superuser"; }
+                    }
+                } else if (userSystemLevel >= 3) {
+                    userHierarchicalLevel = "N10"; // Admin/Superuser sem nick = N10
+                    userCargo = "Fundador/Superuser";
+                }
+
+                // 3. ATUALIZAR HEADER DA SIDEBAR
+                welcomeHeader.textContent = userData.nome || "Usuário";
+                userRoleEl.textContent = userCargo;
+
+                // 4. GERAR E INSERIR O MENU DA SIDEBAR (usando shared-ui.js)
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                if (typeof generateSidebarMenu === 'function') {
+                    const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage, userSystemLevel); // Passa userSystemLevel também
+                    sidebarMenu.innerHTML = menuHtml;
+                } else {
+                    console.error("Erro: generateSidebarMenu() não encontrada.");
+                    sidebarMenu.innerHTML = '<p style="color:red;">Erro ao carregar menu.</p>';
+                }
+
+                // Não há componentes específicos desta página para inicializar aqui
+
+            } catch (error) {
+                console.error("Erro na autenticação ou carregamento:", error);
+                // Mostrar mensagem de erro genérica ou redirecionar
+                if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico.</p>';
+                // alert("Ocorreu um erro ao carregar seus dados. Tente novamente.");
+                // auth.signOut(); // Considerar deslogar em caso de erro crítico
+            }
+        });
+
+        // --- Inicialização ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para regimento_interno.html");
+
+            // Inicializa interações da sidebar (do shared-ui.js)
+            if (typeof initializeSidebarInteractions === 'function') {
+                 initializeSidebarInteractions();
+            } else {
+                 console.error("Erro: initializeSidebarInteractions() não encontrada.");
+            }
+
+            // Configura o botão "Voltar ao Topo"
+            setupBackToTop();
+
+            // A verificação de auth e carregamento do menu ocorrem em auth.onAuthStateChanged
+        });
+
+    </script>
+</body>
+</html>

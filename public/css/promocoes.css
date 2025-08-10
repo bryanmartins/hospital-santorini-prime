@@ -1,0 +1,148 @@
+/* ==========================================================================
+   Estilos Específicos para a Página de Promoções (promocoes.html)
+   ========================================================================== */
+
+/* Estilos para os Badges de Status (Reutilizando/Adaptando de pagamentos.css) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    gap: 5px;
+}
+
+.status-badge i {
+    font-size: 11px;
+}
+
+/* Verde para Apto */
+.status-apto {
+    background-color: var(--success);
+}
+
+/* Vermelho para Não Apto */
+.status-nao-apto {
+    background-color: var(--danger);
+}
+
+/* Cinza/Outra cor para status 'N/A' ou 'Fim de Trilha' */
+.status-na {
+    background-color: var(--text-light);
+    color: #fff;
+}
+
+/* Coluna de Justificativa */
+.justificativa-col {
+    font-size: 13px;
+    color: var(--text-light);
+    max-width: 350px;
+    white-space: normal;
+    line-height: 1.4;
+}
+
+/* --- NOVO: Estilos para a Célula de Ações --- */
+.data-table td:last-child { /* Estiliza a última célula (Ações) */
+    text-align: center; /* Centraliza o container de botões */
+    vertical-align: middle; /* Alinha verticalmente */
+    min-width: 180px; /* Garante espaço mínimo para os botões */
+}
+
+.action-buttons-column {
+    display: flex;
+    flex-direction: column; /* Empilha os botões */
+    align-items: center; /* Centraliza os botões horizontalmente */
+    gap: 5px; /* Espaço entre os botões */
+}
+
+/* Botão Promover */
+.btn-promover {
+    /* Estilos base vêm de .btn-success e .btn-sm */
+    width: 160px; /* Largura fixa para alinhamento */
+}
+
+.btn-promover:disabled {
+    background-color: #cccccc !important;
+    border-color: #bbbbbb !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+.btn-promover:disabled:hover {
+    background-color: #cccccc !important;
+}
+
+/* NOVO: Botão Imprimir Proposta */
+.btn-imprimir-proposta {
+    /* Estilos base vêm de .btn-info e .btn-sm */
+     background: var(--info); /* Cor azul informativa */
+     color: white;
+     width: 160px; /* Mesma largura do botão promover */
+}
+.btn-imprimir-proposta:hover {
+     background: #2980b9; /* Azul um pouco mais escuro no hover */
+     box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+     transform: translateY(-2px);
+}
+
+
+/* Ajustes Responsivos para Tabela de Promoções */
+@media (max-width: 992px) {
+    /* ... (mantém ajustes anteriores se necessário) ... */
+    .data-table td:last-child {
+         min-width: 150px; /* Reduz um pouco no tablet */
+    }
+     .btn-promover, .btn-imprimir-proposta {
+         width: 140px; /* Reduz largura dos botões */
+     }
+}
+
+@media (max-width: 768px) {
+    /* ... (mantém ajustes anteriores) ... */
+     .justificativa-col { max-width: none; font-size: 12px; }
+     .status-badge { min-width: 80px; padding: 4px 10px; font-size: 11px; }
+
+     .data-table td:last-child {
+        min-width: auto; /* Deixa a largura automática */
+        padding: 8px 5px; /* Menos padding na célula de ações */
+    }
+     .action-buttons-column {
+        flex-direction: row; /* Botões lado a lado no mobile */
+        justify-content: center; /* Centraliza os botões */
+        gap: 8px;
+     }
+    .btn-promover, .btn-imprimir-proposta {
+        width: auto; /* Largura automática */
+        padding: 6px 10px; /* Padding ajustado */
+        font-size: 11px;
+    }
+    .btn-promover i, .btn-imprimir-proposta i {
+        margin-right: 4px; /* Espaço menor do ícone */
+    }
+}
+
+@media (max-width: 480px) {
+     /* ... (mantém ajustes anteriores) ... */
+     .data-table th:nth-child(6), .data-table td:nth-child(6) { display: none; } /* Esconde Justificativa */
+     .data-table th:nth-child(5), .data-table td:nth-child(5) { display: none; } /* Esconde Novo Salário */
+
+    .action-buttons-column {
+        gap: 5px; /* Menor espaço entre botões */
+    }
+     .btn-promover, .btn-imprimir-proposta {
+        font-size: 10px;
+        padding: 5px 8px;
+     }
+     .btn-promover i, .btn-imprimir-proposta i {
+        display: none; /* Esconde ícones */
+     }
+}

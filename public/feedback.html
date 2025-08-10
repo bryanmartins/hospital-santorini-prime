@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Feedback - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/feedback.css">
+    <link rel="stylesheet" href="./css/cards.css"> </head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state"><span style="color: rgba(255,255,255,0.7); padding:20px;">Carregando...</span></div>
+        </div>
+        <div class="sidebar-footer">
+             <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button>
+            <a href="#" id="logoutBtn" class="menu-item"> <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-comment-dots"></i> Meu Feedback</h1>
+            <p class="page-subtitle">Visualize seus feedbacks e avaliações recebidos ao longo do tempo.</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+
+        <div class="quinzena-selector">
+            <span class="quinzena-label"><i class="fas fa-calendar-alt"></i> Selecione o Período:</span>
+            <div class="quinzena-dropdown">
+                <select id="quinzenaSelect" class="quinzena-select" disabled>
+                    <option value="" disabled selected>Carregando períodos...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="feedbackContainer" class="feedback-container">
+            <div class="loading-state">
+                 <div class="loading-spinner"></div>
+                 <div class="loading-text">Aguardando autenticação...</div>
+            </div>
+        </div>
+
+    </div> <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- Variáveis Globais ---
+        let currentUser = null;
+        let currentUserData = null; // Populado por fetchUserDataAndLevel
+        let userNivelHierarquico = ''; // Populado por fetchUserDataAndLevel
+
+        // --- Cache de Elementos DOM ---
+        const alertaContainer = document.getElementById('alertaContainer');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const quinzenaSelect = document.getElementById('quinzenaSelect');
+        const feedbackContainer = document.getElementById('feedbackContainer');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Auxiliares (Reutilizadas/Adaptadas) ---
+        function formatarData(dataInput, includeTime = false) { if (!dataInput) return 'N/A'; let data; let isDateOnlyString = false; try { if (dataInput.toDate) { data = dataInput.toDate(); } else if (dataInput instanceof Date) { data = dataInput; } else if (typeof dataInput === 'string' && dataInput.includes('-') && dataInput.length === 10) { isDateOnlyString = true; const parts = dataInput.split('-'); const year = parseInt(parts[0], 10); const month = parseInt(parts[1], 10); const day = parseInt(parts[2], 10); data = new Date(Date.UTC(year, month - 1, day)); data.setUTCHours(12, 0, 0, 0); } else { data = new Date(dataInput); } if (isNaN(data.getTime())) return 'Data Inválida'; const optionsDate = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' }; let formatted = data.toLocaleDateString('pt-BR', optionsDate); if (includeTime && !isDateOnlyString) { const optionsTime = { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }; formatted += ' às ' + data.toLocaleTimeString('pt-BR', optionsTime); } return formatted; } catch (e) { console.error("Erro ao formatar data:", e, dataInput); return 'Erro Data'; } }
+        function formatarPeriodoString(inicio, fim) { if (!inicio || !fim) return 'Período N/A'; return `${formatarData(inicio, false)} - ${formatarData(fim, false)}`; }
+        function showLoading() { if(feedbackContainer) feedbackContainer.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Carregando feedback...</div></div>`; }
+        function showNoFeedback(periodo) { if(feedbackContainer) feedbackContainer.innerHTML = `<div class="no-feedback"><i class="fas fa-inbox"></i><h3>Nenhum feedback</h3><p>Sem avaliação registrada para ${periodo}.</p></div>`; }
+        function showErrorFeedback(message, detail = '') { if(feedbackContainer) feedbackContainer.innerHTML = `<div class="no-feedback error"><i class="fas fa-exclamation-triangle"></i><h3>Erro</h3><p>${message}</p>${detail ? `<small>${detail}</small>` : ''}</div>`; }
+        function generateStars(nota) { const n = parseFloat(nota); let s = ''; if (isNaN(n)) return 'Inválido'; for (let i = 1; i <= 5; i++) { s += i <= n ? '<i class="fas fa-star star filled"></i>' : (i - 0.5 <= n ? '<i class="fas fa-star-half-alt star filled"></i>' : '<i class="far fa-star star"></i>'); } return s; }
+
+
+        // --- Lógica Principal ---
+
+        // Carrega quinzenas CONSOLIDADAS no dropdown
+        async function loadQuinzenasHistoricas() {
+             console.log("--- loadQuinzenasHistoricas ---");
+             if (!quinzenaSelect) return null;
+             quinzenaSelect.innerHTML = '<option value="" disabled>Carregando...</option>';
+             quinzenaSelect.disabled = true;
+             let primeiraQuinzenaId = null;
+             try {
+                 const historicoSnapshot = await db.collection('historicoQuinzenas').orderBy('consolidadaEm', 'desc').get();
+                 quinzenaSelect.innerHTML = '';
+                 if (!historicoSnapshot.empty) {
+                     historicoSnapshot.docs.forEach((doc, index) => {
+                         const d = doc.data(); const id = doc.id; if (!d.dataInicio || !d.dataFim) return;
+                         const periodoTexto = formatarPeriodoString(d.dataInicio, d.dataFim);
+                         const option = document.createElement('option'); option.value = id; option.textContent = periodoTexto;
+                         if (index === 0) { primeiraQuinzenaId = id; option.selected = true; }
+                         quinzenaSelect.appendChild(option);
+                     });
+                 } else { const option = document.createElement('option'); option.value = ""; option.textContent = "Nenhum histórico"; option.disabled = true; quinzenaSelect.appendChild(option); }
+                 console.log(`--- Quinzena mais recente ID: ${primeiraQuinzenaId}`);
+                 return primeiraQuinzenaId;
+             } catch (error) { console.error('--- Erro loadQuinzenasHistoricas:', error); showErrorFeedback("Não foi possível carregar períodos.", error.message); quinzenaSelect.innerHTML = '<option value="">Erro</option>'; return null;
+             } finally { quinzenaSelect.disabled = quinzenaSelect.options.length === 0 || (quinzenaSelect.options[0] && quinzenaSelect.options[0].disabled); }
+         }
+
+        // Carrega feedback do HISTÓRICO
+        async function loadFeedbackHistorico(quinzenaHistDocId) {
+            console.log(`--- loadFeedbackHistorico: QuinzenaHistID=${quinzenaHistDocId}`);
+            if (!currentUser) { showErrorFeedback("Usuário não autenticado."); return; }
+            // *** VERIFICAÇÃO ESSENCIAL ***
+            if (!currentUserData || !currentUserData.funcionarioId) {
+                 console.error("--- loadFeedbackHistorico: funcionarioId não encontrado em currentUserData:", currentUserData);
+                 showErrorFeedback("Vínculo Funcionário-Usuário Não Encontrado", `Não foi possível associar seu login (${currentUserData?.nickHabbo || currentUserData?.email || 'usuário'}). Verifique se seu cadastro de funcionário está ativo e correto.`);
+                 return; // Interrompe
+            }
+            // *****************************
+            const funcionarioId = currentUserData.funcionarioId;
+            if (!quinzenaHistDocId) { showGlobalMessage("warning", "Selecione um período válido.", "alertaContainer"); return; } // Usa alertaContainer
+            console.log(`--- Buscando feedback: FuncionarioID=${funcionarioId}, QuinzenaHistDocID=${quinzenaHistDocId}`);
+            showLoading();
+            try {
+                const query = db.collection('historicoAvaliacoes').where('funcionarioId', '==', funcionarioId).where('quinzenaIdHistorico', '==', quinzenaHistDocId).orderBy('dataConsolidacao', 'desc').limit(1);
+                const querySnapshot = await query.get();
+                if (!querySnapshot.empty) { displayFeedback(querySnapshot.docs[0].data(), quinzenaHistDocId); }
+                else { const periodoSelecionado = quinzenaSelect.options[quinzenaSelect.selectedIndex]?.textContent || `período ID ${quinzenaHistDocId}`; showNoFeedback(periodoSelecionado); }
+            } catch (error) { console.error(`--- Erro loadFeedbackHistorico quinzena ${quinzenaHistDocId}:`, error); showErrorFeedback(`Erro ao carregar o feedback.`, `Detalhe: ${error.message}`); }
+        }
+
+        // Renderiza o card de feedback (mantendo a versão sem nome do avaliador)
+        function displayFeedback(feedbackData, quinzenaIdHistDoc) {
+             console.log(`>>> displayFeedback: Renderizando ${quinzenaIdHistDoc}`);
+             if(!feedbackContainer) return;
+             const nota = parseFloat(feedbackData.nota || 0).toFixed(1);
+             const justificativa = feedbackData.justificativa || 'Nenhuma observação registrada.';
+             const dataConsolidacao = formatarData(feedbackData.dataConsolidacao, true);
+             const periodoTexto = formatarPeriodoString(feedbackData.periodoInicio, feedbackData.periodoFim);
+             // VERSÃO SEM MOSTRAR O AVALIADOR
+             feedbackContainer.innerHTML = `
+                 <div class="feedback-card"> <div class="feedback-header"> <div class="feedback-title"><i class="fas fa-calendar-check"></i> Período: ${periodoTexto}</div> <div class="feedback-date"><i class="fas fa-history"></i> Consolidado em: ${dataConsolidacao}</div> </div> <div class="feedback-info"> <div class="info-group" style="grid-column: 1 / -1;"> <div class="info-label"><i class="fas fa-star"></i> Sua Nota Final</div> <div class="rating-display"> <div class="rating-stars">${generateStars(nota)}</div> <div class="rating-value">${nota}/5.0</div> </div> </div> </div> <div class="feedback-observations"> <div class="observations-title"><i class="fas fa-comment-alt"></i> Observações Recebidas</div> <div class="observations-content">${justificativa.replace(/\n/g, '<br>')}</div> </div> </div>`;
+         }
+
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando feedback.html ===");
+
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+                currentUser = user;
+                console.log(`--- Usuário AUTENTICADO (UID: ${user.uid}).`);
+                showLoading();
+
+                try {
+                    // *** USA A FUNÇÃO PADRÃO CORRIGIDA DO shared-ui.js ***
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    if (!result) throw new Error("Falha ao carregar dados do usuário.");
+                    currentUserData = result.userData; // Guarda dados do usuário (com funcionarioId, se encontrado)
+                    userNivelHierarquico = result.hierarchicalLevel; // Guarda Nível N1-N10
+
+                    console.log(`--- Dados (Fetch Padrão): ${currentUserData.nome}, Nível Hier: ${userNivelHierarquico}, Nível Acesso: ${currentUserData.nivelAcesso}, FuncionarioID: ${currentUserData.funcionarioId}`);
+
+                    // Redireciona Admin
+                    if (userNivelHierarquico === 'N10' || currentUserData.nivelAcesso >= 2) {
+                        console.warn("--- Usuário é Admin/N10. Redirecionando...");
+                        window.location.href = 'dashboard.html'; return;
+                    }
+
+                    // ---- Usuário Comum ----
+                    // Atualizar UI Sidebar (Usa função do shared-ui.js)
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Colaborador";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Colaborador";
+                    const currentPage = window.location.pathname.split('/').pop();
+                    if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(userNivelHierarquico, currentPage); } else { console.error("generateSidebarMenu não encontrada"); }
+                    if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); } else { console.error("initializeSidebarInteractions não encontrada"); }
+
+                    // *** VERIFICAÇÃO DE funcionarioId ***
+                    if (!currentUserData.funcionarioId) {
+                        console.error("--- ERRO: funcionarioId não encontrado para este usuário.");
+                        showErrorFeedback("Vínculo Funcionário-Usuário Não Encontrado", `Não foi possível associar seu login (${currentUserData.nickHabbo || currentUserData.email}). Verifique se seu nick no perfil está correto e se você possui um registro de funcionário ATIVO. Contate a administração se o problema persistir.`);
+                        if(quinzenaSelect) { quinzenaSelect.innerHTML = '<option value="">--</option>'; quinzenaSelect.disabled = true; }
+                        return; // Interrompe
+                    }
+                    // *************************************
+
+                    // Carrega quinzenas e feedback inicial
+                    const quinzenaInicialId = await loadQuinzenasHistoricas();
+                    if (quinzenaInicialId) {
+                        await loadFeedbackHistorico(quinzenaInicialId);
+                    } else {
+                         if(feedbackContainer.innerHTML.includes('loading-state')) { showNoFeedback("nenhum período histórico"); }
+                    }
+
+                    // Adiciona listener para mudança no select
+                    if (quinzenaSelect && !quinzenaSelect.listenerAdded) {
+                        quinzenaSelect.addEventListener('change', function() {
+                             loadFeedbackHistorico(this.value); // A verificação de funcionarioId já ocorreu
+                        });
+                        quinzenaSelect.listenerAdded = true;
+                    }
+
+                } catch (error) {
+                    console.error("Erro crítico na inicialização:", error);
+                    showErrorFeedback("Erro ao carregar a página.", error.message);
+                }
+            }); // Fim onAuthStateChanged
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

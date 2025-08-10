@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Pontos - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/cards.css">
+    <link rel="stylesheet" href="./css/pontos.css"> </head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state"><span style="color: rgba(255,255,255,0.7); padding:20px;">Carregando...</span></div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button>
+            <a href="#" id="logoutBtn" class="menu-item"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-clock"></i> Controle de Pontos</h1>
+            <p class="page-subtitle">Gerencie os pontos de desempenho dos funcionários do hospital</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+
+        <div class="form-card">
+            <div class="form-card-header"><div class="form-card-title"><i class="fas fa-plus-minus"></i> Adicionar ou Remover Pontos</div></div>
+            <div class="form-card-body">
+                <form id="pontosForm">
+                    <div class="form-group">
+                        <label class="form-label" for="funcionario">Funcionário</label>
+                        <div class="select-wrapper">
+                            <select id="funcionario" class="form-control" required>
+                                <option value="">Carregando funcionários...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="pontos">Quantidade de Pontos</label>
+                        <input type="number" id="pontos" class="form-control" placeholder="Pontos" required>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn btn-primary btn-block">
+                        <i class="fas fa-save"></i> Salvar Alteração
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+             <div class="card-header"><div class="card-title"><i class="fas fa-users"></i> Ranking de Pontos</div></div>
+             <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>NICK DO HABBO</th>
+                                <th>CARGO</th>
+                                <th>TOTAL DE PONTOS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pontosBody">
+                            <tr class="empty-state" id="loading-row">
+                                <td colspan="3"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // --- Variáveis Globais ---
+        let currentUserData = null;
+
+        // --- Cache de Elementos DOM ---
+        const alertaContainer = document.getElementById('alertaContainer');
+        const pontosBody = document.getElementById('pontosBody');
+        const funcionarioSelect = document.getElementById('funcionario');
+        const pontosForm = document.getElementById('pontosForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Específicas da Página ---
+
+        // Carrega funcionários ativos no dropdown
+        async function carregarFuncionariosNoDropdown() {
+             console.log("Carregando funcionários no dropdown...");
+             funcionarioSelect.innerHTML = '<option value="">Carregando...</option>';
+             funcionarioSelect.disabled = true;
+             try {
+                 const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get();
+                 if (funcionariosSnapshot.empty) { showGlobalMessage("info", "Nenhum funcionário ativo encontrado."); funcionarioSelect.innerHTML = '<option value="">Nenhum</option>'; return; }
+                 const funcionarios = funcionariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => (a.nickHabbo || '').localeCompare(b.nickHabbo || ''));
+                 funcionarioSelect.innerHTML = '<option value="">Selecione o Funcionário</option>';
+                 funcionarios.forEach(func => { const option = document.createElement('option'); option.value = func.id; option.textContent = `${func.nickHabbo || 'N/A'} (${func.cargo || 'Sem cargo'})`; funcionarioSelect.appendChild(option); });
+                 funcionarioSelect.disabled = false;
+                 console.log(`${funcionarios.length} funcionários carregados.`);
+             } catch (error) { console.error("Erro ao carregar funcionários:", error); showGlobalMessage("error", "Erro ao carregar funcionários: " + error.message); funcionarioSelect.innerHTML = '<option value="">Erro</option>'; }
+        }
+
+        // Adiciona ou remove pontos
+        async function adicionarPontos(event) {
+            event.preventDefault();
+            console.log("Tentando adicionar/remover pontos...");
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            try {
+                const user = auth.currentUser; if (!user) { throw new Error("Usuário não autenticado."); }
+                if (!currentUserData || currentUserData.nivelAcesso < 2) { throw new Error("Permissão insuficiente (Nível 2+ requerido)."); }
+                const funcionarioId = funcionarioSelect.value; const pontosInput = document.getElementById('pontos'); const pontos = parseInt(pontosInput.value);
+                if (!funcionarioId) { throw new Error("Selecione um funcionário."); } if (isNaN(pontos)) { throw new Error("Insira uma quantidade válida de pontos."); }
+                const funcionarioRef = db.collection("funcionarios").doc(funcionarioId);
+                await db.runTransaction(async (transaction) => {
+                    const funcDoc = await transaction.get(funcionarioRef); if (!funcDoc.exists) { throw new Error("Funcionário não encontrado."); }
+                    const dadosFuncionario = funcDoc.data(); const pontosAtuais = dadosFuncionario.totalPontos || 0; const novoTotalPontos = pontosAtuais + pontos;
+                    transaction.update(funcionarioRef, { totalPontos: novoTotalPontos, ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp() });
+                    const historicoRef = db.collection("pontos").doc();
+                    transaction.set(historicoRef, { funcionarioId: funcionarioId, funcionarioNome: dadosFuncionario.nickHabbo || 'N/A', cargo: dadosFuncionario.cargo || 'N/A', nivel: dadosFuncionario.nivel || 'N/A', pontos: pontos, totalPontosAposOperacao: novoTotalPontos, data: firebase.firestore.FieldValue.serverTimestamp(), usuarioResponsavel: user.uid, usuarioNome: currentUserData.nome || 'Usuário desconhecido', usuarioNivel: currentUserData.nivelAcesso });
+                });
+                const funcNick = funcionarioSelect.options[funcionarioSelect.selectedIndex].text.split(' (')[0];
+                 const funcDocApos = await db.collection("funcionarios").doc(funcionarioId).get();
+                 const novoTotalReal = funcDocApos.exists() ? funcDocApos.data().totalPontos || 0 : 'N/A'; // Verifica se existe antes de ler
+                showGlobalMessage("success", `Pontos atualizados! ${pontos > 0 ? '+' : ''}${pontos} para ${funcNick}. Novo total: ${novoTotalReal}`);
+                pontosForm.reset(); await carregarPontos();
+            } catch (error) { console.error("Erro ao adicionar pontos:", error); showGlobalMessage("error", `Erro: ${error.message}`);
+            } finally { submitBtn.disabled = false; submitBtn.innerHTML = originalText; }
+        }
+
+        // Configuração de pontos mínimos por cargo (copiado do arquivo antigo)
+        const cargosConfig = { departamentos: { DECLIN: { nome: "Departamento Clínico", cargos: { N1: [ {cargo: "Clinica Geral", pontos: 15}, {cargo: "Cirurgia", pontos: 15}, {cargo: "Enfermagem", pontos: 15}, {cargo: "Pediatria", pontos: 15}, {cargo: "Obstetrícia", pontos: 15} ], N2: [ {cargo: "Chefe de Clínica Geral", pontos: 25}, {cargo: "Chefe de Cirurgia", pontos: 25}, {cargo: "Chefe de Enfermagem", pontos: 25}, {cargo: "Chefe de Pediatria", pontos: 25}, {cargo: "Chefe de Obstetrícia", pontos: 25} ], N4: [ {cargo: "Supervisor Clínico", pontos: 40}, {cargo: "Supervisor Materno-Infantil", pontos: 40} ], N5: [ {cargo: "Coordenador Clinico", pontos: 45} ] } }, DOPH: { nome: "Departamento de Operações e Performance Humana", cargos: { N1: [ {cargo: "Psicologia", pontos: 15}, {cargo: "Psiquiatria", pontos: 15}, {cargo: "Segurança", pontos: 15}, {cargo: "Recepção", pontos: 15} ], N2: [ {cargo: "Chefe de Psicologia", pontos: 25}, {cargo: "Chefe de Psiquiatria", pontos: 25}, {cargo: "Chefe de Segurança", pontos: 25}, {cargo: "Chefe de Recepção", pontos: 25} ], N3: [ {cargo: "Analista", pontos: 35} ], N4: [ {cargo: "Supervisor de Saúde Mental", pontos: 40}, {cargo: "Supervisor de Operações", pontos: 40} ], N5: [ {cargo: "Coordenador de Operações e Saúde Mental", pontos: 45} ] } }, DEX: { nome: "Departamento Executivo", cargos: { N6: [{cargo: "Vice-Diretor", pontos: 50}], N7: [{cargo: "Diretor", pontos: 50}], N8: [{cargo: "Vice-Presidente", pontos: 55}], N9: [{cargo: "Presidente", pontos: 55}], N10: [{cargo: "Fundador", pontos: null}] } } } };
+
+        // Função para buscar pontos mínimos (copiado do arquivo antigo)
+        function getMinimumPointsRequired(cargo) {
+            for (const deptKey in cargosConfig.departamentos) {
+                const dept = cargosConfig.departamentos[deptKey];
+                for (const nivel in dept.cargos) {
+                    const cargoInfo = dept.cargos[nivel].find(c => c.cargo === cargo);
+                    if (cargoInfo && cargoInfo.pontos !== null) { return cargoInfo.pontos; }
+                }
+            }
+            console.warn(`Pontos mínimos não definidos para "${cargo}". Assumindo 0.`);
+            return 0;
+        }
+
+        // Carrega e exibe a tabela de pontos com ranking e cores
+        async function carregarPontos() {
+            console.log("Carregando tabela de pontos...");
+            pontosBody.innerHTML = `<tr class="empty-state loading"><td colspan="3"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr>`;
+
+            try {
+                const querySnapshot = await db.collection("funcionarios")
+                                             .where("ativo", "==", true)
+                                             .orderBy("totalPontos", "desc")
+                                             .get();
+
+                if (querySnapshot.empty) {
+                    pontosBody.innerHTML = `<tr class="empty-state"><td colspan="3"><i class="fas fa-info-circle"></i><p>Nenhum funcionário ativo encontrado.</p></td></tr>`;
+                    return;
+                }
+
+                pontosBody.innerHTML = ''; // Limpa tabela
+
+                // ***** CORREÇÃO AQUI: Usar querySnapshot.docs.forEach *****
+                querySnapshot.docs.forEach((doc, index) => { // <<< MUDANÇA AQUI
+                    const funcionario = { id: doc.id, ...doc.data() };
+                    const tr = document.createElement('tr');
+                    const pontos = funcionario.totalPontos || 0;
+                    const cargo = funcionario.cargo || 'N/A';
+
+                    const minimumPoints = getMinimumPointsRequired(cargo);
+                    const isSufficient = typeof minimumPoints === 'number' && pontos >= minimumPoints;
+                    const pointsClass = isSufficient ? 'points-sufficient' : 'points-insufficient';
+
+                    // Gera rank HTML (agora 'index' deve ser um número)
+                    let rankHtml = '';
+                    const rankNumber = index + 1; // 'index' agora vem do .docs.forEach
+                    if (typeof index === 'number' && !isNaN(rankNumber)) {
+                        if (index < 3) {
+                            rankHtml = `<span class="rank-number rank-${rankNumber}">${rankNumber}</span>`;
+                        } else {
+                            rankHtml = `<span class="rank-number">${rankNumber}</span>`;
+                        }
+                    } else {
+                         console.error(`ERRO Rank: index inválido! index=${index}, rankNumber=${rankNumber}`);
+                         rankHtml = `<span class="rank-number" style="background:red;color:white;">ERR</span>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>${rankHtml} ${funcionario.nickHabbo || 'N/A'}</td>
+                        <td>${cargo}</td>
+                        <td><span class="points-badge ${pointsClass}">${pontos} pts</span></td>
+                    `;
+                    pontosBody.appendChild(tr);
+                });
+                console.log(`${querySnapshot.size} funcionários carregados na tabela.`);
+
+            } catch (error) {
+                console.error("Erro ao carregar pontos:", error);
+                pontosBody.innerHTML = `<tr class="empty-state error"><td colspan="3"><i class="fas fa-exclamation-triangle"></i><p>Erro: ${error.message}</p></td></tr>`;
+                showGlobalMessage("error", "Erro ao carregar o ranking: " + error.message);
+                 if (error.code === 'failed-precondition' && error.message.includes('index')) {
+                     showGlobalMessage("warning", "Pode ser necessário criar um índice no Firestore para (ativo == true, totalPontos DESC).");
+                 }
+            }
+        }
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando controle_pontos.html ===");
+
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+
+                try {
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    currentUserData = result.userData;
+                    const userHierarchicalLevel = result.hierarchicalLevel;
+
+                    console.log(`--- Usuário carregado: ${currentUserData.nome}, Nível Hierárquico: ${userHierarchicalLevel}, Nível Acesso: ${currentUserData.nivelAcesso}`);
+
+                    // Permissão: Apenas N10
+                    if (userHierarchicalLevel !== 'N10') {
+                        console.warn("Acesso Negado: Apenas N10.");
+                        document.body.innerHTML = `<div style='text-align: center; margin-top: 50px;'><h1>Acesso Negado</h1><p>Você não tem permissão.</p><a href='dashboard.html'>Voltar</a></div>`;
+                        return;
+                    }
+
+                    // Atualizar UI Sidebar
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Admin";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Administrador";
+                    const currentPage = window.location.pathname.split('/').pop();
+                    if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(userHierarchicalLevel, currentPage); }
+                    else { console.error("generateSidebarMenu não encontrada"); }
+                    if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); }
+                    else { console.error("initializeSidebarInteractions não encontrada"); }
+
+                    // Carrega dados da página
+                    await carregarFuncionariosNoDropdown();
+                    await carregarPontos();
+
+                    // Adiciona listener do form
+                    if(pontosForm) { pontosForm.addEventListener('submit', adicionarPontos); }
+                    else { console.error("Formulário #pontosForm não encontrado!"); }
+
+                } catch (error) {
+                    console.error("Erro crítico na inicialização:", error);
+                    showGlobalMessage("error", "Erro ao carregar dados: " + error.message);
+                }
+            }); // Fim onAuthStateChanged
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

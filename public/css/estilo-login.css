@@ -1,0 +1,236 @@
+/* --- CSS Completo da Versão Anterior --- */
+        /* ... (Todo o CSS anterior permanece aqui) ... */
+         /* --- Reset Básico & Variáveis --- */
+         :root {
+             --primary-blue: #1e90ff; --secondary-blue: #4682b4; --light-blue: #a0d8ef;
+             --dark-blue: #2c3e50; --darker-blue-bg: #27394b; --background-light: #f8f9fa;
+             --text-color: #495057; --text-color-light: #ffffff; --gray-light: #dee2e6;
+             --gray-medium: #adb5bd; --white: #ffffff; --error-red: #dc3545; --success-green: #198754;
+             --error-bg-light: rgba(220, 53, 69, 0.1); --success-bg-light: rgba(25, 135, 84, 0.1);
+             --error-color-lightbg: var(--error-red); --success-color-lightbg: var(--success-green);
+             --error-color-darkbg: #ff8a8a; --success-color-darkbg: #a5d6a7;
+             --error-bg-dark: rgba(255, 82, 82, 0.15); --success-bg-dark: rgba(100, 221, 23, 0.1);
+             /* Adicionando cores para o modal dentro do container de login (glassmorphism) */
+             --error-color-glassbg: #f8d7da; --success-color-glassbg: #d1e7dd;
+             --error-bg-glass: rgba(220, 53, 69, 0.2); --success-bg-glass: rgba(25, 135, 84, 0.2);
+             --font-montserrat: 'Montserrat', sans-serif; --font-tenor: 'Tenor Sans', sans-serif;
+         }
+         * { margin: 0; padding: 0; box-sizing: border-box; }
+         html { font-size: 100%; }
+         body {
+             font-family: var(--font-montserrat); height: 100vh; display: flex;
+             justify-content: center; align-items: center;
+             background: linear-gradient(135deg, #1a2a6c, #1e90ff, #4682b4);
+             background-size: 300% 300%; animation: gradientFlow 25s ease infinite alternate;
+             overflow: hidden; position: relative; color: var(--text-color-light);
+         }
+         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+         .bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; }
+         .hexagon-grid { position: absolute; width: 100%; height: 100%; background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSI0OSIgdmlld0JveD0iMCAwIDI4IDQ5Ij48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMiIgc3Ryb2tlLXdpZHRoPSIwLjUiPjxwYXRoIGQ9Ik0xMy45OTk5OTc4LDkuNTQxNDc0NzkgTDEzLjk5OTk5NzgsMzguNTQxNDc0OCBMMjcuNTk4MDc2MiwyMy45OTk5OTc4IEwxMy45OTk5OTc4LDkuNTQxNDc0NzkgWiI+PC9wYXRoPjxwYXRoIGQ9Ik0xMy45OTk5OTc4LDkuNTQxNDc0NzkgTDAuNDAxOTE5NDk3LDIzLjk5OTk5NzggTDEzLjk5OTk5NzgsMzguNTQxNDc0OCBMMTMuOTk5OTk5NzgsOS41NDE0NzQ3OSBaIj48L3BhdGg+PC9nPjwvZz48L3N2Zz4='); opacity: 0; animation: fadeInGrid 5s ease 1s forwards; }
+         @keyframes fadeInGrid { to { opacity: 0.08; } }
+         .bg-circle { position: absolute; border-radius: 50%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.15); transition: transform 0.2s ease-out; opacity: 0; animation: floatCircle 20s infinite alternate ease-in-out, fadeInCircle 2s ease forwards; }
+         .circle1 { width: 500px; height: 500px; top: -250px; left: -100px; animation-duration: 22s, 2s; animation-delay: 1s, 0.5s; }
+         .circle2 { width: 400px; height: 400px; bottom: -150px; right: -150px; animation-duration: 18s, 2s; animation-delay: 0.5s, 0.8s; animation-direction: alternate-reverse, normal; }
+         .circle3 { width: 300px; height: 300px; top: 60%; left: 10%; animation-duration: 25s, 2s; animation-delay: 0s, 1.2s; }
+         .circle4 { width: 200px; height: 200px; top: 10%; right: 5%; animation-duration: 20s, 2s; animation-delay: 1.5s, 1.5s; }
+         @keyframes floatCircle { 0% {} 100% { transform: translate(25px, 35px) rotate(15deg) scale(1.05); } }
+         @keyframes fadeInCircle { to { opacity: 0.6; } }
+         .initial-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; gap: 3rem; z-index: 10; pointer-events: none; opacity: 1; animation: fadeOutInitialContainer 0.5s ease-out 3.5s forwards; }
+         @keyframes fadeOutInitialContainer { to { opacity: 0; } }
+         .logo-animation { width: 180px; height: auto; filter: drop-shadow(0 5px 15px rgba(30, 144, 255, 0.5)); opacity: 0; transform: scale(0.8); animation: logoAppearSimple 1.0s ease-out 0.3s forwards; }
+         @keyframes logoAppearSimple { from { opacity: 0; transform: scale(0.8) translateX(-20px); } to { opacity: 1; transform: scale(1) translateX(0); } }
+         .animated-slogan-wrapper { width: 320px; opacity: 1; text-align: left; }
+         .animated-slogan { font-family: var(--font-montserrat); font-size: 0.95rem; font-weight: 500; color: var(--text-color-light); line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); font-style: italic; display: inline-block; opacity: 0; transform: translateY(15px); animation: fadeSlideUpSlogan 1.2s ease-out 1s forwards; }
+         @keyframes fadeSlideUpSlogan { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+         .login-container { background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 2.5rem 3rem; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.2); width: 90%; max-width: 430px; text-align: center; z-index: 2; position: relative; opacity: 0; transform: translateY(30px); animation: fadeInUp 1s ease-out 4s forwards; }
+         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+         .login-header-internal { margin-bottom: 2rem; }
+         .login-header-internal img#internal-logo { display: block; margin: 0 auto 1rem auto; max-width: 90px; height: auto; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)); }
+         .login-header-internal h1 { font-family: var(--font-tenor); font-size: 1.5rem; color: var(--text-color-light); margin-bottom: 0.2rem; font-weight: 400; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
+         .login-header-internal h2 { font-size: 0.95rem; font-weight: 400; color: rgba(255, 255, 255, 0.8); margin-bottom: 1.8rem; }
+         #loginForm { width: 100%; }
+         .form-group { margin-bottom: 1.8rem; position: relative; }
+         .login-container .form-group label { font-size: 0.85rem; font-weight: 500; color: rgba(255, 255, 255, 0.7); position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%); padding: 0 0.4rem; transition: all 0.25s ease; pointer-events: none; opacity: 1; }
+         .form-group input { width: 100%; padding: 0.9rem 1rem; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; font-family: var(--font-montserrat); font-size: 0.95rem; color: var(--text-color-light); transition: all 0.25s ease; background-color: rgba(255, 255, 255, 0.08); outline: none; }
+         .form-group input:-webkit-autofill, .form-group input:-webkit-autofill:hover, .form-group input:-webkit-autofill:focus, .form-group input:-webkit-autofill:active { -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.08) inset !important; box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.08) inset !important; -webkit-text-fill-color: #fff !important; }
+         .form-group input:focus { border-color: rgba(30, 144, 255, 0.8); background-color: rgba(255, 255, 255, 0.12); box-shadow: 0 0 15px rgba(30, 144, 255, 0.4); }
+         /* Label animation adjustment for glassmorphism */
+         .login-container .form-group input:focus + label,
+         .login-container .form-group input:not(:placeholder-shown) + label {
+             top: 0;
+             transform: translateY(-50%) scale(0.85);
+             color: var(--light-blue);
+             font-weight: 600;
+             opacity: 1;
+             /* Adjusted background for better visibility on glass */
+             background: linear-gradient(to bottom, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.7));
+             border-radius: 3px;
+             padding: 0.1rem 0.4rem; /* Slightly more padding */
+         }
+         .form-group input::placeholder { color: transparent; } /* Keep placeholder hidden */
+         .btn-submit { background: linear-gradient(45deg, #1e90ff, #00bfff, #1e90ff); background-size: 200% auto; color: var(--white); padding: 0.9rem 1.5rem; border: none; border-radius: 8px; font-family: var(--font-montserrat); font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; transition: all 0.4s ease; margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; position: relative; overflow: hidden; z-index: 1; box-shadow: 0 5px 15px rgba(0, 191, 255, 0.2); }
+         .btn-submit::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transition: left 0.6s ease; z-index: -1; transform: skewX(-25deg); }
+         .btn-submit:hover { background-position: right center; transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(0, 191, 255, 0.4); }
+         .btn-submit:hover::before { left: 100%; }
+         .btn-submit:active { transform: translateY(-1px) scale(1); box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3); }
+         .btn-submit:disabled { cursor: not-allowed; opacity: 0.7; background: var(--secondary-blue); } /* Estilo para botão desabilitado */
+         .login-footer { margin-top: 1.8rem; width: 100%; }
+         .links { font-size: 0.85rem; margin-bottom: 1.5rem; text-align: center; }
+         .links a { color: var(--light-blue); text-decoration: none; font-weight: 500; transition: all 0.3s ease; position: relative; padding-bottom: 2px; cursor: pointer; }
+         .links a::after { content: ''; position: absolute; width: 0; height: 1px; bottom: 0; left: 50%; background: var(--light-blue); transition: all 0.3s ease; transform: translateX(-50%); }
+         .links a:hover { color: var(--white); text-shadow: 0 0 8px rgba(173, 216, 230, 0.7); }
+         .links a:hover::after { width: 100%; }
+         .divider { display: flex; align-items: center; text-align: center; margin-bottom: 1.5rem; color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 500; }
+         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+         .divider:not(:empty)::before { margin-right: .5em; }
+         .divider:not(:empty)::after { margin-left: .5em; }
+         .social-login-buttons { display: flex; justify-content: center; gap: 1rem; width: 100%; }
+         .social-login-button { display: flex; align-items: center; justify-content: center; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.9); font-family: var(--font-montserrat); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; flex-grow: 1; text-align: center; backdrop-filter: blur(3px); }
+         .social-login-button img { width: 18px; height: 18px; margin-right: 0.6rem; filter: brightness(0) invert(1); }
+         .social-login-button:hover { border-color: rgba(255, 255, 255, 0.5); background-color: rgba(255, 255, 255, 0.15); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+         .message-area { margin-top: 1.5rem; width: 100%; min-height: 1px; /* Garante espaço mesmo vazio */ }
+         /* Mensagens de Erro/Sucesso no Login Container (Glass) */
+         .login-container .error-message,
+         .login-container .success-message {
+             font-size: 0.85rem; border-radius: 8px;
+             display: none; visibility: hidden; width: 100%;
+             text-align: center; font-weight: 500;
+             padding: 0; margin: 0;
+             border: none; /* Borda adicionada via JS */
+             background-color: transparent; /* Fundo adicionado via JS */
+             box-shadow: none; /* Sombra adicionada via JS */
+             backdrop-filter: none; /* Filtro adicionado via JS */
+             height: 0; overflow: hidden;
+             transition: all 0.3s ease, opacity 0.3s ease, height 0.3s ease, padding 0.3s ease, margin-top 0.3s ease, border 0.3s ease; /* Transições suaves */
+             opacity: 0; /* Inicia transparente */
+         }
+         @keyframes messageAppear {
+             from { opacity: 0; transform: translateY(-10px); }
+             to { opacity: 1; transform: translateY(0); }
+         }
+         /* Estilos específicos quando visíveis (aplicados via JS) */
+         .login-container .error-message.visible {
+             color: var(--error-color-glassbg);
+             background-color: var(--error-bg-glass);
+             border: 1px solid rgba(255, 138, 138, 0.5);
+             box-shadow: 0 0 10px rgba(255, 82, 82, 0.3);
+             backdrop-filter: blur(2px);
+             display: block; visibility: visible; height: auto;
+             padding: 0.8rem 1rem; margin-top: 1.5rem; opacity: 1;
+         }
+         .login-container .success-message.visible {
+             color: var(--success-color-glassbg);
+             background-color: var(--success-bg-glass);
+             border: 1px solid rgba(165, 214, 167, 0.5);
+             box-shadow: 0 0 10px rgba(100, 221, 23, 0.3);
+             backdrop-filter: blur(2px);
+             display: block; visibility: visible; height: auto;
+             padding: 0.8rem 1rem; margin-top: 1.5rem; opacity: 1;
+         }
+
+         /* --- Modal (Dark Opaque Refinado) --- */
+         .modal {
+             display: none; /* Inicia oculto */
+             position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+             overflow: auto; background-color: rgba(44, 62, 80, 0.75);
+             backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+             /* Usar flex para centralizar vertical e horizontalmente */
+             align-items: center; justify-content: center;
+         }
+         .modal-content {
+             background-color: var(--dark-blue); color: var(--text-color-light);
+             padding: 2.5rem 3rem; border-radius: 12px; width: 90%; max-width: 480px;
+             position: relative; display: flex; flex-direction: column; align-items: center;
+             animation: modalFade 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); border: none;
+         }
+         @keyframes modalFade {
+             from { opacity: 0; transform: translateY(-40px) scale(0.98); }
+             to { opacity: 1; transform: translateY(0) scale(1); }
+         }
+         .modal-content h2 {
+             color: var(--text-color-light); text-shadow: none; font-size: 1.6rem;
+             font-family: var(--font-tenor); margin-bottom: 2.5rem; font-weight: 400;
+             width: 100%; text-align: center;
+         }
+         .modal-content .form-group { margin-bottom: 1.8rem; width:100%; }
+         .modal-content .form-group label { /* Simplificado: Label sempre visível acima */
+             display: block; font-size: 0.85rem; font-weight: 600;
+             color: rgba(255, 255, 255, 0.8); margin-bottom: 0.8rem; text-align: left;
+         }
+         .modal-content .form-group input {
+             color: var(--text-color-light); border: 1px solid rgba(255, 255, 255, 0.3);
+             background-color: rgba(255, 255, 255, 0.08); width: 100%;
+             padding: 0.9rem 1rem; border-radius: 8px; font-family: var(--font-montserrat);
+             font-size: 0.95rem; transition: all 0.25s ease; outline: none;
+         }
+         .modal-content .form-group input:-webkit-autofill {
+             -webkit-box-shadow: 0 0 0 30px var(--darker-blue-bg, #27394b) inset !important;
+             box-shadow: 0 0 0 30px var(--darker-blue-bg, #27394b) inset !important;
+             -webkit-text-fill-color: var(--text-color-light) !important;
+         }
+         .modal-content .form-group input:focus {
+             border-color: var(--primary-blue); background-color: rgba(255, 255, 255, 0.1);
+             box-shadow: 0 0 12px rgba(30, 144, 255, 0.3);
+         }
+         .modal-content .form-group input::placeholder { color: rgba(255, 255, 255, 0.4); opacity: 1; }
+         .modal-content button.btn-submit { margin-top: 1rem; } /* Espaçamento botão modal */
+         .modal-content .close-button {
+             position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px;
+             background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7);
+             border: none; border-radius: 50%; font-size: 1.1rem; line-height: 32px;
+             text-align: center; cursor: pointer; transition: all 0.3s ease; font-weight: bold;
+         }
+         .modal-content .close-button:hover {
+             background: rgba(255, 255, 255, 0.2); color: var(--white);
+             transform: rotate(90deg) scale(1.1);
+         }
+         .modal-content .message-area { width: 100%; margin-top: 1.5rem; min-height: 1px; }
+         /* Mensagens de Erro/Sucesso no Modal (Dark) */
+         .modal-content .error-message,
+         .modal-content .success-message {
+             font-size: 0.85rem; border-radius: 8px;
+             display: none; visibility: hidden; width: 100%;
+             text-align: center; font-weight: 500;
+             padding: 0; margin: 0;
+             border: none; /* Borda via JS */
+             background-color: transparent; /* Fundo via JS */
+             height: 0; overflow: hidden;
+             transition: all 0.3s ease, opacity 0.3s ease, height 0.3s ease, padding 0.3s ease, margin-top 0.3s ease, border 0.3s ease;
+             opacity: 0;
+         }
+         /* Estilos específicos quando visíveis (aplicados via JS) */
+         .modal-content .error-message.visible {
+             color: var(--error-color-darkbg);
+             background-color: var(--error-bg-dark);
+             border: 1px solid rgba(255, 138, 138, 0.4); /* Borda escura */
+             display: block; visibility: visible; height: auto;
+             padding: 0.8rem 1rem; margin-top: 1.5rem; opacity: 1;
+         }
+         .modal-content .success-message.visible {
+             color: var(--success-color-darkbg);
+             background-color: var(--success-bg-dark);
+             border: 1px solid rgba(165, 214, 167, 0.4); /* Borda escura */
+             display: block; visibility: visible; height: auto;
+             padding: 0.8rem 1rem; margin-top: 1.5rem; opacity: 1;
+         }
+
+         /* --- Ajustes Responsivos --- */
+         @media (max-width: 768px) {
+            body { align-items: flex-start; padding-top: 5vh; }
+            .initial-animation-container { flex-direction: column; text-align: center; gap: 1.5rem; }
+            .logo-animation { width: 150px; }
+            .animated-slogan-wrapper { width: 90%; }
+            .login-container { padding: 2rem 1.5rem; margin-top: 0; /* Remove margin if initial animation is hidden */ }
+            .modal-content { padding: 2rem 1.5rem; }
+         }
+         @media (max-width: 480px) {
+            :root { --font-size-base: 95%; } /* Ajusta base da fonte */
+            .login-container { padding: 1.8rem 1.2rem; max-width: 95%; }
+            .login-header-internal h1 { font-size: 1.3rem; }
+            .login-header-internal h2 { font-size: 0.9rem; }
+            .form-group input, .btn-submit, .social-login-button { font-size: 0.9rem; padding: 0.8rem 1rem; }
+            .social-login-buttons { flex-direction: column; gap: 0.8rem; }
+            .modal-content { padding: 1.8rem 1.2rem; max-width: 95%; }
+            .modal-content h2 { font-size: 1.4rem; }
+         }

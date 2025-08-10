@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Funcionários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral (Estrutura Dinâmica) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2> <!-- Atualizado dinamicamente -->
+            <span class="user-role">Carregando...</span> <!-- Atualizado dinamicamente -->
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item"> <!-- ID mantido para logout -->
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal Redesenhado -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-users"></i>
+                Lista de Funcionários
+            </h1>
+            <p class="page-subtitle">Gerencie todos os colaboradores do Hospital Santorini Prime</p>
+        </div>
+
+        <!-- Mensagem de Feedback -->
+        <div id="mensagem" style="display: none;"></div> <!-- Estilo display:none adicionado -->
+
+        <!-- Tabela de Funcionários -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-list"></i>
+                    Funcionários Cadastrados
+                </div>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar funcionário...">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>NICK DO HABBO</th>
+                            <th>CARGO</th>
+                            <th>NÍVEL</th>
+                            <th>DISCORD</th>
+                            <th>WHATSAPP</th>
+                            <th>SALÁRIO</th>
+                            <th>DATA DE ADMISSÃO</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="funcionariosBody">
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Carregando lista de funcionários...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Botão de Impressão -->
+        <div class="print-section">
+            <button id="imprimirPDF" class="btn btn-primary btn-lg">
+                <i class="fas fa-file-pdf"></i> Gerar Relatório por Níveis
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-edit"></i>
+                    Editar Funcionário
+                </h5>
+                <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editIndex">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNickHabbo">Nick do Habbo</label>
+                        <input type="text" id="editNickHabbo" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCargo">Cargo</label>
+                        <div class="select-wrapper">
+                            <select id="editCargo" class="form-control" required>
+                                <option value="">Selecione um cargo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNivel">Nível</label>
+                        <div class="select-wrapper">
+                            <select id="editNivel" class="form-control" required>
+                                <option value="">Selecione um nível</option>
+                                <option value="N1">N1 - Cargo Inicial</option>
+                                <option value="N2">N2 - Chefes de Ala</option>
+                                <option value="N3">N3 - Analistas</option>
+                                <option value="N4">N4 - Supervisores</option>
+                                <option value="N5">N5 - Coordenadores</option>
+                                <option value="N6">N6 - Vice-Diretor</option>
+                                <option value="N7">N7 - Diretor</option>
+                                <option value="N8">N8 - Vice-Presidente</option>
+                                <option value="N9">N9 - Presidente</option>
+                                <option value="N10">N10 - Fundador</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editDiscord">Discord</label>
+                        <input type="text" id="editDiscord" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editWhatsapp">WhatsApp</label>
+                        <input type="text" id="editWhatsapp" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editSalario">Salário (c)</label>
+                        <input type="number" id="editSalario" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editDataAdmissao">Data de Admissão</label>
+                        <input type="date" id="editDataAdmissao" class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="salvarEdicao()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Incluir Configuração do Firebase e UI Compartilhada -->
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px;">Erro crítico na configuração. Contacte o suporte.</p>';
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Variáveis Globais e Elementos DOM Específicos da Página ---
+        let currentUser = null; // Usuário autenticado global
+        let currentUserLevel = 0; // Nível de acesso do usuário logado
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const mensagemDiv = document.getElementById('mensagem');
+        const funcionariosBody = document.getElementById('funcionariosBody');
+        const editModal = document.getElementById('editModal');
+        // ... (outros elementos DOM específicos se houver)
+
+        // --- Verificação de Autenticação e Carregamento Inicial (Adaptado) ---
+        auth.onAuthStateChanged(async (user) => {
+            console.log("Auth state changed:", user ? user.uid : "No user");
+            if (user) {
+                currentUser = user; // Define usuário global
+                try {
+                    // 1. BUSCAR DADOS DO USUÁRIO LOGADO ('usuarios')
+                    const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                    if (!userDoc.exists) {
+                        throw new Error("Usuário não encontrado no Firestore. Saindo...");
+                    }
+                    const userData = userDoc.data();
+                    console.log("UserData:", userData);
+
+                    // 2. DEFINIR NÍVEL DE ACESSO (da coleção 'usuarios')
+                    currentUserLevel = parseInt(userData.nivel || 0); // Define nível global
+                    const accessLevel = currentUserLevel;
+
+                    // 3. PERMISSÃO DA PÁGINA (Lista de Funcionários pode ser acessível por Nível >= 1, ajustar se necessário)
+                    // if (accessLevel < 1) { // Exemplo: Se Nível 0 não pode ver
+                    //     console.warn(`Usuário Nível ${accessLevel} tentou acessar Lista de Funcionários. Redirecionando.`);
+                    //     mostrarMensagem("Você não tem permissão para acessar esta página.", "error");
+                    //     setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                    //     return;
+                    // }
+
+                    // 4. BUSCAR NÍVEL HIERÁRQUICO ('funcionarios') PARA O MENU (Lógica de gestao_usuarios.html)
+                    let userHierarchicalLevel = "N0"; // Nível padrão
+                    let userCargo = userData.cargo || "N/A"; // Cargo do usuário logado
+
+                    if (userData.nickHabbo && userData.nickHabbo !== "N/A") {
+                         try {
+                             const funcQuery = await db.collection("funcionarios")
+                                 .where("nickHabbo", "==", userData.nickHabbo)
+                                 .where("ativo", "==", true)
+                                 .limit(1).get();
+
+                             if (!funcQuery.empty) {
+                                 const funcData = funcQuery.docs[0].data();
+                                 userHierarchicalLevel = funcData.nivel || "N0"; // Usa nível do funcionário
+                                 userCargo = funcData.cargo || userCargo; // Atualiza cargo se diferente
+                                 console.log("Nível Hierárquico (Funcionário):", userHierarchicalLevel);
+                             } else if (accessLevel >= 3) { // Superusuário
+                                 userHierarchicalLevel = "N10";
+                                 console.log("Superusuário sem registro de funcionário ativo, Nível Hierárquico: N10");
+                             } else {
+                                  console.log("Usuário com Nick Habbo, mas não encontrado como funcionário ativo.");
+                             }
+                         } catch (funcError) {
+                             console.error("Erro ao buscar dados do funcionário:", funcError);
+                             if (accessLevel >= 3) { userHierarchicalLevel = "N10"; }
+                         }
+                     } else if (accessLevel >= 3) { // Superusuário sem Nick
+                         userHierarchicalLevel = "N10";
+                         console.log("Superusuário sem Nick Habbo, Nível Hierárquico: N10");
+                     }
+
+                    // 5. ATUALIZAR HEADER DA SIDEBAR (Sem "Olá, ")
+                    welcomeHeader.textContent = userData.nome || "Usuário"; // Apenas o nome
+                    userRoleEl.textContent = userCargo; // Mostra o cargo
+
+                    // 6. GERAR E INSERIR O MENU DA SIDEBAR
+                    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                    if (typeof generateSidebarMenu === 'function') {
+                         const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                         sidebarMenu.innerHTML = menuHtml;
+                    } else {
+                         console.error("Erro: generateSidebarMenu() não encontrada em shared-ui.js.");
+                         sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro ao carregar menu.</p>';
+                    }
+
+                    // 7. CARREGAR DADOS ESPECÍFICOS DA PÁGINA (Funcionários)
+                    await carregarFuncionarios();
+
+                } catch (error) {
+                    console.error("Erro durante autenticação ou carregamento inicial:", error);
+                    mostrarMensagem(`Erro crítico: ${error.message}`, "error");
+                    if (error.message.includes("não encontrado")) {
+                         auth.signOut();
+                         window.location.href = 'login.html';
+                    }
+                    if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro crítico ao carregar.</p>';
+                }
+            } else {
+                // Nenhum usuário logado
+                console.log("Nenhum usuário logado. Redirecionando para login.");
+                currentUser = null;
+                currentUserLevel = 0;
+                window.location.href = 'login.html';
+            }
+        });
+
+        // --- Função Logout (usa auth global) ---
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                mostrarMensagem("Erro ao sair: " + error.message, "error");
+            });
+        }
+
+        // --- Função para exibir mensagens (usa mensagemDiv) ---
+        function mostrarMensagem(mensagem, tipo) {
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            mensagemDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`;
+            mensagemDiv.className = `message ${tipo}-message`;
+            mensagemDiv.style.display = 'block';
+            mensagemDiv.style.opacity = '1';
+            mensagemDiv.style.transition = '';
+            mensagemDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            setTimeout(() => {
+                mensagemDiv.style.opacity = '0';
+                mensagemDiv.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => { mensagemDiv.style.display = 'none'; }, 500);
+            }, 5000);
+        }
+
+
+        // --- Funções de Manipulação do Modal (Adicionado log) ---
+        function openModal() {
+            // LOG ADICIONADO: Verifica se openModal é chamada
+            console.log(">>> openModal() chamada.");
+            if (!editModal) {
+                console.error("Erro: Elemento editModal não encontrado!");
+                return;
+            }
+            editModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            console.log("Modal deve estar ativo agora.");
+        }
+
+        function closeModal() {
+            editModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // --- Operações com Funcionários (Firestore) ---
+
+        // Função para verificar permissão (Adaptada para usar currentUserLevel)
+        async function verificarPermissao() {
+            // Nível 3 (Superusuário) ou superior necessário para editar/excluir
+            if (currentUserLevel >= 3) {
+                return true;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Sem Permissão',
+                text: 'Você precisa ser Superusuário (nível 3) ou superior para realizar esta ação.'
+            });
+            return false;
+            // Nota: A busca no Firestore foi removida pois currentUserLevel já é buscado no onAuthStateChanged
+        }
+
+
+        // Função para carregar funcionários (Usa classes nivel-n*)
+        async function carregarFuncionarios() {
+            const tbody = funcionariosBody; // Usando a variável global
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando lista de funcionários...</p>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                // Ordena por data de admissão (mais antigos primeiro)
+                const snapshot = await db.collection("funcionarios")
+                    .orderBy("dataAdmissao", "asc")
+                    .get();
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <p>Nenhum funcionário ativo encontrado.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = ''; // Limpa antes de adicionar
+                let funcionariosAtivos = 0;
+
+                snapshot.forEach(doc => {
+                    const funcionario = doc.data();
+
+                    // Pula funcionários inativos
+                    if (funcionario.ativo === false) return;
+
+                    funcionariosAtivos++;
+                    const tr = document.createElement('tr');
+
+                    const dataAdmissao = funcionario.dataAdmissao ? funcionario.dataAdmissao.toDate().toLocaleDateString('pt-BR') : 'N/A';
+                    const nickHabbo = funcionario.nickHabbo || 'N/A';
+                    const cargo = funcionario.cargo || 'N/A';
+                    const nivel = funcionario.nivel || 'N/A';
+                    const discord = funcionario.discord || 'N/A';
+                    const whatsapp = formatarTelefone(funcionario.whatsapp) || 'N/A';
+                    const salario = funcionario.salario || 'N/A';
+
+                    // Define a classe CSS do badge usando nivel-n*
+                    let nivelBadgeClass = 'nivel-default'; // Classe padrão se não for N*
+                    if (nivel.startsWith('N')) {
+                        const nivelNum = parseInt(nivel.substring(1));
+                        if (!isNaN(nivelNum) && nivelNum >= 1 && nivelNum <= 10) {
+                            nivelBadgeClass = `nivel-n${nivelNum}`; // Gera nivel-n1, nivel-n2, etc.
+                        }
+                    }
+
+                    tr.innerHTML = `
+                        <td data-label="NICK DO HABBO">${nickHabbo}</td>
+                        <td data-label="CARGO">${cargo}</td>
+                        <td data-label="NÍVEL"><span class="nivel-badge ${nivelBadgeClass}">${nivel}</span></td>
+                        <td data-label="DISCORD">${discord}</td>
+                        <td data-label="WHATSAPP">${whatsapp}</td>
+                        <td data-label="SALÁRIO">${salario}c</td>
+                        <td data-label="DATA DE ADMISSÃO">${dataAdmissao}</td>
+                        <td data-label="AÇÕES">
+                            <div class="btn-group">
+                                <button onclick="editarFuncionario('${doc.id}')" class="btn btn-primary btn-sm" title="Editar Funcionário">
+                                    <i class="fas fa-edit"></i> <span class="btn-text">Editar</span>
+                                </button>
+                                <button onclick="excluirFuncionario('${doc.id}')" class="btn btn-danger btn-sm" title="Desligar Funcionário">
+                                    <i class="fas fa-user-minus"></i> <span class="btn-text">Desligar</span>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Se após iterar, nenhum funcionário ativo foi encontrado
+                if (funcionariosAtivos === 0) {
+                     tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-search"></i>
+                                <p>Nenhum funcionário ativo encontrado.</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                // Implementar busca (Mantida)
+                implementarBusca();
+
+            } catch (error) {
+                console.error("Erro ao carregar funcionários:", error);
+                mostrarMensagem(`Erro ao carregar lista de funcionários: ${error.message}`, "error");
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erro ao carregar funcionários. Tente novamente.</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Função para implementar busca (Mantida)
+        function implementarBusca() {
+            const searchInput = document.getElementById('searchInput');
+            const rows = document.querySelectorAll('#funcionariosBody tr');
+
+            // Remove listener antigo para evitar duplicação se carregarFuncionarios for chamado múltiplas vezes
+            searchInput.removeEventListener('keyup', handleSearchKeyUp);
+            searchInput.addEventListener('keyup', handleSearchKeyUp);
+
+            function handleSearchKeyUp(e) {
+                const term = e.target.value.toLowerCase().trim();
+                let found = false;
+
+                rows.forEach(row => {
+                    // Ignora a linha de "nenhum encontrado" ou "carregando"
+                    if (row.querySelector('.empty-state')) {
+                        row.style.display = 'none'; // Esconde estados temporários durante a busca
+                        return;
+                    }
+
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(term)) {
+                        row.style.display = ''; // Usa display padrão da tabela (geralmente 'table-row')
+                        found = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Opcional: Mostrar mensagem se nada for encontrado na busca
+                const noResultsRow = document.getElementById('noResultsRow');
+                if (!found && term !== '') {
+                    if (!noResultsRow) {
+                        const tr = document.createElement('tr');
+                        tr.id = 'noResultsRow';
+                        tr.innerHTML = `<td colspan="8" class="empty-state"><i class="fas fa-search-minus"></i><p>Nenhum funcionário encontrado para "${term}".</p></td>`;
+                        funcionariosBody.appendChild(tr);
+                    } else {
+                        noResultsRow.style.display = ''; // Mostra a linha de "não encontrado"
+                        noResultsRow.querySelector('p').textContent = `Nenhum funcionário encontrado para "${term}".`;
+                    }
+                } else if (noResultsRow) {
+                    noResultsRow.style.display = 'none'; // Esconde se encontrou algo ou se a busca está vazia
+                }
+            }
+        }
+
+
+        // --- Funções Auxiliares (Mantidas) ---
+
+        // Função para formatar número de telefone (Mantida)
+        function formatarTelefone(telefone) {
+            if (!telefone) return null;
+            
+            // Remove todos os caracteres não numéricos
+            const numero = String(telefone).replace(/\D/g, '');
+            
+            // Verifica se tem a quantidade correta de dígitos
+            if (numero.length === 11) {
+                // Formato (XX) XXXXX-XXXX
+                return `(${numero.slice(0,2)}) ${numero.slice(2,7)}-${numero.slice(7)}`;
+            } else if (numero.length === 10) {
+                // Formato (XX) XXXX-XXXX
+                return `(${numero.slice(0,2)}) ${numero.slice(2,6)}-${numero.slice(6)}`;
+            }
+            
+            return telefone; // Retorna original se não conseguir formatar
+        }
+
+        // Função para carregar cargos no modal de edição (Mantida - usa estrutura local)
+        // Idealmente, poderia buscar do Firestore como em gestao_usuarios, mas mantendo como está por enquanto.
+        function carregarCargosModal() {
+            const cargoSelect = document.getElementById('editCargo');
+            cargoSelect.innerHTML = '<option value="">Selecione um cargo</option>';
+
+            // Estrutura de departamentos e cargos
+            const cargosConfig = {
+                departamentos: {
+                    DECLIN: {
+                        nome: "Departamento Clínico",
+                        cargos: {
+                            N1: [
+                                {cargo: "Clinica Geral", salario: 30},
+                                {cargo: "Cirurgia", salario: 30},
+                                {cargo: "Enfermagem", salario: 30},
+                                {cargo: "Pediatria", salario: 30},
+                                {cargo: "Obstetrícia", salario: 30}
+                            ],
+                            N2: [
+                                {cargo: "Chefe de Clínica Geral", salario: 35},
+                                {cargo: "Chefe de Cirurgia", salario: 35},
+                                {cargo: "Chefe de Enfermagem", salario: 35},
+                                {cargo: "Chefe de Pediatria", salario: 35},
+                                {cargo: "Chefe de Obstetrícia", salario: 35}
+                            ],
+                            N4: [
+                                {cargo: "Supervisor Clínico", salario: 45},
+                                {cargo: "Supervisor Materno-Infantil", salario: 45}
+                            ],
+                            N5: [
+                                {cargo: "Coordenador Clinico", salario: 50}
+                            ]
+                        }
+                    },
+                    DOPH: {
+                        nome: "Departamento de Operações e Performance Humana",
+                        cargos: {
+                            N1: [
+                                {cargo: "Psicologia", salario: 30},
+                                {cargo: "Psiquiatria", salario: 30},
+                                {cargo: "Segurança", salario: 30},
+                                {cargo: "Recepção", salario: 30}
+                            ],
+                            N2: [
+                                {cargo: "Chefe de Psicologia", salario: 35},
+                                {cargo: "Chefe de Psiquiatria", salario: 35},
+                                {cargo: "Chefe de Segurança", salario: 35},
+                                {cargo: "Chefe de Recepção", salario: 35}
+                            ],
+                            N3: [
+                                {cargo: "Analista", salario: 40}
+                            ],
+                            N4: [
+                                {cargo: "Supervisor de Saúde Mental", salario: 45},
+                                {cargo: "Supervisor de Operações", salario: 45}
+                            ],
+                            N5: [
+                                {cargo: "Coordenador de Operações e Saúde Mental", salario: 50}
+                            ]
+                        }
+                    },
+                    DEX: {
+                        nome: "Departamento Executivo",
+                        cargos: {
+                            N6: [{cargo: "Vice-Diretor", salario: 55}],
+                            N7: [{cargo: "Diretor", salario: 60}],
+                            N8: [{cargo: "Vice-Presidente", salario: 65}],
+                            N9: [{cargo: "Presidente", salario: 70}],
+                            N10: [{cargo: "Fundador", salario: 70}]
+                        }
+                    }
+                }
+            };
+
+            // Preencher select com as opções de cargos
+            for (const deptKey in cargosConfig.departamentos) {
+                const dept = cargosConfig.departamentos[deptKey];
+                
+                for (const nivel in dept.cargos) {
+                    dept.cargos[nivel].forEach(cargo => {
+                        const option = document.createElement('option');
+                        option.value = cargo.cargo;
+                        option.textContent = `${cargo.cargo} (${deptKey})`;
+                        option.setAttribute('data-salario', cargo.salario);
+                        option.setAttribute('data-departamento', deptKey);
+                        cargoSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        // --- Funções CRUD (Mantidas, com verificação de permissão) ---
+
+        // Função para editar funcionário (Adicionados logs detalhados)
+        async function editarFuncionario(id) {
+            console.log(`>>> editarFuncionario chamada com ID: ${id}`);
+            console.log(`Tentando editar funcionário ID: ${id}, Nível atual: ${currentUserLevel}`);
+
+            if (!await verificarPermissao()) {
+                console.log("Permissão negada para editar.");
+                return;
+            }
+            console.log("Permissão concedida para editar.");
+
+            try {
+                // LOG 1: Antes de buscar no Firestore
+                console.log("Passo 1: Buscando dados do funcionário no Firestore...");
+                const doc = await db.collection("funcionarios").doc(id).get();
+                console.log("Passo 2: Dados do Firestore recebidos.");
+
+                if (!doc.exists || doc.data().ativo === false) {
+                    console.error("Erro: Funcionário não encontrado ou inativo.");
+                    mostrarMensagem("Funcionário não encontrado ou inativo.", "error");
+                    return;
+                }
+                console.log("Passo 3: Funcionário encontrado e ativo.");
+
+                const funcionario = doc.data();
+                console.log("Dados do funcionário:", funcionario);
+
+                // LOG 4: Antes de formatar data
+                console.log("Passo 4: Formatando data de admissão...");
+                const dataAdmissao = funcionario.dataAdmissao ? funcionario.dataAdmissao.toDate() : new Date();
+                const dataFormatada = dataAdmissao.getFullYear() + '-' +
+                                      ('0' + (dataAdmissao.getMonth() + 1)).slice(-2) + '-' +
+                                      ('0' + dataAdmissao.getDate()).slice(-2);
+                console.log("Data formatada:", dataFormatada);
+
+                // LOG 5: Antes de carregar cargos
+                console.log("Passo 5: Carregando cargos no modal...");
+                carregarCargosModal(); // Verificar se há erros dentro desta função também
+                console.log("Passo 6: Cargos carregados.");
+
+                // LOG 7: Antes de preencher o formulário
+                console.log("Passo 7: Preenchendo formulário do modal...");
+                document.getElementById('editIndex').value = id;
+                document.getElementById('editNickHabbo').value = funcionario.nickHabbo || '';
+                document.getElementById('editCargo').value = funcionario.cargo || '';
+                document.getElementById('editNivel').value = funcionario.nivel || '';
+                document.getElementById('editSalario').value = funcionario.salario || '';
+                document.getElementById('editDiscord').value = funcionario.discord || '';
+                document.getElementById('editWhatsapp').value = funcionario.whatsapp || '';
+                document.getElementById('editDataAdmissao').value = dataFormatada;
+                console.log("Passo 8: Formulário preenchido.");
+
+                // LOG 9: Antes de chamar openModal
+                console.log("Passo 9: Chamando openModal()...");
+                openModal(); // Abre o modal
+                console.log("Passo 10: openModal() chamado."); // Este log pode não aparecer se openModal travar
+
+            } catch (error) {
+                // LOG ERRO: Captura qualquer erro no try block
+                console.error("ERRO DETALHADO ao tentar editar funcionário:", error);
+                mostrarMensagem("Erro ao carregar dados do funcionário: " + error.message, "error");
+            }
+        }
+
+        // Função para "excluir" (desligar) funcionário (Mantida)
+        async function excluirFuncionario(id) {
+            // Verifica permissão Nível 3+
+            if (!await verificarPermissao()) return;
+
+            try {
+                const result = await Swal.fire({
+                    title: 'Confirmar Desligamento',
+                    text: "Tem certeza que deseja marcar este funcionário como inativo (desligado)?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sim, Desligar!',
+                    cancelButtonText: 'Cancelar'
+                });
+
+                if (result.isConfirmed) {
+                    // Atualiza para inativo em vez de excluir
+                    await db.collection("funcionarios").doc(id).update({
+                        ativo: false,
+                        dataDesligamento: firebase.firestore.FieldValue.serverTimestamp() // Registra data do desligamento
+                    });
+
+                    mostrarMensagem("Funcionário desligado com sucesso!", "success");
+                    carregarFuncionarios(); // Recarrega a lista para remover o funcionário
+                }
+            } catch (error) {
+                console.error("Erro ao desligar funcionário:", error);
+                mostrarMensagem("Erro ao desligar funcionário: " + error.message, "error");
+            }
+        }
+
+        // Função para salvar edição do funcionário (Mantida)
+        async function salvarEdicao() {
+            if (!await verificarPermissao()) return; // Verifica permissão Nível 3+
+
+            const id = document.getElementById('editIndex').value;
+            const nickHabbo = document.getElementById('editNickHabbo').value.trim();
+            const cargo = document.getElementById('editCargo').value;
+            const nivel = document.getElementById('editNivel').value;
+            const salario = parseFloat(document.getElementById('editSalario').value);
+            const discord = document.getElementById('editDiscord').value.trim();
+            const whatsapp = document.getElementById('editWhatsapp').value.trim();
+            const dataAdmissaoStr = document.getElementById('editDataAdmissao').value; // String YYYY-MM-DD
+
+            // Validação básica
+            if (!id || !nickHabbo || !cargo || !nivel || isNaN(salario) || !discord || !whatsapp || !dataAdmissaoStr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Dados Incompletos',
+                    text: 'Por favor, preencha todos os campos corretamente.',
+                    confirmButtonColor: '#1e90ff' // Cor azul Santorini
+                });
+                return;
+            }
+
+            // Converte a data string para Timestamp do Firebase
+            // Adiciona T00:00:00 para evitar problemas de fuso horário ao converter
+            const dataAdmissaoTimestamp = firebase.firestore.Timestamp.fromDate(new Date(dataAdmissaoStr + 'T00:00:00'));
+
+
+            const submitButton = editModal.querySelector('.modal-footer .btn-primary');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+
+            try {
+                await db.collection("funcionarios").doc(id).update({
+                    nickHabbo: nickHabbo,
+                    cargo: cargo,
+                    nivel: nivel,
+                    salario: salario,
+                    discord: discord,
+                    whatsapp: whatsapp, // Salva sem formatação
+                    dataAdmissao: dataAdmissaoTimestamp, // Salva como Timestamp
+                    ultimaAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                mostrarMensagem("Funcionário atualizado com sucesso!", "success");
+                closeModal();
+                await carregarFuncionarios(); // Recarrega a lista
+
+            } catch (error) {
+                console.error("Erro ao atualizar funcionário:", error);
+                mostrarMensagem("Erro ao atualizar funcionário: " + error.message, "error");
+            } finally {
+                 submitButton.disabled = false;
+                 submitButton.innerHTML = originalButtonText;
+            }
+        }
+
+
+        // Função para gerar PDF (Mantida)
+        async function gerarPDF() {
+            try {
+                Swal.fire({
+                    title: 'Gerando PDF...',
+                    text: 'Por favor, aguarde...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Busca TODOS os funcionários - modificado para buscar tudo de uma vez
+                const querySnapshot = await db.collection("funcionarios").get();
+                
+                if (querySnapshot.empty) {
+                    throw new Error('Nenhum funcionário encontrado');
+                }
+
+                let funcionariosPorNivel = {};
+                
+                // Agrupa funcionários por nível
+                querySnapshot.forEach((doc) => {
+                    const funcionario = doc.data();
+                    
+                    // Pula funcionários inativos - verificação explícita
+                    if (funcionario.ativo === false) return;
+                    
+                    const nivel = funcionario.nivel || 'Sem Nível';
+                    if (!funcionariosPorNivel[nivel]) {
+                        funcionariosPorNivel[nivel] = [];
+                    }
+                    funcionariosPorNivel[nivel].push(funcionario);
+                });
+
+                // Cria o conteúdo do PDF com configurações otimizadas
+                let content = document.createElement('div');
+                content.style.padding = '10px'; // Reduzir padding para evitar páginas em branco
+                content.style.fontFamily = 'Montserrat, Arial, sans-serif';
+                content.style.maxWidth = '100%';
+                
+                // Header do PDF simplificado
+                const header = document.createElement('div');
+                header.style.textAlign = 'center';
+                header.style.marginBottom = '15px';
+                
+                // Título em vez de imagem
+                const title = document.createElement('h1');
+                title.innerHTML = 'HOSPITAL SANTORINI PRIME';
+                title.style.fontSize = '20px';
+                title.style.color = '#1e90ff';
+                title.style.margin = '0 0 5px 0';
+                
+                const subtitle = document.createElement('h2');
+                subtitle.innerHTML = 'RELATÓRIO DE FUNCIONÁRIOS POR NÍVEL';
+                subtitle.style.fontSize = '16px';
+                subtitle.style.color = '#4682b4';
+                subtitle.style.margin = '0 0 10px 0';
+                
+                const date = document.createElement('p');
+                date.textContent = `Data de Geração: ${new Date().toLocaleDateString('pt-BR')}`;
+                date.style.fontSize = '12px';
+                date.style.margin = '0';
+                date.style.color = '#6c757d';
+                
+                header.appendChild(title);
+                header.appendChild(subtitle);
+                header.appendChild(date);
+                content.appendChild(header);
+
+                // Ordena níveis (N1, N2, N3...) corretamente
+                const niveis = Object.keys(funcionariosPorNivel).sort((a, b) => {
+                    // Extrai o número do nível (N1 -> 1)
+                    const numA = a.startsWith('N') ? parseInt(a.substring(1)) : 0;
+                    const numB = b.startsWith('N') ? parseInt(b.substring(1)) : 0;
+                    return numA - numB; // Organiza em ordem crescente
+                });
+                
+                // Adiciona cada nível em uma nova seção
+                niveis.forEach((nivel, index) => {
+                    const funcionariosDoNivel = funcionariosPorNivel[nivel];
+                    
+                    // Verifica se há funcionários neste nível
+                    if (funcionariosDoNivel.length === 0) return;
+                    
+                    const nivelSection = document.createElement('div');
+                    nivelSection.className = 'nivel-section';
+                    
+                    // Controle de quebra de página - apenas a partir do segundo nível
+                    if (index > 0) {
+                        nivelSection.style.pageBreakBefore = 'always';
+                    }
+                    
+                    nivelSection.style.marginBottom = '20px';
+                    
+                    // Título de nível
+                    const nivelTitle = document.createElement('h3');
+                    nivelTitle.textContent = `Funcionários Nível ${nivel}`;
+                    nivelTitle.style.fontSize = '16px';
+                    nivelTitle.style.color = '#1e90ff';
+                    nivelTitle.style.textAlign = 'center';
+                    nivelTitle.style.marginBottom = '10px';
+                    nivelTitle.style.backgroundColor = '#f0f8ff';
+                    nivelTitle.style.padding = '8px';
+                    nivelTitle.style.borderRadius = '6px';
+                    
+                    // Tabela de funcionários
+                    const table = document.createElement('table');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.fontSize = '12px'; // Reduzir tamanho da fonte para caber mais
+                    
+                    // Cabeçalho da tabela
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = `
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Nick do Habbo</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cargo</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Discord</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Whatsapp</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Salário</th>
+                            <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Data de Admissão</th>
+                        </tr>
+                    `;
+                    
+                    // Corpo da tabela - ordenar por data de admissão (mais antigos primeiro)
+                    const tbody = document.createElement('tbody');
+                    
+                    funcionariosDoNivel
+                        .sort((a, b) => {
+                            // Ordenar por data de admissão (mais antigos primeiro)
+                            const dateA = a.dataAdmissao ? a.dataAdmissao.toDate().getTime() : 0;
+                            const dateB = b.dataAdmissao ? b.dataAdmissao.toDate().getTime() : 0;
+                            return dateA - dateB;
+                        })
+                        .forEach(func => {
+                            const tr = document.createElement('tr');
+                            tr.style.border = '1px solid #f0f0f0';
+                            
+                            const dataAdmissao = func.dataAdmissao ? func.dataAdmissao.toDate().toLocaleDateString('pt-BR') : 'N/A';
+                            const whatsappFormatado = formatarTelefone(func.whatsapp) || 'N/A';
+                            
+                            tr.innerHTML = `
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${func.nickHabbo || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${func.cargo || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${func.discord || 'N/A'}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${whatsappFormatado}</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${func.salario || '0'}c</td>
+                                <td style="padding: 8px; border: 1px solid #eee; text-align: left;">${dataAdmissao}</td>
+                            `;
+                            
+                            tbody.appendChild(tr);
+                        });
+                    
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    
+                    nivelSection.appendChild(nivelTitle);
+                    nivelSection.appendChild(table);
+                    content.appendChild(nivelSection);
+                });
+
+                // Rodapé mais simples
+                const footer = document.createElement('div');
+                footer.style.marginTop = '15px';
+                footer.style.textAlign = 'center';
+                footer.style.fontSize = '10px';
+                footer.style.color = '#6c757d';
+                footer.innerHTML = `Hospital Santorini Prime © ${new Date().toLocaleDateString('pt-BR')}`;
+                content.appendChild(footer);
+
+                // Configurações otimizadas do PDF
+                const opt = {
+                    margin: [10, 10, 10, 10], // Margens menores: [topo, direita, baixo, esquerda]
+                    filename: 'lista_funcionarios_santorini.pdf',
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: false,
+                        scrollY: 0 // Prevenir scroll vertical bugado
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'landscape',
+                        compress: true,
+                        precision: 2
+                    },
+                    pagebreak: { 
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        before: '.nivel-section' // Usar classes para quebra de página
+                    }
+                };
+
+                // Gera o PDF
+                await html2pdf().from(content).set(opt).save();
+                
+                Swal.close();
+                
+            } catch (error) {
+                console.error('Erro ao gerar PDF:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao gerar PDF: ' + error.message,
+                });
+            }
+        }
+
+        // --- Inicialização e Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para lista_funcionarios.html");
+
+            // Inicializa interações da sidebar (do shared-ui.js)
+            if (typeof initializeSidebarInteractions === 'function') {
+                 initializeSidebarInteractions();
+            } else {
+                 console.error("Erro: initializeSidebarInteractions() não encontrada em shared-ui.js.");
+            }
+
+            // Listener para o botão de impressão PDF
+            document.getElementById('imprimirPDF')?.addEventListener('click', gerarPDF);
+
+            // Expor funções globais necessárias para `onclick` nos botões da tabela/modal
+            window.editarFuncionario = editarFuncionario;
+            window.excluirFuncionario = excluirFuncionario;
+            window.salvarEdicao = salvarEdicao;
+            window.closeModal = closeModal; // Expor closeModal se usado em `onclick`
+
+            console.log("Listeners específicos de lista_funcionarios.html configurados.");
+
+            // A função carregarFuncionarios() é chamada dentro do onAuthStateChanged
+            // após a verificação e carregamento dos dados do usuário.
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

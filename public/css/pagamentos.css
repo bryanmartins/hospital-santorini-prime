@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Estilos Específicos para a Página de Pagamentos (pagamento_salarios.html)
+   ========================================================================== */
+
+/* --- Navegação por Abas (Tabs) --- */
+.tab-nav {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 30px;
+    overflow-x: auto; /* Permite rolagem em telas pequenas */
+    white-space: nowrap; /* Impede que botões quebrem linha */
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-light); /* Cor padrão inativa */
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Montserrat', sans-serif;
+    position: relative; /* Para o ::after */
+    border-bottom: 2px solid transparent; /* Espaço reservado para borda ativa */
+    margin-bottom: -2px; /* Alinha com a borda principal */
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary); /* Borda colorida na aba ativa */
+}
+
+/* O ::after foi removido da versão anterior, a borda no .active é mais simples */
+/* .tab-btn.active::after { ... } */
+
+/* Conteúdo das Abas */
+.tab-content {
+    display: none; /* Escondido por padrão */
+    animation: fadeIn 0.5s ease; /* Requer @keyframes fadeIn em estilo-principal */
+}
+
+.tab-content.active {
+    display: block; /* Mostra conteúdo da aba ativa */
+}
+
+/* --- Caixa de Total de Custos --- */
+.total-costs {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 25px; /* Mais padding */
+    box-shadow: var(--shadow-md);
+    margin-bottom: 30px;
+    text-align: center;
+    border-top: 4px solid var(--primary); /* Destaque superior */
+}
+
+.total-costs h3 {
+    color: var(--primary-dark); /* Tom mais escuro */
+    font-size: 16px; /* Tamanho ajustado */
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase; /* Opcional */
+    letter-spacing: 0.5px;
+}
+
+.total-costs p {
+    font-size: 28px; /* Valor destacado */
+    font-weight: 700;
+    color: var(--dark);
+    margin: 0; /* Remove margem padrão */
+}
+
+/* --- Badges de Status (Apto/Não Apto) --- */
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px; /* Padding ajustado */
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px; /* Largura mínima ajustada */
+    color: white; /* Texto branco */
+    text-transform: uppercase; /* Opcional */
+    letter-spacing: 0.5px;
+}
+
+.badge-apto {
+    background-color: var(--success); /* Cor sólida */
+    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.4); /* Sombra mais forte */
+}
+
+.badge-nao-apto {
+    background-color: var(--danger); /* Cor sólida */
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4); /* Sombra mais forte */
+}
+
+/* --- Medalhas --- */
+.medalha {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; /* Tamanho ajustado */
+    height: 26px;
+    border-radius: 50%;
+    margin-right: 8px;
+    font-weight: 600;
+    font-size: 12px;
+    color: white;
+    vertical-align: middle; /* Alinha melhor com texto */
+}
+
+.medalha-ouro {
+    background: linear-gradient(135deg, #FFDF00, #FFB822); /* Gradiente Ouro */
+    box-shadow: 0 2px 5px rgba(255, 215, 0, 0.4);
+}
+
+.medalha-prata {
+    background: linear-gradient(135deg, #E0E0E0, #BDBDBD); /* Gradiente Prata */
+    box-shadow: 0 2px 5px rgba(192, 192, 192, 0.4);
+}
+
+.medalha-bronze {
+    background: linear-gradient(135deg, #D2691E, #A0522D); /* Gradiente Bronze */
+    box-shadow: 0 2px 5px rgba(205, 127, 50, 0.4);
+}
+
+/* --- Checkbox Customizado --- */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza na célula da tabela */
+    user-select: none;
+    cursor: pointer;
+    height: 100%; /* Ocupa altura da célula */
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: relative;
+    height: 20px; /* Tamanho ajustado */
+    width: 20px;
+    background-color: #fff;
+    border: 2px solid #ccc; /* Borda cinza */
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+/* Hover state */
+.custom-checkbox:hover input ~ .checkmark {
+    border-color: var(--primary-dark);
+}
+
+/* Checked state */
+.custom-checkbox input:checked ~ .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* Checkmark indicator (hidden when unchecked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px; /* Posição ajustada */
+    top: 2px;  /* Posição ajustada */
+    width: 5px;  /* Tamanho ajustado */
+    height: 10px; /* Tamanho ajustado */
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Show checkmark when checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Focus state for accessibility */
+.custom-checkbox input:focus ~ .checkmark {
+     box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.25);
+}
+
+
+/* --- Responsivo Específico --- */
+@media (max-width: 768px) {
+    .tab-nav {
+        margin-bottom: 20px; /* Menos margem */
+    }
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    .total-costs {
+        padding: 15px;
+    }
+    .total-costs p {
+        font-size: 22px;
+    }
+     /* Ajustes tabela já devem estar em tabelas.css */
+}

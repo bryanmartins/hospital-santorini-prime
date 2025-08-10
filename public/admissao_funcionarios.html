@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissão de Funcionários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <style>
+        .warning-block {
+            display: block;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            border-left-width: 4px;
+            border-left-style: solid;
+        }
+        .warning-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left-color: var(--info);
+            color: var(--info);
+        }
+        .warning-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+        .warning-block i { margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Olá, Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-user-plus"></i>
+                Admissão de Funcionários
+            </h1>
+            <p class="page-subtitle">Cadastre novos colaboradores no Hospital Santorini Prime</p>
+        </div>
+
+        <div id="mensagem" style="display: none;"></div> <div class="form-card">
+            <div class="form-card-header">
+                <div class="form-card-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    Formulário de Admissão de Novo Colaborador
+                </div>
+            </div>
+            <div class="form-card-body">
+                <form id="admissaoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="nickHabbo">Nick do Habbo</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="nickHabbo" placeholder="Nome de usuário no Habbo" required>
+                            </div>
+                            <span id="readmissaoAviso" class="warning-block warning-info" style="display: none;"></span>
+                            <span id="proibidoReadmitirAviso" class="warning-block warning-danger" style="display: none;"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="dataAdmissao">Data de Admissão</label>
+                            <input type="date" class="form-control" id="dataAdmissao" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="cargo">Cargo</label>
+                            <div class="select-wrapper"> <select class="form-control" id="cargo" required>
+                                    <option value="">Selecione um cargo</option>
+                                    </select>
+                            </div>
+                            <span id="vagasDisponiveis" class="form-text"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="nivel">Nível</label>
+                             <div class="select-wrapper"> <select class="form-control" id="nivel" required>
+                                    <option value="">Selecione um nível</option>
+                                    <option value="N1">N1 - Cargo Inicial</option>
+                                    <option value="N2">N2 - Chefes de Ala</option>
+                                    <option value="N3">N3 - Analistas</option>
+                                    <option value="N4">N4 - Supervisores</option>
+                                    <option value="N5">N5 - Coordenadores</option>
+                                    <option value="N6">N6 - Vice-Diretor</option>
+                                    <option value="N7">N7 - Diretor</option>
+                                    <option value="N8">N8 - Vice-Presidente</option>
+                                    <option value="N9">N9 - Presidente</option>
+                                    <option value="N10">N10 - Fundador</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="salario">Salário (c)</label>
+                            <input type="number" class="form-control" id="salario" placeholder="Valor (c)" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="discord">Discord</label>
+                            <input type="text" class="form-control" id="discord" placeholder="Usuário#0000" required>
+                            <span class="form-text">Ex: usuario#1234 ou ID do Discord</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="whatsapp">WhatsApp</label>
+                            <input type="text" class="form-control" id="whatsapp" placeholder="(00) 00000-0000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Admitir Funcionário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script src="./js/firebase-config.js"></script>
+
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            // Poderia mostrar um erro na tela
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Variáveis Globais e Elementos DOM ---
+        let currentUser = null;
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const mensagemDiv = document.getElementById('mensagem');
+        const cargoSelect = document.getElementById('cargo');
+        const nivelSelect = document.getElementById('nivel');
+        const salarioInput = document.getElementById('salario');
+        const vagasSpan = document.getElementById('vagasDisponiveis');
+        const nickHabboInput = document.getElementById('nickHabbo');
+        const readmissaoAviso = document.getElementById('readmissaoAviso');
+        const proibidoReadmitirAviso = document.getElementById('proibidoReadmitirAviso');
+        const submitButton = document.querySelector('#admissaoForm button[type="submit"]');
+
+
+        // --- Estrutura de Dados (Orçamento - Mantida igual) ---
+        const cargosConfig = { /* ... (objeto cargosConfig completo como no arquivo original) ... */ departamentos: { DECLIN: { nome: "Departamento Clínico", cargos: { N1: [ {cargo: "Clinica Geral", salario: 30, pontos: 15, exp: 0}, {cargo: "Cirurgia", salario: 30, pontos: 15, exp: 0}, {cargo: "Enfermagem", salario: 30, pontos: 15, exp: 0}, {cargo: "Pediatria", salario: 30, pontos: 15, exp: 0}, {cargo: "Obstetrícia", salario: 30, pontos: 15, exp: 0} ], N2: [ {cargo: "Chefe de Clínica Geral", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Cirurgia", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Enfermagem", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Pediatria", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Obstetrícia", salario: 35, pontos: 25, exp: 15} ], N4: [ {cargo: "Supervisor Clínico", salario: 45, pontos: 40, exp: 60}, {cargo: "Supervisor Materno-Infantil", salario: 45, pontos: 40, exp: 60} ], N5: [ {cargo: "Coordenador Clinico", salario: 50, pontos: 45, exp: 90} ] } }, DOPH: { nome: "Departamento de Operações e Performance Humana", cargos: { N1: [ {cargo: "Psicologia", salario: 30, pontos: 15, exp: 0}, {cargo: "Psiquiatria", salario: 30, pontos: 15, exp: 0}, {cargo: "Segurança", salario: 30, pontos: 15, exp: 0}, {cargo: "Recepção", salario: 30, pontos: 15, exp: 0} ], N2: [ {cargo: "Chefe de Psicologia", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Psiquiatria", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Segurança", salario: 35, pontos: 25, exp: 15}, {cargo: "Chefe de Recepção", salario: 35, pontos: 25, exp: 15} ], N3: [ {cargo: "Analista", salario: 40, pontos: 35, exp: 45} ], N4: [ {cargo: "Supervisor de Saúde Mental", salario: 45, pontos: 40, exp: 60}, {cargo: "Supervisor de Operações", salario: 45, pontos: 40, exp: 60} ], N5: [ {cargo: "Coordenador de Operações e Saúde Mental", salario: 50, pontos: 45, exp: 90} ] } }, DEX: { nome: "Departamento Executivo", cargos: { N6: [{cargo: "Vice-Diretor", salario: 55, pontos: 50, exp: 120}], N7: [{cargo: "Diretor", salario: 60, pontos: 50, exp: 150}], N8: [{cargo: "Vice-Presidente", salario: 65, pontos: 55, exp: 180}], N9: [{cargo: "Presidente", salario: 70, pontos: 55, exp: 210}], N10: [{cargo: "Fundador", salario: 70, pontos: null, exp: null}] } } } };
+        function calcularCusto(salario) { /* ... (função mantida) ... */ switch (salario) { case 30: return 32; case 35: return 38; case 40: return 42; case 45: return 48; case 50: return 52; case 55: return 58; case 60: return 63; case 65: return 69; case 70: return 74; default: return salario; } }
+
+        // --- Função Mostrar Mensagem (Mantida) ---
+        function mostrarMensagem(mensagem, tipo) {
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            mensagemDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`;
+            mensagemDiv.className = `message ${tipo}-message`; // Adiciona classe de tipo
+            mensagemDiv.style.display = 'block'; // Garante visibilidade
+            mensagemDiv.style.opacity = '1';
+            mensagemDiv.style.transition = ''; // Reseta transição
+            mensagemDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                mensagemDiv.style.opacity = '0';
+                mensagemDiv.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => { mensagemDiv.style.display = 'none'; }, 500);
+            }, 5000);
+        }
+
+        // --- Funções de Admissão e Lógica da Página (Mantidas) ---
+        async function carregarOrcamento() { /* ... (função carregarOrcamento/carregarCargos) ... */ // Esta função agora carrega os cargos no select
+            cargoSelect.innerHTML = '<option value="">Carregando cargos...</option>'; // Feedback inicial
+            try {
+                const docRef = await db.collection("orcamento").doc("estrutura").get();
+                const orcamentoData = docRef.exists ? docRef.data() : cargosConfig.departamentos; // Usa padrão se não existir
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get(); // Busca só ativos
+                const funcionariosAtivos = {};
+                funcionariosSnapshot.forEach(doc => { const func = doc.data(); funcionariosAtivos[func.cargo] = (funcionariosAtivos[func.cargo] || 0) + 1; });
+
+                cargoSelect.innerHTML = '<option value="">Selecione um cargo</option>'; // Limpa antes de adicionar
+
+                const cargosDisponiveis = [];
+
+                for (const deptKey in orcamentoData) { const dept = orcamentoData[deptKey]; if (Array.isArray(dept)) { dept.forEach(cargoInfo => { const vagasOcupadas = funcionariosAtivos[cargoInfo.cargo] || 0; const vagasDisponiveis = Math.max(0, (cargoInfo.vagas || 0) - vagasOcupadas); if (vagasDisponiveis > 0) { cargosDisponiveis.push({ cargo: cargoInfo.cargo, vagas: vagasDisponiveis, salario: cargoInfo.salario, departamento: deptKey }); } }); } }
+
+                // Ordena cargos alfabeticamente
+                cargosDisponiveis.sort((a, b) => a.cargo.localeCompare(b.cargo));
+
+                // Adiciona opções ao select
+                cargosDisponiveis.forEach(cargoInfo => { const option = document.createElement('option'); option.value = cargoInfo.cargo; option.textContent = `${cargoInfo.cargo} (${cargoInfo.departamento}) - ${cargoInfo.vagas} vagas`; option.setAttribute('data-vagas', cargoInfo.vagas); option.setAttribute('data-salario', cargoInfo.salario); option.setAttribute('data-departamento', cargoInfo.departamento); cargoSelect.appendChild(option); });
+
+                atualizarVagasDisponiveis(); // Atualiza info de vagas inicialmente
+            } catch (error) { console.error("Erro ao carregar cargos:", error); mostrarMensagem("Erro ao carregar lista de cargos.", "error"); cargoSelect.innerHTML = '<option value="">Erro ao carregar</option>'; }
+         }
+        function atualizarVagasDisponiveis() { /* ... (função mantida) ... */ if (cargoSelect.selectedIndex > 0) { const option = cargoSelect.options[cargoSelect.selectedIndex]; const vagas = option.getAttribute('data-vagas'); vagasSpan.textContent = `Vagas disponíveis: ${vagas}`; vagasSpan.style.display = 'block'; } else { vagasSpan.style.display = 'none'; } }
+        function atualizarSalario() { /* ... (função mantida) ... */ const cargoSelecionado = cargoSelect.value; const option = cargoSelect.options[cargoSelect.selectedIndex]; if (option) { salarioInput.value = option.getAttribute('data-salario') || ''; } else { salarioInput.value = ''; } }
+        function definirNivelPorCargo(cargoSelecionado) { /* ... (função mantida) ... */ for (const dept in cargosConfig.departamentos) { const departamento = cargosConfig.departamentos[dept]; for (const nivel in departamento.cargos) { const cargoEncontrado = departamento.cargos[nivel].find(c => c.cargo === cargoSelecionado); if (cargoEncontrado) { nivelSelect.value = nivel; return; } } } nivelSelect.value = 'N1'; } // Assume N1 se não achar
+        function formatarTelefone(telefone) { /* ... (função mantida) ... */ if (!telefone) return null; const numero = String(telefone).replace(/\D/g, ''); if (numero.length === 11) { return `(${numero.slice(0,2)}) ${numero.slice(2,7)}-${numero.slice(7)}`; } else if (numero.length === 10) { return `(${numero.slice(0,2)}) ${numero.slice(2,6)}-${numero.slice(6)}`; } return telefone; }
+        async function verificarHistoricoDesligamentos(nickHabbo) { /* ... (função mantida) ... */ readmissaoAviso.style.display = 'none'; proibidoReadmitirAviso.style.display = 'none'; submitButton.disabled = false; try { const desligamentosSnapshot = await db.collection("desligamentos").where("nickHabbo", "==", nickHabbo).get(); if (desligamentosSnapshot.empty) return; const desligamentos = desligamentosSnapshot.docs.map(doc => doc.data()); const justaCausa = desligamentos.some(d => d.tipoDesligamento === 'Justa Causa'); const outrosDesligamentos = desligamentos.filter(d => d.tipoDesligamento !== 'Justa Causa'); if (justaCausa || outrosDesligamentos.length >= 2) { proibidoReadmitirAviso.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Funcionário não pode ser readmitido.`; proibidoReadmitirAviso.style.display = 'block'; submitButton.disabled = true; } else if (outrosDesligamentos.length === 1) { readmissaoAviso.innerHTML = `<i class="fas fa-info-circle"></i> Pode ser recontratado mais uma vez.`; readmissaoAviso.style.display = 'block'; } } catch (error) { console.error("Erro ao verificar histórico:", error); mostrarMensagem("Erro ao verificar histórico.", "error"); } }
+        async function admitirFuncionario(event) { /* ... (função mantida) ... */ const nickHabbo = document.getElementById('nickHabbo').value.trim(); const cargo = document.getElementById('cargo').value; const nivel = document.getElementById('nivel').value; const salario = parseFloat(document.getElementById('salario').value); const discord = document.getElementById('discord').value.trim(); const whatsapp = document.getElementById('whatsapp').value.trim(); const dataAdmissao = document.getElementById('dataAdmissao').value; if (!nickHabbo || !cargo || !nivel || isNaN(salario) || !discord || !whatsapp || !dataAdmissao) { mostrarMensagem("Preencha todos os campos.", "error"); return; } const originalButtonText = submitButton.innerHTML; submitButton.disabled = true; submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Admitindo...'; try { const funcionarioExistente = await db.collection("funcionarios").where("nickHabbo", "==", nickHabbo).where("ativo", "==", true).get(); if (!funcionarioExistente.empty) { mostrarMensagem("Funcionário ativo já existe.", "error"); return; } await db.collection("funcionarios").add({ nickHabbo: nickHabbo, cargo: cargo, nivel: nivel, salario: salario, discord: discord, whatsapp: whatsapp, dataAdmissao: firebase.firestore.Timestamp.fromDate(new Date(dataAdmissao + 'T00:00:00')), totalPontos: 0, ativo: true, dataCadastro: firebase.firestore.FieldValue.serverTimestamp() }); mostrarMensagem("Funcionário admitido!", "success"); document.getElementById('admissaoForm').reset(); carregarOrcamento(); } catch (error) { console.error("Erro ao admitir:", error); mostrarMensagem("Erro: " + error.message, "error"); } finally { submitButton.disabled = false; submitButton.innerHTML = originalButtonText; } }
+
+        // --- Inicialização e Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para admissao_funcionarios.html");
+
+            // Inicializa interações da sidebar (do shared-ui.js)
+            if (typeof initializeSidebarInteractions === 'function') {
+                 initializeSidebarInteractions();
+            } else {
+                 console.error("Erro: initializeSidebarInteractions() não encontrada.");
+            }
+
+            // Lógica de autenticação e carregamento
+            auth.onAuthStateChanged(async (user) => {
+                console.log("Auth state changed:", user ? user.uid : "No user");
+                if (user) {
+                    currentUser = user; // Define usuário global
+                    try {
+                        // 1. BUSCAR DADOS DO USUÁRIO LOGADO ('usuarios')
+                        const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                        if (!userDoc.exists) { throw new Error("Usuário não encontrado."); }
+                        const userData = userDoc.data();
+                        console.log("UserData:", userData);
+
+                        // 2. VERIFICAR NÍVEL DE ACESSO (da coleção 'usuarios')
+                        const accessLevel = parseInt(userData.nivel || 0);
+
+                        // 3. PERMISSÃO DA PÁGINA (Admissão é para Nível >= 2)
+                        if (accessLevel < 2) {
+                            console.warn(`Usuário Nível ${accessLevel} tentou acessar Admissão. Redirecionando.`);
+                            window.location.href = 'dashboard_user.html'; // Ou outra página apropriada
+                            return;
+                        }
+
+                        // 4. BUSCAR NÍVEL HIERÁRQUICO ('funcionarios') PARA O MENU
+                        let userHierarchicalLevel = "N0";
+                        let userCargo = userData.cargo || "N/A";
+                        if (userData.nickHabbo) {
+                             try {
+                                 const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", userData.nickHabbo).where("ativo", "==", true).limit(1).get();
+                                 if (!funcQuery.empty) {
+                                     const funcData = funcQuery.docs[0].data();
+                                     userHierarchicalLevel = funcData.nivel || "N0";
+                                     userCargo = funcData.cargo || userCargo;
+                                     console.log("Nível Hierárquico:", userHierarchicalLevel);
+                                 } else if (accessLevel >= 3) { userHierarchicalLevel = "N10"; } // Admin/Superuser sem func = N10
+                             } catch (funcError) { if (accessLevel >= 3) { userHierarchicalLevel = "N10"; } }
+                         } else if (accessLevel >= 3) { userHierarchicalLevel = "N10"; } // Admin/Superuser sem nick = N10
+
+
+                        // 5. ATUALIZAR HEADER DA SIDEBAR
+                        welcomeHeader.textContent = userData.nome || "Usuário";
+                        userRoleEl.textContent = userCargo;
+
+                        // 6. GERAR E INSERIR O MENU DA SIDEBAR
+                        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                        if (typeof generateSidebarMenu === 'function') {
+                             const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                             sidebarMenu.innerHTML = menuHtml;
+                        } else { console.error("Erro: generateSidebarMenu() não encontrada."); sidebarMenu.innerHTML = '<p style="color:red;">Erro menu.</p>'; }
+
+                        // 7. CARREGAR DADOS ESPECÍFICOS DA PÁGINA (Cargos/Orçamento)
+                        await carregarOrcamento();
+
+                    } catch (error) { console.error("Erro auth/load:", error); if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico.</p>'; }
+                } else { console.log("Nenhum usuário logado."); window.location.href = 'login.html'; }
+            }); // Fim auth.onAuthStateChanged
+
+            // Adiciona Listeners específicos da página
+            document.getElementById('admissaoForm').addEventListener('submit', admitirFuncionario);
+            document.getElementById('cargo').addEventListener('change', function() { atualizarSalario(); definirNivelPorCargo(this.value); atualizarVagasDisponiveis(); });
+            document.getElementById('nivel').addEventListener('change', atualizarSalario); // Atualiza salário se nível mudar manualmente tbm
+            document.getElementById('whatsapp').addEventListener('input', function(e) { let valor = e.target.value.replace(/\D/g, ''); if (valor.length > 11) valor = valor.slice(0, 11); if (valor.length >= 10) { valor = valor.replace(/^(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3'); } e.target.value = valor; });
+            document.getElementById('nickHabbo').addEventListener('blur', function() { // Verifica histórico quando sai do campo
+                 if (this.value.trim().length > 0) { verificarHistoricoDesligamentos(this.value.trim()); }
+             });
+            document.querySelectorAll('#admissaoForm input, #admissaoForm select').forEach(el => { el.addEventListener('blur', function() { if (this.checkValidity()) { this.classList.add('is-valid'); this.classList.remove('is-invalid'); } else if (this.value) { this.classList.add('is-invalid'); this.classList.remove('is-valid'); } }); });
+
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

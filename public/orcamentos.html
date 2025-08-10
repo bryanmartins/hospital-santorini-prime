@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamentos - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/orcamentos.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral (Estrutura Dinâmica) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal Redesenhado -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Gestão de Orçamentos
+            </h1>
+            <p class="page-subtitle">Administre o orçamento do Hospital Santorini Prime por departamento e cargo</p>
+            
+            <!-- Container de Status Atualizado -->
+            <div class="status-container">
+                <div class="status-header">
+                    <div class="status-title">
+                        <i class="fas fa-info-circle"></i>
+                        Situação do Orçamento
+                    </div>
+                </div>
+                <div class="status-body">
+                    <div class="status-info">
+                        <div class="status-badge success">
+                            <i class="fas fa-check-circle"></i> Orçamento Ativo
+                        </div>
+                        <div class="status-text">
+                            Todas as alterações no orçamento serão refletidas nos custos e na disponibilidade de vagas.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Área de mensagem de status -->
+        <div id="messageDisplay" style="display:none;">
+            <div id="successMessage" class="message success-message"></div>
+            <div id="errorMessage" class="message error-message"></div>
+        </div>
+
+        <!-- Card: Tabela de Orçamentos -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-table"></i>
+                    Distribuição de Vagas e Salários
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Departamento</th>
+                                <th>Cargo</th>
+                                <th>Total Limite de Vagas</th>
+                                <th>Vagas Preenchidas</th>
+                                <th>Vagas Disponíveis</th>
+                                <th>Salário (c)</th>
+                                <th>Custo Unitário (c)</th>
+                                <th>Total de Custos Atuais (c)</th>
+                                <th>Total de Custos Máximos (c)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budgetBody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 30px;">
+                                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #1e90ff;"></i>
+                                    <p style="margin-top: 10px;">Carregando dados do orçamento...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Resumo Geral -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Resumo Geral
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table summary-table" id="summaryTable">
+                        <thead>
+                            <tr>
+                                <th>Total Limite de Vagas</th>
+                                <th>Vagas Preenchidas</th>
+                                <th>Vagas Disponíveis</th>
+                                <th>Total de Custos Atuais (c)</th>
+                                <th>Total de Custos Máximos (c)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">
+                                    <i class="fas fa-spinner fa-spin"></i> Carregando resumo...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Informações por Departamento -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="fas fa-building"></i>
+                    Informações por Departamento
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table dept-summary-table" id="deptSummaryTable">
+                        <thead>
+                            <tr>
+                                <th>Departamento</th>
+                                <th>Vagas Ocupadas</th>
+                                <th>% Ocupação</th>
+                                <th>Máximo de Vagas</th>
+                                <th>Custos Atuais (c)</th>
+                                <th>Máximo de Custos (c)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptSummaryBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 20px;">
+                                    <i class="fas fa-spinner fa-spin"></i> Carregando dados por departamento...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="button-container">
+                    <button id="saveOrcamento" class="btn btn-primary" onclick="salvarOrcamento()">
+                        <i class="fas fa-save"></i> Salvar Orçamento
+                    </button>
+                    <button id="loadOrcamento" class="btn btn-secondary" onclick="carregarOrcamento()">
+                        <i class="fas fa-sync-alt"></i> Atualizar Dados
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px;">Erro crítico na configuração. Contacte o suporte.</p>';
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentUser = null;
+        let currentUserLevel = 0;
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const messageDisplay = document.getElementById('messageDisplay');
+
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                try {
+                    const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                    if (!userDoc.exists) {
+                        throw new Error("Usuário não encontrado no Firestore. Saindo...");
+                    }
+                    const userData = userDoc.data();
+                    currentUserLevel = parseInt(userData.nivel || 0);
+
+                    if (currentUserLevel < 2) {
+                        mostrarMensagem("Você não tem permissão para acessar esta página.", "error");
+                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+                        return;
+                    }
+
+                    let userHierarchicalLevel = "N0";
+                    let userCargo = userData.cargo || "N/A";
+
+                    if (userData.nickHabbo && userData.nickHabbo !== "N/A") {
+                        try {
+                            const funcQuery = await db.collection("funcionarios")
+                                .where("nickHabbo", "==", userData.nickHabbo)
+                                .where("ativo", "==", true)
+                                .limit(1).get();
+
+                            if (!funcQuery.empty) {
+                                const funcData = funcQuery.docs[0].data();
+                                userHierarchicalLevel = funcData.nivel || "N0";
+                                userCargo = funcData.cargo || userCargo;
+                            } else if (currentUserLevel >= 3) {
+                                userHierarchicalLevel = "N10";
+                            }
+                        } catch (funcError) {
+                            console.error("Erro ao buscar dados do funcionário:", funcError);
+                            if (currentUserLevel >= 3) { userHierarchicalLevel = "N10"; }
+                        }
+                    } else if (currentUserLevel >= 3) {
+                        userHierarchicalLevel = "N10";
+                    }
+
+                    welcomeHeader.textContent = userData.nome || "Usuário";
+                    userRoleEl.textContent = userCargo;
+
+                    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                    if (typeof generateSidebarMenu === 'function') {
+                        const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                        sidebarMenu.innerHTML = menuHtml;
+                    } else {
+                        console.error("Erro: generateSidebarMenu() não encontrada em shared-ui.js.");
+                        sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro ao carregar menu.</p>';
+                    }
+
+                    await carregarOrcamento();
+
+                } catch (error) {
+                    console.error("Erro durante autenticação ou carregamento inicial:", error);
+                    mostrarMensagem(`Erro crítico: ${error.message}`, "error");
+                    if (error.message.includes("não encontrado")) {
+                        auth.signOut();
+                        window.location.href = 'login.html';
+                    }
+                    if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro crítico ao carregar.</p>';
+                }
+            } else {
+                currentUser = null;
+                currentUserLevel = 0;
+                window.location.href = 'login.html';
+            }
+        });
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                mostrarMensagem("Erro ao sair: " + error.message, "error");
+            });
+        }
+
+        const departamentos = {
+            "DECLIN": [
+                { cargo: "Clinica Geral", vagas: 10, salario: 30 },
+                { cargo: "Cirurgia", vagas: 5, salario: 30 },
+                { cargo: "Enfermagem", vagas: 10, salario: 30 },
+                { cargo: "Pediatria", vagas: 10, salario: 30 },
+                { cargo: "Obstetrícia", vagas: 5, salario: 30 },
+                { cargo: "Chefe de Clínica Geral", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Cirurgia", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Enfermagem", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Pediatria", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Obstetrícia", vagas: 1, salario: 35 },
+                { cargo: "Supervisor Clínico", vagas: 1, salario: 45 },
+                { cargo: "Supervisor Materno-Infantil", vagas: 1, salario: 45 },
+                { cargo: "Coordenador Clinico", vagas: 1, salario: 50 }
+            ],
+            "DEX": [
+                { cargo: "Vice-Diretor", vagas: 1, salario: 55 },
+                { cargo: "Diretor", vagas: 1, salario: 60 },
+                { cargo: "Vice-Presidente", vagas: 1, salario: 65 },
+                { cargo: "Presidente", vagas: 1, salario: 70 },
+                { cargo: "Fundador", vagas: 4, salario: 70 }
+            ],
+            "DOPH": [
+                { cargo: "Psicologia", vagas: 10, salario: 30 },
+                { cargo: "Psiquiatria", vagas: 5, salario: 30 },
+                { cargo: "Segurança", vagas: 10, salario: 30 },
+                { cargo: "Recepção", vagas: 10, salario: 30 },
+                { cargo: "Chefe de Psicologia", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Psiquiatria", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Segurança", vagas: 1, salario: 35 },
+                { cargo: "Chefe de Recepção", vagas: 1, salario: 35 },
+                { cargo: "Analista", vagas: 6, salario: 40 },
+                { cargo: "Supervisor de Saúde Mental", vagas: 1, salario: 45 },
+                { cargo: "Supervisor de Operações", vagas: 1, salario: 45 },
+                { cargo: "Coordenador de Operações e Saúde Mental", vagas: 1, salario: 50 }
+            ]
+        };
+
+        function mostrarMensagem(mensagem, tipo) {
+            const msgDivId = tipo === 'success' ? 'successMessage' : 'errorMessage';
+            const msgDiv = document.getElementById(msgDivId);
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+            document.getElementById('successMessage').innerHTML = '';
+            document.getElementById('errorMessage').innerHTML = '';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            if (msgDiv) {
+                msgDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`;
+                msgDiv.style.display = 'block';
+                msgDiv.style.opacity = '1';
+                msgDiv.style.transition = '';
+            }
+
+            if (messageDisplay) {
+                messageDisplay.style.display = 'block';
+                messageDisplay.classList.add('show');
+                messageDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            setTimeout(() => {
+                if (msgDiv) {
+                    msgDiv.style.opacity = '0';
+                    msgDiv.style.transition = 'opacity 0.5s ease';
+                }
+                if (messageDisplay) {
+                    setTimeout(() => {
+                        if (msgDiv) msgDiv.style.display = 'none';
+                        const otherMsgId = tipo === 'success' ? 'errorMessage' : 'successMessage';
+                        const otherMsgDiv = document.getElementById(otherMsgId);
+                        if (!otherMsgDiv || otherMsgDiv.style.display === 'none' || otherMsgDiv.innerHTML === '') {
+                            messageDisplay.style.display = 'none';
+                            messageDisplay.classList.remove('show');
+                        }
+                        if (msgDiv) msgDiv.innerHTML = '';
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+        async function carregarOrcamento() {
+            const budgetBody = document.getElementById('budgetBody');
+            budgetBody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;"><i class="fas fa-spinner fa-spin" style="font-size:24px;color:#1e90ff;"></i><p style="margin-top:10px;">Carregando dados do orçamento...</p></td></tr>';
+
+            let totalVagas = 0;
+            let totalPreenchidas = 0;
+            let totalCustosAtuais = 0;
+            let totalCustosMaximos = 0;
+
+            try {
+                const docRef = await db.collection("orcamento").doc("estrutura").get();
+                let orcamentoData = departamentos;
+                if (docRef.exists) {
+                    const data = docRef.data();
+                    if (data.DECLIN || data.DEX || data.DOPH) {
+                        orcamentoData = {
+                            DECLIN: data.DECLIN || departamentos.DECLIN,
+                            DEX: data.DEX || departamentos.DEX,
+                            DOPH: data.DOPH || departamentos.DOPH
+                        };
+                    }
+                }
+
+                const promises = [];
+                budgetBody.innerHTML = '';
+
+                for (const dept in departamentos) {
+                    const cargos = orcamentoData[dept];
+                    if (Array.isArray(cargos)) {
+                        for (const cargo of cargos) {
+                            const promise = db.collection("funcionarios")
+                                .where("cargo", "==", cargo.cargo)
+                                .get()
+                                .then((querySnapshot) => {
+                                    const preenchidas = querySnapshot.docs.filter(doc => doc.data().ativo !== false).length;
+                                    const disponiveis = Math.max(0, cargo.vagas - preenchidas);
+                                    const custoUnitario = calcularCustoUnitario(cargo.salario);
+                                    const custosAtuais = preenchidas * custoUnitario;
+                                    const maxCustos = cargo.vagas * custoUnitario;
+
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td>${dept}</td>
+                                        <td>${cargo.cargo}</td>
+                                        <td>
+                                            <input type="number" value="${cargo.vagas}" min="0"
+                                                   onchange="atualizarVagas(this, '${dept}', '${cargo.cargo}')">
+                                        </td>
+                                        <td>${preenchidas}</td>
+                                        <td>${disponiveis}</td>
+                                        <td>${cargo.salario}</td>
+                                        <td>${custoUnitario}</td>
+                                        <td>${custosAtuais}</td>
+                                        <td>${maxCustos}</td>
+                                    `;
+                                    budgetBody.appendChild(row);
+
+                                    return {
+                                        dept,
+                                        vagas: cargo.vagas,
+                                        preenchidas,
+                                        custoUnitario,
+                                        custosAtuais,
+                                        maxCustos
+                                    };
+                                });
+                            promises.push(promise);
+                        }
+                    }
+                }
+
+                const results = await Promise.all(promises);
+                results.forEach(result => {
+                    totalVagas += result.vagas;
+                    totalPreenchidas += result.preenchidas;
+                    totalCustosAtuais += result.custosAtuais;
+                    totalCustosMaximos += result.maxCustos;
+                });
+
+                atualizarResumoGeral();
+                atualizaDeptSummary();
+            } catch (error) {
+                console.error("Erro detalhado ao carregar orçamento:", error);
+                mostrarMensagem("Erro ao carregar dados do orçamento: " + error.message, "error");
+                
+                budgetBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align:center;padding:30px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size:24px;color:#e74c3c;"></i>
+                            <p style="margin-top:10px;">Erro ao carregar dados: ${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function calcularCustoUnitario(salario) {
+            switch (salario) {
+                case 30: return 32;
+                case 35: return 38;
+                case 40: return 42;
+                case 45: return 48;
+                case 50: return 52;
+                case 55: return 58;
+                case 60: return 63;
+                case 65: return 69;
+                case 70: return 74;
+                default: return salario;
+            }
+        }
+
+        function atualizarResumoGeral() {
+            const summaryBody = document.getElementById('summaryBody');
+            summaryBody.innerHTML = '';
+
+            let totalVagas = 0;
+            let totalPreenchidas = 0;
+            let totalCustosAtuais = 0;
+            let totalCustosMaximos = 0;
+
+            const budgetRows = document.querySelectorAll('#budgetBody tr');
+            budgetRows.forEach(row => {
+                const vagas = parseInt(row.querySelector('input[type="number"]').value);
+                const preenchidas = parseInt(row.cells[3].textContent);
+                const custoUnitario = parseInt(row.cells[6].textContent);
+
+                totalVagas += vagas;
+                totalPreenchidas += preenchidas;
+                totalCustosAtuais += preenchidas * custoUnitario;
+                totalCustosMaximos += vagas * custoUnitario;
+            });
+
+            const totalRow = document.createElement('tr');
+            totalRow.classList.add('total-row');
+            totalRow.innerHTML = `
+                <td>${totalVagas}</td>
+                <td>${totalPreenchidas}</td>
+                <td>${Math.max(0, totalVagas - totalPreenchidas)}</td>
+                <td>${totalCustosAtuais}</td>
+                <td>${totalCustosMaximos}</td>
+            `;
+            summaryBody.appendChild(totalRow);
+        }
+
+        function atualizaDeptSummary() {
+            const deptSummaryBody = document.getElementById('deptSummaryBody');
+            deptSummaryBody.innerHTML = '';
+
+            const deptStats = {};
+
+            const budgetRows = document.querySelectorAll('#budgetBody tr');
+            budgetRows.forEach(row => {
+                const dept = row.cells[0].textContent;
+                const vagas = parseInt(row.querySelector('input[type="number"]').value);
+                const preenchidas = parseInt(row.cells[3].textContent);
+                const custoUnitario = parseInt(row.cells[6].textContent);
+
+                if (!deptStats[dept]) {
+                    deptStats[dept] = {
+                        vagasOcupadas: 0,
+                        maxVagas: 0,
+                        custosAtuais: 0,
+                        maxCustos: 0
+                    };
+                }
+
+                deptStats[dept].vagasOcupadas += preenchidas;
+                deptStats[dept].maxVagas += vagas;
+                deptStats[dept].custosAtuais += preenchidas * custoUnitario;
+                deptStats[dept].maxCustos += vagas * custoUnitario;
+            });
+
+            for (const dept in deptStats) {
+                const stats = deptStats[dept];
+                const ocupacao = stats.maxVagas > 0 ? ((stats.vagasOcupadas / stats.maxVagas) * 100).toFixed(2) + '%' : '0.00%';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dept}</td>
+                    <td>${stats.vagasOcupadas}</td>
+                    <td>${ocupacao}</td>
+                    <td>${stats.maxVagas}</td>
+                    <td>${stats.custosAtuais}</td>
+                    <td>${stats.maxCustos}</td>
+                `;
+                deptSummaryBody.appendChild(row);
+            }
+
+            const gratificacoesRow = document.createElement('tr');
+            gratificacoesRow.innerHTML = `
+                <td>Gratificações</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>35</td>
+                <td>35</td>
+            `;
+            deptSummaryBody.appendChild(gratificacoesRow);
+
+            const totalRow = document.createElement('tr');
+            totalRow.classList.add('total-row');
+
+            const totalVagas = Object.values(deptStats).reduce((acc, curr) => acc + curr.maxVagas, 0);
+            const totalPreenchidas = Object.values(deptStats).reduce((acc, curr) => acc + curr.vagasOcupadas, 0);
+            const totalCustosAtuais = Object.values(deptStats).reduce((acc, curr) => acc + curr.custosAtuais, 35);
+            const totalCustosMaximos = Object.values(deptStats).reduce((acc, curr) => acc + curr.maxCustos, 35);
+
+            totalRow.innerHTML = `
+                <td>Total</td>
+                <td>${totalPreenchidas}</td>
+                <td>-</td>
+                <td>${totalVagas}</td>
+                <td>${totalCustosAtuais}</td>
+                <td>${totalCustosMaximos}</td>
+            `;
+            deptSummaryBody.appendChild(totalRow);
+        }
+
+        function atualizarVagas(inputElement, departamento, cargo) {
+            const novasVagas = parseInt(inputElement.value, 10);
+
+            if (isNaN(novasVagas) || novasVagas < 0) {
+                mostrarMensagem("Por favor, insira um número válido e não negativo para as vagas.", "error");
+                carregarOrcamento();
+                return;
+            }
+
+            atualizarResumoGeral();
+            atualizaDeptSummary();
+        }
+
+        function salvarOrcamento() {
+            try {
+                const rows = document.querySelectorAll('#budgetBody tr');
+                const novoOrcamento = {
+                    DECLIN: [],
+                    DEX: [],
+                    DOPH: []
+                };
+
+                rows.forEach(row => {
+                    const dept = row.cells[0].textContent;
+                    const cargo = row.cells[1].textContent;
+                    const vagas = parseInt(row.querySelector('input[type="number"]').value);
+                    const salario = parseInt(row.cells[5].textContent);
+
+                    if (novoOrcamento[dept]) {
+                        novoOrcamento[dept].push({
+                            cargo: cargo,
+                            vagas: vagas,
+                            salario: salario
+                        });
+                    }
+                });
+
+                db.collection("orcamento").doc("estrutura").set(novoOrcamento)
+                    .then(() => {
+                        mostrarMensagem("Orçamento salvo com sucesso!", "success");
+                        carregarOrcamento();
+                    })
+                    .catch((error) => {
+                        console.error("Erro detalhado ao salvar orçamento:", error);
+                        mostrarMensagem("Erro ao salvar o orçamento: " + error.message, "error");
+                    });
+            } catch (error) {
+                console.error("Erro ao preparar orçamento para salvar:", error);
+                mostrarMensagem("Erro ao preparar dados do orçamento: " + error.message, "error");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initializeSidebarInteractions === 'function') {
+                initializeSidebarInteractions();
+            } else {
+                console.error("Erro: initializeSidebarInteractions() não encontrada em shared-ui.js.");
+            }
+
+            const logoutButton = document.getElementById('logoutBtn');
+            if (logoutButton && typeof logout === 'function') {
+                logoutButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+            window.salvarOrcamento = salvarOrcamento;
+            window.carregarOrcamento = carregarOrcamento;
+            window.atualizarVagas = atualizarVagas;
+        });
+    </script>
+</body>
+</html>

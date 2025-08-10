@@ -1,0 +1,340 @@
+/* ==========================================================================
+   Estilos Específicos para a Página Trilha de Carreira (trilha.html)
+   ========================================================================== */
+
+/* --- Estilo das Seções Principais da Trilha --- */
+.trilha-section {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-md);       /* Usa variável */
+    overflow: hidden;
+    margin-bottom: 30px;
+    animation: fadeIn 0.5s ease forwards; /* Requer @keyframes fadeIn em estilo-principal.css */
+    opacity: 0; /* Começa invisível */
+}
+/* Animação escalonada para seções */
+ .trilha-section:nth-of-type(1) { animation-delay: 0.1s; }
+ .trilha-section:nth-of-type(2) { animation-delay: 0.2s; }
+ .trilha-section:nth-of-type(3) { animation-delay: 0.3s; }
+ .trilha-section:nth-of-type(4) { animation-delay: 0.4s; }
+ /* ... adicionar mais se necessário ... */
+
+.trilha-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.trilha-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.trilha-title i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.trilha-body {
+    padding: 25px 30px;
+}
+
+.trilha-content {
+    line-height: 1.7;
+    color: var(--text-main);
+    font-size: 15px;
+    margin-bottom: 20px; /* Espaço geral para o container */
+}
+ .trilha-content p {
+     margin-bottom: 1em;
+     text-align: justify;
+ }
+ /* --- FIM Estilo das Seções Principais --- */
+
+
+ /* --- Estilo para Tabelas Específicas da Trilha --- */
+ /* (Regras gerais em tabelas.css, aqui apenas overrides/adições) */
+ .trilha-table {
+     /* Estilos base já em tabelas.css */
+     margin-bottom: 20px;
+ }
+
+ .trilha-table th {
+     /* background-color: #f8f9fa; */ /* Já definido em tabelas.css */
+     color: var(--primary); /* Cor específica para header desta tabela */
+ }
+
+ .trilha-table tr:nth-child(even) {
+     background-color: #f9f9f9; /* Zebra striping */
+ }
+
+
+ /* --- Estilo para cabeçalhos de seção DENTRO do .trilha-content --- */
+ /* (Usar .section-title para títulos FORA dos cards) */
+ .trilha-content h3 {
+     color: var(--primary-dark); /* Azul mais escuro */
+     margin-top: 25px;
+     margin-bottom: 15px; /* Mais espaço */
+     font-weight: 600;
+     font-size: 18px;
+     padding-bottom: 8px;
+     border-bottom: 1px solid #eee;
+ }
+ .trilha-content h3:first-child {
+     margin-top: 0; /* Remove margem do primeiro título */
+ }
+
+
+ /* --- Estilo para listas DENTRO do .trilha-content --- */
+ .trilha-content ul,
+ .trilha-content ol { /* Aplica a ambos os tipos de lista */
+     margin-bottom: 15px;
+     padding-left: 25px; /* Indentação */
+     line-height: 1.7; /* Garante espaçamento */
+     color: var(--text-main);
+ }
+
+ .trilha-content li {
+     margin-bottom: 10px; /* Espaço entre itens */
+ }
+
+ .trilha-content li::marker {
+     color: var(--primary); /* Cor do marcador */
+     font-weight: bold; /* Opcional: destaca marcador */
+ }
+
+
+ /* --- Alert Box (Caixa de Alerta Amarela) --- */
+ /* Estilo similar ao .alert-warning */
+ .alert-box {
+     background-color: rgba(243, 156, 18, 0.1); /* Fundo warning */
+     border-left: 4px solid var(--warning); /* Borda warning */
+     padding: 15px 20px;
+     margin: 25px 0; /* Mais margem vertical */
+     border-radius: 6px;
+ }
+ .alert-box h3 {
+     color: var(--warning); /* Cor do título warning */
+     margin: 0 0 10px 0; /* Ajuste de margem */
+     border-bottom: none; /* Sem borda no título */
+     padding-bottom: 0;
+     display: flex;
+     align-items: center;
+     font-size: 16px;
+     font-weight: 600;
+ }
+ .alert-box h3 i {
+     margin-right: 10px;
+ }
+ .alert-box p {
+     margin-bottom: 0;
+     color: var(--text-main);
+ }
+ .alert-box strong {
+     color: var(--warning); /* Cor do destaque warning */
+     font-weight: 600;
+ }
+
+
+/* --- Estilo Acordeão --- */
+.accordion {
+    background-color: #fff;
+    margin-bottom: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #e9ecef;
+    overflow: hidden; /* Prevent content overflow before expansion */
+}
+
+.accordion-header {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.accordion-header:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion.active > .accordion-header .accordion-icon i {
+    transform: rotate(180deg);
+    color: var(--primary);
+}
+
+.accordion-title {
+    font-weight: 600;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
+}
+.accordion-title i {
+    margin-right: 12px;
+    color: var(--primary);
+    font-size: 1.2em;
+    width: 20px; /* Ensure icon width */
+    text-align: center;
+}
+.accordion-title .nivel-badge {
+    margin-left: 10px; /* Space between icon and badge */
+    margin-right: 10px; /* Space between badge and text */
+}
+
+.accordion-icon i {
+    transition: transform 0.3s ease;
+    color: var(--text-light);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease-out, padding 0.35s ease-out; /* Smooth transition for height and padding */
+    padding: 0 20px; /* No vertical padding when closed */
+    background-color: #fdfdff; /* Slightly off-white background for content */
+    border-top: 1px solid #e9ecef; /* Add border-top for separation */
+}
+.accordion.active > .accordion-content {
+     padding: 15px 20px; /* Add padding back when open */
+     max-height: 2000px; /* Adjust as needed, make it large enough */
+}
+
+/* Spacing fix: Add margin above department title if it follows a paragraph */
+.accordion-content > p + h3.section-title {
+    margin-top: 25px; /* Adjust value as needed */
+}
+
+/* Nested Accordion Styles */
+.nested-accordion {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+    box-shadow: none; /* Remove outer shadow */
+    border-radius: 8px; /* Slightly smaller radius */
+}
+.nested-header {
+    padding: 12px 15px;
+    background-color: #f8f9fa; /* Different background for nested header */
+}
+.nested-header .accordion-title {
+    font-size: 1em; /* Slightly smaller title */
+    color: var(--dark);
+}
+.nested-header .accordion-title i {
+    font-size: 1em;
+    color: var(--secondary);
+}
+.nested-accordion.active > .nested-header .accordion-icon i {
+    transform: rotate(180deg);
+}
+
+.nested-content {
+    background-color: #fff; /* White background for nested content */
+    max-height: 0; /* Ensure nested content also starts closed */
+    overflow: hidden; /* Ensure nested content also starts closed */
+    transition: max-height 0.35s ease-out, padding 0.35s ease-out; /* Ensure transition */
+    padding: 0 15px; /* Adjust padding */
+    border-top: 1px solid #dee2e6; /* Add border-top for separation */
+}
+.nested-accordion.active > .nested-content {
+    padding: 15px;
+    max-height: 1500px; /* Adjust as needed, make it large enough */
+}
+
+/* --- Card de Cargo (Dentro do Acordeão) --- */
+.cargo-card {
+    background-color: #fff; /* Ensure background */
+    padding: 15px;
+    border-radius: 6px;
+    /* border: 1px solid #e9ecef; */ /* Optional border inside nested content */
+    margin-bottom: 0; /* Remove bottom margin if it's the only element */
+}
+.cargo-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+.cargo-section {
+    margin-bottom: 15px;
+}
+.cargo-section:last-child {
+    margin-bottom: 0;
+}
+.cargo-section-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 8px;
+}
+.trilha-list {
+    list-style: none; /* Remove default bullets */
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.trilha-list li {
+    font-size: 0.9em;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    position: relative;
+    padding-left: 18px; /* Space for custom bullet */
+}
+.trilha-list li::before {
+    content: "\f00c"; /* FontAwesome check icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--success);
+    position: absolute;
+    left: 0;
+    top: 2px; /* Adjust vertical alignment */
+    font-size: 0.8em;
+}
+.cargo-section p {
+    font-size: 0.9em;
+    color: var(--text-main);
+    margin-bottom: 0;
+}
+
+/* --- Bloco Informativo/Destaque (Trilha Step) --- */
+.trilha-step { background: var(--light); border-left: 4px solid var(--info); padding: 15px 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0; }
+.trilha-step h3 { color: var(--info); margin-bottom: 10px; font-size: 17px; font-weight: 600; margin-top: 0; }
+.trilha-step p { margin-bottom: 0; color: var(--text-main); font-size: 14px; line-height: 1.6; }
+.trilha-step ul { padding-left: 20px; margin-top: 10px; list-style: disc; font-size: 14px; color: var(--text-main); }
+.trilha-step li { margin-bottom: 5px; }
+
+/* --- Responsivo Específico Trilha --- */
+@media (max-width: 768px) {
+    .trilha-section { padding: 15px; margin-bottom: 20px; }
+    .trilha-header { padding: 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .trilha-title { font-size: 16px; }
+    .trilha-body { padding: 20px 15px; }
+    .trilha-content { font-size: 14px; }
+    .trilha-content h3 { font-size: 17px; } /* Ajuste dos H3 internos */
+    .alert-box h3 { font-size: 15px; }
+    .alert-box p { font-size: 14px; }
+    .accordion-header { padding: 12px 15px; }
+    .accordion-title { font-size: 15px; }
+    .accordion-content { padding: 0 15px; }
+    .accordion.active > .accordion-content { padding: 15px; }
+    .nested-header { padding: 10px 12px; }
+    .nested-header .accordion-title { font-size: 14px; }
+    .nested-content { padding: 0 12px; }
+    .accordion.nested-accordion.active > .nested-content { padding: 12px; }
+    .cargo-card { padding: 0; }
+    .cargo-title { font-size: 15px; }
+    .cargo-section-title { font-size: 13px; }
+    .cargo-section p, .cargo-section ul { font-size: 13px; }
+    .trilha-step { padding: 12px 15px; }
+    .trilha-step h3 { font-size: 16px; }
+    .trilha-step p, .trilha-step ul { font-size: 13px; }
+}

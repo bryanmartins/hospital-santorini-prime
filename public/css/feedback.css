@@ -1,0 +1,497 @@
+/* ==========================================================================
+   Estilos Específicos para a Página de Feedback (feedback.html)
+   ========================================================================== */
+
+/* Seletor de Quinzena */
+.quinzena-selector {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    gap: 15px;
+    animation: fadeIn 0.5s ease forwards; /* Requer @keyframes fadeIn */
+}
+
+.quinzena-label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Não encolher o label */
+}
+
+.quinzena-label i {
+    margin-right: 10px;
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.quinzena-dropdown {
+    position: relative;
+    min-width: 250px; /* Largura mínima */
+    flex-grow: 1; /* Ocupa espaço disponível */
+    max-width: 400px; /* Largura máxima */
+}
+
+/* Estilo específico para este select, similar ao form-control */
+.quinzena-select {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--light);
+    border: 2px solid #e1e5eb;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-main);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 40px; /* Espaço para seta */
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.quinzena-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.25);
+    outline: none;
+}
+
+/* Seta específica para este dropdown (caret-down) */
+.quinzena-dropdown::after {
+    content: '\f078'; /* Ícone caret-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900; /* Solid style */
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.quinzena-dropdown:focus-within::after { /* Muda cor no foco */
+    color: var(--primary);
+}
+
+/* Container dos Feedbacks */
+.feedback-container {
+    animation: fadeIn 0.6s ease forwards; /* Requer @keyframes fadeIn */
+    animation-delay: 0.1s; /* Pequeno delay */
+    margin-top: 20px;
+}
+
+/* Card de Feedback Individual */
+.feedback-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden; /* Para conter header arredondado */
+    margin-bottom: 30px;
+    transition: var(--transition);
+}
+
+.feedback-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feedback-header {
+    padding: 20px 25px;
+    background: linear-gradient(145deg, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Removido border-radius daqui, overflow:hidden no card resolve */
+    flex-wrap: wrap; /* Quebra linha se necessário */
+    gap: 10px; /* Espaçamento se quebrar linha */
+}
+
+.feedback-title {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    margin: 0; /* Remove margem padrão de h3 */
+}
+
+.feedback-title i {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.feedback-date {
+    font-size: 13px;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+}
+
+.feedback-date i {
+    margin-right: 5px;
+}
+
+/* Informações dentro do Card */
+.feedback-info {
+    padding: 25px;
+    display: grid;
+    grid-template-columns: 1fr; /* Uma coluna por padrão */
+    gap: 20px; /* Aumenta o espaço entre grupos */
+    border-bottom: 1px solid #eee;
+}
+/* Layout em 2 colunas se houver espaço */
+ @media (min-width: 600px) {
+     .feedback-info {
+         grid-template-columns: repeat(2, 1fr);
+         gap: 25px;
+     }
+ }
+
+
+.info-group {
+    margin-bottom: 0; /* Remove margem padrão se for div */
+}
+
+.info-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.info-label i {
+    margin-right: 8px;
+    color: var(--primary);
+    width: 18px;
+    text-align: center;
+}
+
+.info-value {
+    font-size: 16px;
+    color: var(--text-main);
+}
+
+/* Exibição do Rating (Estrelas) */
+.rating-display {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Permite quebrar linha */
+    gap: 10px; /* Espaço entre estrelas e valor */
+}
+
+.rating-stars {
+    display: flex;
+    gap: 3px; /* Espaço entre estrelas */
+}
+
+.star {
+    font-size: 22px;
+    color: #ddd; /* Cor da estrela vazia */
+}
+
+.star.filled {
+    color: #f1c40f; /* Cor da estrela preenchida (amarelo) */
+}
+
+.rating-value { /* Valor numérico da nota */
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-left: 5px; /* Pequeno espaço após estrelas */
+}
+
+/* Seção de Observações */
+.feedback-observations {
+    padding: 25px;
+}
+
+.observations-title {
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+}
+
+.observations-title i {
+    margin-right: 10px;
+    color: var(--primary);
+}
+
+.observations-content {
+    background: rgba(30, 144, 255, 0.05); /* Fundo azul bem claro */
+    border-left: 4px solid var(--primary);
+    padding: 15px 20px;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-main);
+    white-space: pre-wrap; /* Preserva quebras de linha e espaços */
+    word-wrap: break-word; /* Quebra palavras longas */
+    max-height: 300px; /* Altura máxima com rolagem se necessário */
+     overflow-y: auto;
+}
+
+/* Estado "Sem Feedback" */
+.no-feedback {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    margin-top: 0; /* Reset margin */
+    animation: fadeIn 0.5s ease forwards; /* Requer @keyframes fadeIn */
+    border: 1px dashed #eee; /* Adiciona uma borda tracejada */
+}
+
+.no-feedback i {
+    font-size: 48px;
+    color: var(--text-light);
+    opacity: 0.5;
+    margin-bottom: 15px;
+}
+
+.no-feedback-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.no-feedback-text {
+    color: var(--text-light);
+    font-size: 14px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Estado de Loading (Pode ser consolidado com outros loadings) */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    min-height: 200px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(30, 144, 255, 0.1); /* Borda clara */
+    border-left-color: var(--primary); /* Cor primária na borda que gira */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Requer @keyframes spin */
+    margin-bottom: 20px;
+}
+
+ @keyframes spin { /* Melhor definido em estilo-principal.css */
+     to { transform: rotate(360deg); }
+ }
+
+.loading-text {
+    font-size: 16px;
+    color: var(--text-light);
+}
+
+/* Classe utilitária (Melhor em estilo-principal.css) */
+ .text-danger {
+     color: var(--danger) !important;
+ }
+
+
+/* ==========================================================================
+   Estilos Responsivos Específicos para Feedback
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Ajustes gerais responsivos (sidebar, main-content, page-title)
+       devem estar em estilo-principal.css */
+
+    /* Ajustes específicos desta página */
+    .quinzena-selector {
+         flex-direction: column; /* Empilha label e dropdown */
+         align-items: flex-start; /* Alinha itens à esquerda */
+         padding: 15px;
+    }
+    .quinzena-dropdown {
+         width: 100%; /* Ocupa largura total */
+         min-width: unset; /* Remove largura mínima */
+    }
+    .feedback-header {
+         flex-direction: column; /* Empilha título e data */
+         align-items: flex-start; /* Alinha à esquerda */
+         gap: 10px;
+         padding: 15px 20px;
+    }
+    .feedback-date {
+         margin-left: 0; /* Remove margem se houver */
+    }
+    .feedback-info {
+        padding: 20px;
+        grid-template-columns: 1fr; /* Garante uma coluna */
+    }
+     .observations-content {
+        padding: 15px;
+     }
+     .rating-display {
+         flex-direction: column; /* Empilha estrelas e valor */
+         align-items: flex-start;
+     }
+     .rating-value {
+         margin-left: 0;
+     }
+}
+
+/* Animação fadeIn (Melhor definida em estilo-principal.css) */
+ /* @keyframes fadeIn {
+     from { opacity: 0; transform: translateY(10px); }
+     to { opacity: 1; transform: translateY(0); }
+ } */
+
+ /* ============================================= */
+/* Estilos Específicos para Avaliar.html         */
+/* Adicionar ao final de formularios.css        */
+/* ============================================= */
+
+/* Container da Avaliação (Estrelas + Valor) */
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre estrelas e texto da nota */
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* Permite quebra se não couber */
+}
+
+/* Container APENAS das estrelas */
+.stars-container {
+    /* direction: rtl; */ /* REMOVIDO - Causa do R->L */
+    display: inline-flex; /* Alinha estrelas na mesma linha */
+}
+
+/* Esconde o input radio original */
+.star-rating {
+    display: none;
+}
+
+/* Estilo do Label (Estrela Visual) */
+.star-label {
+    font-size: 2.5rem;      /* Tamanho da estrela */
+    color: #ccc;            /* Cor padrão (cinza/vazia) */
+    cursor: pointer;
+    transition: color 0.1s ease-in-out; /* Transição suave */
+    padding: 0 2px;         /* Pequeno espaçamento lateral */
+}
+
+/* Estilo para estrela selecionada (:checked) E anteriores (controlado via JS com classe .selected) */
+/* A regra :checked ~ .star-label sozinha não funciona bem para LTR */
+.star-label.selected,
+.star-rating:checked + .star-label { /* Estiliza a estrela exata do input selecionado */
+    color: var(--primary) !important; /* Cor primária (azul) - !important pode ser necessário se houver conflito */
+}
+
+/* Efeito Hover será tratado via JavaScript para LTR */
+
+/* Texto que mostra a nota ("Nota: 3 de 5 estrelas") */
+.rating-value {
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 150px; /* Garante espaço */
+    font-size: 0.95rem; /* Tamanho um pouco menor */
+}
+
+/* Caixa de Feedback (Excelente, Bom, etc.) */
+.feedback-box {
+    margin-top: 10px;
+    padding: 12px 15px; /* Mais padding */
+    border-radius: 6px;
+    background-color: #f0f4f8; /* Fundo um pouco diferente */
+    border: 1px solid #e0e6ed;
+    display: none; /* Começa escondido */
+    width: 100%; /* Ocupa largura disponível */
+}
+
+.feedback-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--dark);
+    font-size: 0.9rem;
+}
+
+.feedback-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
+/* Caixa de Informação (Aviso sobre substituir avaliação) */
+.info-box {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-left: 4px solid var(--info);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    color: #2a7ab0; /* Tom de azul um pouco mais escuro */
+    font-size: 14px;
+}
+.info-box p { margin: 0; }
+.info-box strong { font-weight: 600; }
+
+/* Container dos Botões Voltar/Enviar */
+.btn-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap; /* Permite quebrar em telas pequenas */
+}
+
+/* Estilos para Mensagem de Período Inativo */
+#periodoInativoContainer {
+    width: 100%; /* Para centralizar o conteúdo interno */
+}
+.period-inactive {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    margin-top: 30px;
+    border: 1px solid #eee;
+}
+.period-inactive-icon i {
+    font-size: 3.5rem; /* Pouco menor */
+    color: var(--warning);
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+.period-inactive-title {
+    font-size: 1.6rem; /* Pouco menor */
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.period-inactive-message {
+    font-size: 1rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+#voltarBtnInativo { /* Estilo específico para o botão dentro da msg */
+     margin-top: 25px !important;
+}
+
+
+
+/* Validação Visual (se não estiver em formularios.css) */
+.form-control.is-valid { border-color: var(--success) !important; }
+.form-control.is-invalid { border-color: var(--danger) !important; }

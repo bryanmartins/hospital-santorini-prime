@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Tenor+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./css/estilo-login.css">
+    
+</head>
+<body>
+    <div class="bg-overlay">
+         <div class="hexagon-grid"></div>
+         <div class="bg-circle circle1"></div>
+         <div class="bg-circle circle2"></div>
+         <div class="bg-circle circle3"></div>
+         <div class="bg-circle circle4"></div>
+     </div>
+
+     <div class="initial-animation-container" id="initial-animation">
+          <img src="imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime" class="logo-animation">
+          <div class="animated-slogan-wrapper">
+               <span class="animated-slogan">A confiança que você precisa com o cuidado que você merece</span>
+          </div>
+     </div>
+
+     <div class="login-container">
+         <div class="login-header-internal">
+              <img src="imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime" id="internal-logo">
+              <h1>Hospital Santorini Prime</h1>
+              <h2>Portal do Funcionário</h2>
+         </div>
+
+         <form id="loginForm">
+              <div class="form-group">
+                   <input type="email" id="email" name="email" placeholder=" " required>
+                   <label for="email">E-mail</label>
+              </div>
+              <div class="form-group">
+                   <input type="password" id="password" name="password" placeholder=" " required>
+                   <label for="password">Senha</label>
+              </div>
+              <button type="submit" id="loginBtn" class="btn-submit">
+                   Entrar
+              </button>
+         </form>
+
+         <div class="login-footer">
+              <div class="links">
+                   <a href="#" onclick="abrirModalRecuperacao()">Esqueceu sua senha?</a>
+              </div>
+              <div class="divider">ou</div>
+              <div class="social-login-buttons">
+                   <button class="social-login-button" id="googleLogin">
+                         <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/google.svg" alt="Google" /> Google
+                    </button>
+                   </div>
+              <div class="message-area">
+                   <div class="error-message" id="errorMessage"></div>
+                   <div class="success-message" id="successMessage"></div>
+              </div>
+         </div>
+     </div>
+
+     <div class="modal" id="recoverPasswordModal">
+         <div class="modal-content">
+              <span class="close-button" onclick="fecharModalRecuperacao()" title="Fechar">&times;</span>
+              <h2>Recuperar Senha</h2>
+              <form id="recoverPasswordForm" onsubmit="event.preventDefault(); enviarEmailRecuperacao();">
+                   <div class="form-group">
+                        <label for="recoverPasswordEmail">E-mail Cadastrado</label>
+                        <input type="email" id="recoverPasswordEmail" required placeholder="Digite seu e-mail">
+                   </div>
+                   <button type="submit" id="recoverBtn" class="btn-submit"> Enviar E-mail
+                   </button>
+              </form>
+              <div class="message-area">
+                   <div class="error-message" id="recoverPasswordErrorMessage"></div>
+                   <div class="success-message" id="recoverPasswordSuccessMessage"></div>
+              </div>
+         </div>
+     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // --- CREDENCIAIS FIREBASE (Use as suas!) ---
+        const firebaseConfig = { apiKey: "AIzaSyAY8jZCkyAXXxotM1mkXIYp5P6ra8mYdW0", /* ...restante... */ authDomain: "hospital-santorini-prime.firebaseapp.com", projectId: "hospital-santorini-prime", storageBucket: "hospital-santorini-prime.appspot.com", messagingSenderId: "348303850069", appId: "1:348303850069:web:753e2e59c864627d3932dc", measurementId: "G-2SLGJQ6MC6" };
+
+        // --- Inicialização Firebase ---
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+        // --- Seletores DOM ---
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const recoverPasswordModal = document.getElementById('recoverPasswordModal');
+        const recoverPasswordErrorMessage = document.getElementById('recoverPasswordErrorMessage');
+        const recoverPasswordSuccessMessage = document.getElementById('recoverPasswordSuccessMessage');
+        const recoverPasswordEmailInput = document.getElementById('recoverPasswordEmail');
+        const recoverBtn = document.getElementById('recoverBtn'); // Selector para o botão do modal
+
+        // --- Funções Utilitárias de Mensagem (Refinadas) ---
+        const showHideMessage = (element, message, isVisible, isError, containerType = 'login') => {
+            if (!element) return;
+
+            // Limpa classes e texto antes de aplicar novos
+            element.classList.remove('visible', 'error', 'success');
+            element.textContent = '';
+
+            if (isVisible && message) {
+                element.textContent = message;
+                element.classList.add('visible');
+                if (containerType === 'modal') {
+                    element.classList.add(isError ? 'error-modal' : 'success-modal'); // Classes placeholder se precisar de estilo diferente
+                } else {
+                     element.classList.add(isError ? 'error-login' : 'success-login'); // Classes placeholder
+                }
+                // A classe 'visible' no CSS já controla display, padding, etc.
+            }
+            // Se !isVisible, a ausência da classe 'visible' já esconde
+        };
+
+        // Funções específicas para cada local
+        function showLoginError(message) { showHideMessage(errorMessage, message, true, true, 'login'); showHideMessage(successMessage, null, false, false, 'login'); }
+        function showLoginSuccess(message) { showHideMessage(successMessage, message, true, false, 'login'); showHideMessage(errorMessage, null, false, true, 'login'); }
+        function showModalError(message) { showHideMessage(recoverPasswordErrorMessage, message, true, true, 'modal'); showHideMessage(recoverPasswordSuccessMessage, null, false, false, 'modal'); }
+        function showModalSuccess(message) { showHideMessage(recoverPasswordSuccessMessage, message, true, false, 'modal'); showHideMessage(recoverPasswordErrorMessage, null, false, true, 'modal'); }
+        function clearLoginMessages() { showHideMessage(errorMessage, null, false, true, 'login'); showHideMessage(successMessage, null, false, false, 'login'); }
+        function clearModalMessages() { showHideMessage(recoverPasswordErrorMessage, null, false, true, 'modal'); showHideMessage(recoverPasswordSuccessMessage, null, false, false, 'modal'); }
+        function clearAllMessages() { clearLoginMessages(); clearModalMessages(); }
+
+
+         // --- Função de Redirecionamento ---
+        function redirectToDashboard(userData) {
+             console.log("DEBUG: redirectToDashboard chamada com userData:", userData);
+             let path = 'dashboard_user.html'; // Default para N1, N2 e casos de erro/sem nível
+             if (userData && typeof userData.nivel === 'number') {
+                  console.log("DEBUG: Verificando nível:", userData.nivel);
+                  if (userData.nivel >= 3) { // Níveis 3 ou superior
+                       path = 'dashboard.html';
+                  }
+             } else {
+                  console.warn("DEBUG: userData ou userData.nivel inválido/ausente. Redirecionando para user padrão.", userData);
+             }
+
+             console.log("DEBUG: Redirecionando para:", path);
+             showLoginSuccess('Login bem-sucedido! Redirecionando...'); // Mensagem antes do redirect
+             setTimeout(() => {
+                  console.log("DEBUG: Executando window.location.href =", path);
+                  window.location.href = path;
+             }, 1500); // Aumentei um pouco o delay para a msg ser vista
+         }
+
+        // --- Funções de Autenticação ---
+
+        // ***** FUNÇÃO RESTAURADA/IMPLEMENTADA *****
+        async function signInWithProvider(provider, providerName) {
+             console.log(`DEBUG: Tentando login com ${providerName}...`);
+             clearAllMessages();
+             try {
+                 // Tentar o login com Popup
+                 const result = await auth.signInWithPopup(provider);
+                 const user = result.user;
+                 console.log(`DEBUG: ${providerName} Auth OK! UID:`, user.uid);
+
+                 // Verificar se o usuário já existe no Firestore
+                 const userDocRef = db.collection("usuarios").doc(user.uid);
+                 const userDoc = await userDocRef.get();
+
+                 if (userDoc.exists) {
+                     console.log("DEBUG: Usuário existente no Firestore, redirecionando...");
+                     redirectToDashboard(userDoc.data());
+                 } else {
+                     // Se for o primeiro login com este provedor E o usuário não existe,
+                     // podemos criar um registro básico ou negar o acesso.
+                     // NESTE CASO, VAMOS NEGAR (Assumindo que usuários precisam ser pré-cadastrados)
+                     console.warn("DEBUG: Auth OK, mas usuário NÃO CADASTRADO no Firestore:", user.uid);
+                     showLoginError(`Usuário ${providerName} autenticado, mas não encontrado em nosso sistema. Contate o administrador.`);
+                     await auth.signOut(); // Desloga o usuário
+                 }
+             } catch (error) {
+                 console.error(`DEBUG: Erro no login com ${providerName}:`, error);
+                 let msg = `Erro ao fazer login com ${providerName}.`;
+                 if (error.code === 'auth/popup-closed-by-user') {
+                     msg = 'Login cancelado.';
+                 } else if (error.code === 'auth/account-exists-with-different-credential') {
+                     msg = 'Já existe uma conta com este e-mail usando outro método de login.';
+                 } else if (error.code === 'auth/network-request-failed') {
+                     msg = 'Erro de rede. Verifique sua conexão.';
+                 }
+                 showLoginError(msg);
+             }
+         }
+
+        function signInWithGoogle() {
+             signInWithProvider(googleProvider, 'Google');
+         }
+        // function signInWithMicrosoft() { ... } // Se precisar implementar
+
+        async function fazerLogin() {
+            console.log("DEBUG: fazerLogin() chamada.");
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            clearLoginMessages(); // Limpa mensagens anteriores do login
+
+            if (!email || !password) {
+                showLoginError("Preencha e-mail e senha.");
+                return;
+            }
+
+            const btnTxt = 'Entrar';
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+            console.log("DEBUG: Botão desabilitado, chamando Firebase Auth...");
+
+            try {
+                 await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                 console.log("DEBUG: Persistência definida. Tentando signIn...");
+                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                 const user = userCredential.user;
+                 console.log("DEBUG: Auth OK! UID:", user.uid);
+
+                 console.log("DEBUG: Buscando dados do Firestore...");
+                 const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                 console.log("DEBUG: Firestore doc obtido. Existe:", userDoc.exists);
+
+                 if (userDoc.exists) {
+                     const userData = userDoc.data();
+                     console.log("DEBUG: Dados do usuário:", userData);
+                     // A mensagem de sucesso é mostrada dentro de redirectToDashboard
+                     redirectToDashboard(userData);
+                 } else {
+                     console.warn("DEBUG: Auth OK, mas documento Firestore não encontrado:", user.uid);
+                     showLoginError('Erro ao carregar dados do usuário. Contate o suporte.');
+                     await auth.signOut(); // Desloga se não achar dados
+                     loginBtn.disabled = false;
+                     loginBtn.textContent = btnTxt;
+                 }
+            } catch (error) {
+                 console.error("DEBUG: Erro no bloco try/catch do fazerLogin:", error);
+                 console.error("DEBUG: error.code:", error.code);
+                 console.error("DEBUG: error.message:", error.message);
+                 let msg = 'Erro ao fazer login.';
+                 switch (error.code) {
+                     case 'auth/user-not-found': msg = 'Usuário não encontrado.'; break;
+                     case 'auth/wrong-password': msg = 'Senha incorreta.'; break;
+                     case 'auth/invalid-email': msg = 'E-mail inválido.'; break;
+                     case 'auth/user-disabled': msg = 'Usuário desativado.'; break;
+                     case 'auth/network-request-failed': msg = 'Erro de rede. Verifique sua conexão.'; break;
+                     default: msg = 'Verifique suas credenciais ou tente mais tarde.';
+                 }
+                 showLoginError(msg);
+                 loginBtn.disabled = false; // Reabilita o botão em caso de erro
+                 loginBtn.textContent = btnTxt; // Restaura texto original
+            }
+        }
+
+
+        // --- Recuperação de Senha (Modal) ---
+
+        // ***** FUNÇÃO RESTAURADA/IMPLEMENTADA *****
+        function abrirModalRecuperacao() {
+            console.log("DEBUG: Abrindo modal de recuperação.");
+            clearModalMessages(); // Limpa mensagens anteriores do modal
+            if(recoverPasswordEmailInput) recoverPasswordEmailInput.value = ''; // Limpa o campo de email
+            if(recoverPasswordModal) {
+                 recoverPasswordModal.style.display = 'flex'; // Usa flex para centralizar
+                 // Força reflow para garantir animação
+                 void recoverPasswordModal.offsetWidth;
+                 // A animação 'modalFade' definida no CSS cuidará da transição
+            } else {
+                 console.error("Modal element (#recoverPasswordModal) not found!");
+            }
+        }
+
+        // ***** FUNÇÃO RESTAURADA/IMPLEMENTADA *****
+        function fecharModalRecuperacao() {
+             console.log("DEBUG: Fechando modal de recuperação.");
+             if(recoverPasswordModal) {
+                  recoverPasswordModal.style.display = 'none';
+             } else {
+                  console.error("Modal element (#recoverPasswordModal) not found!");
+             }
+             clearModalMessages(); // Limpa mensagens ao fechar
+             // Reabilita o botão caso estivesse em loading e fechou
+             if (recoverBtn) {
+                 recoverBtn.disabled = false;
+                 recoverBtn.innerHTML = 'Enviar E-mail';
+             }
+        }
+
+        // ***** FUNÇÃO RESTAURADA/IMPLEMENTADA *****
+        async function enviarEmailRecuperacao() {
+            console.log("DEBUG: enviarEmailRecuperacao() chamada.");
+            const email = recoverPasswordEmailInput.value.trim();
+            clearModalMessages(); // Limpa mensagens anteriores
+
+            if (!email) {
+                showModalError("Por favor, insira seu e-mail.");
+                return;
+            }
+
+            // Validação simples de email (melhorar se necessário)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                 showModalError("Formato de e-mail inválido.");
+                 return;
+            }
+
+
+            const btnTxt = 'Enviar E-mail';
+            recoverBtn.disabled = true;
+            recoverBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            console.log("DEBUG: Botão do modal desabilitado, chamando sendPasswordResetEmail...");
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                console.log("DEBUG: E-mail de recuperação enviado para:", email);
+                showModalSuccess(`E-mail de recuperação enviado para ${email}. Verifique sua caixa de entrada (e spam).`);
+                // Opcional: Fechar modal após sucesso?
+                // setTimeout(fecharModalRecuperacao, 4000); // Fecha após 4 segundos
+
+                // Limpar campo e reabilitar botão (mesmo com sucesso, caso não feche auto)
+                 recoverPasswordEmailInput.value = '';
+                 recoverBtn.disabled = false;
+                 recoverBtn.innerHTML = btnTxt;
+
+
+            } catch (error) {
+                console.error("DEBUG: Erro ao enviar e-mail de recuperação:", error);
+                console.error("DEBUG: error.code:", error.code);
+                let msg = 'Erro ao enviar e-mail de recuperação.';
+                if (error.code === 'auth/user-not-found') {
+                    // IMPORTANTE: Por segurança, NÃO informe que o usuário não foi encontrado.
+                    // Isso evita que atacantes descubram e-mails válidos.
+                    // Mostre uma mensagem genérica de sucesso.
+                    console.warn("DEBUG: Tentativa de recuperação para e-mail não cadastrado:", email);
+                    showModalSuccess(`Se o e-mail ${email} estiver cadastrado, um link de recuperação será enviado.`);
+                } else if (error.code === 'auth/invalid-email') {
+                     msg = 'O formato do e-mail fornecido é inválido.';
+                } else if (error.code === 'auth/network-request-failed') {
+                     msg = 'Erro de rede. Verifique sua conexão e tente novamente.';
+                 } else {
+                    // Outros erros podem ser mostrados
+                     msg = `Erro: ${error.message}`; // Mensagem mais genérica para outros casos
+                 }
+                // Só mostra erro se não for 'user-not-found'
+                 if (error.code !== 'auth/user-not-found') {
+                    showModalError(msg);
+                 }
+                recoverBtn.disabled = false; // Reabilita o botão em caso de erro
+                recoverBtn.innerHTML = btnTxt; // Restaura texto original
+            }
+        }
+
+        // --- Inicialização DOM ---
+        document.addEventListener('DOMContentLoaded', async () => {
+             console.log("DEBUG: DOMContentLoaded - Verificando estado inicial de autenticação...");
+             try {
+                 // Pequeno delay para garantir que o SDK do Firebase Auth inicializou
+                 await new Promise(resolve => setTimeout(resolve, 150));
+
+                 const currentUser = auth.currentUser;
+                 if (currentUser) {
+                     console.log("DEBUG: Usuário já logado encontrado na carga:", currentUser.uid);
+                     // Verifica se está ativo (não deslogado entre loads)
+                     await currentUser.reload(); // Atualiza o estado do usuário
+                     if (auth.currentUser) { // Verifica novamente após reload
+                         const userDoc = await db.collection("usuarios").doc(currentUser.uid).get();
+                         if (userDoc.exists) {
+                             console.log("DEBUG: Dados do usuário pré-logado encontrados, redirecionando...");
+                             redirectToDashboard(userDoc.data());
+                             return; // Evita executar resto do script se redirecionar
+                         } else {
+                             console.warn("DEBUG: Usuário pré-logado sem dados no Firestore. Deslogando.");
+                             await auth.signOut();
+                         }
+                     } else {
+                          console.log("DEBUG: Usuário foi deslogado entre o carregamento e a verificação.");
+                     }
+                 } else {
+                     console.log("DEBUG: Nenhum usuário pré-logado.");
+                     // Se não há usuário logado, mostra a animação inicial/formulário
+                     setupLoginPage();
+                 }
+             } catch (error) {
+                 console.error("DEBUG: Erro ao verificar auth state inicial ou buscar dados:", error);
+                 // Mesmo com erro, tenta mostrar a página de login
+                 setupLoginPage();
+             }
+         }); // Fecha DOMContentLoaded
+
+
+         // Função para configurar a página de login (animações e listeners)
+         // Chamada se não houver redirect no início
+         function setupLoginPage() {
+             console.log("DEBUG: Configurando a página de login (animações, listeners)...");
+             // --- Handler da Animação Inicial ---
+             const initialAnimationContainer = document.getElementById('initial-animation');
+             const loginContainer = document.querySelector('.login-container');
+             const runInitialAnimation = window.innerWidth > 768 && initialAnimationContainer && loginContainer;
+
+             if (runInitialAnimation) {
+                 console.log("DEBUG: Rodando animação inicial.");
+                 // Garante que o login container está invisível antes da animação terminar
+                 loginContainer.style.opacity = '0';
+                 loginContainer.style.transform = 'translateY(30px)';
+
+                 // Após a animação do container inicial (fadeOutInitialContainer: 3.5s + 0.5s = 4s)
+                 setTimeout(() => {
+                     console.log("DEBUG: Animação inicial completa, mostrando login container.");
+                     // A animação fadeInUp (4s delay, 1s duration) no CSS cuidará de mostrar o container
+                     // Apenas garantimos que ele não está mais explicitamente oculto pelo JS
+                 }, 4000);
+             } else {
+                 console.log("DEBUG: Pulando animação inicial.");
+                 // Remove o container da animação inicial e mostra o login imediatamente
+                 if (initialAnimationContainer) initialAnimationContainer.style.display = 'none';
+                 if (loginContainer) {
+                     // Aplica o estado final da animação 'fadeInUp' diretamente
+                     loginContainer.style.opacity = '1';
+                     loginContainer.style.transform = 'translateY(0)';
+                     // Remove a animação para evitar que ela rode desnecessariamente
+                     loginContainer.style.animation = 'none';
+                 }
+             }
+
+             // --- Efeito Parallax ---
+             const bgCircles = document.querySelectorAll('.bg-circle');
+             const bgOverlay = document.querySelector('.bg-overlay');
+             if (bgOverlay && bgCircles.length > 0 && window.innerWidth > 768) { // Adicionado cheque de largura
+                 console.log("DEBUG: Adicionando listener parallax.");
+                 document.body.addEventListener('mousemove', (e) => {
+                     const mouseX = e.clientX;
+                     const mouseY = e.clientY;
+                     const centerX = window.innerWidth / 2;
+                     const centerY = window.innerHeight / 2;
+
+                     // Movimento sutil do fundo geral (hexágonos)
+                     const moveXGrid = (mouseX - centerX) * 0.005; // Fator pequeno
+                     const moveYGrid = (mouseY - centerY) * 0.005;
+                     bgOverlay.style.transform = `translate(${moveXGrid}px, ${moveYGrid}px)`;
+
+                     // Movimento mais pronunciado dos círculos
+                     bgCircles.forEach((circle, index) => {
+                         const speedFactor = (index + 1) * 0.008 + 0.01; // Círculos diferentes se movem diferente
+                         const moveX = (centerX - mouseX) * speedFactor; // Invertido para alguns
+                         const moveY = (centerY - mouseY) * speedFactor;
+                         circle.style.transform = `translate(${moveX}px, ${moveY}px)`; // Sobrescreve animação float
+                     });
+                 });
+             } else {
+                 console.log("DEBUG: Parallax não ativado (tela pequena ou elementos não encontrados).");
+             }
+
+             // --- Listeners Botões e Formulários ---
+             const loginForm = document.getElementById('loginForm');
+             if (loginForm) {
+                 loginForm.addEventListener('submit', (e) => {
+                     e.preventDefault();
+                     fazerLogin();
+                 });
+                 console.log("DEBUG: Listener de submit adicionado ao loginForm.");
+             } else { console.error("Elemento loginForm não encontrado!"); }
+
+             const googleLoginBtn = document.getElementById('googleLogin');
+             if (googleLoginBtn) {
+                 googleLoginBtn.addEventListener('click', signInWithGoogle);
+                 console.log("DEBUG: Listener de click adicionado ao googleLoginBtn.");
+             } else { console.error("Elemento googleLogin button não encontrado!"); }
+
+             // Listener Enter na Senha
+             const passwordInput = document.getElementById('password');
+             if (passwordInput) {
+                 passwordInput.addEventListener('keydown', function(event) {
+                     if (event.key === 'Enter' || event.keyCode === 13) {
+                         event.preventDefault(); // Impede submit padrão do form (caso houvesse)
+                         fazerLogin(); // Chama a função de login
+                     }
+                 });
+                 console.log("DEBUG: Listener de keydown (Enter) adicionado à senha.");
+             } else { console.error("Campo de senha (password) não encontrado para listener de keydown!"); }
+
+             // --- Fechar Modal Clicando Fora ---
+             window.addEventListener('click', (event) => {
+                 if (event.target == recoverPasswordModal) {
+                     fecharModalRecuperacao();
+                 }
+             });
+             console.log("DEBUG: Listener para fechar modal ao clicar fora adicionado.");
+
+             console.log("DEBUG: Configuração da página de login finalizada.");
+        } // Fecha setupLoginPage
+
+    </script>
+</body>
+</html>

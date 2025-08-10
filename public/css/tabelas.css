@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Estilos para Tabelas de Dados e Cards de Tabela
+   ========================================================================== */
+
+/* --- Card que envolve a Tabela --- */
+.table-card { background: white; border-radius: var(--border-radius); box-shadow: var(--shadow-md); overflow: hidden; margin-bottom: 30px; }
+.table-header { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+.table-title { font-size: 18px; font-weight: 600; color: var(--dark); display: flex; align-items: center; margin: 0; }
+.table-title i { margin-right: 10px; color: var(--primary); font-size: 16px; }
+
+/* --- Estilos Gerais para Tabelas --- */
+.table-responsive { overflow-x: auto; }
+.data-table, .status-table, .ranking-table, .summary-table, .dept-summary-table, .trilha-table { /* Aplica a todas */ width: 100%; border-collapse: collapse; margin-bottom: 0; background: white; /* Fundo branco padrão */ }
+.data-table th, .data-table td, .status-table th, .status-table td, .ranking-table th, .ranking-table td, .summary-table th, .summary-table td, .dept-summary-table th, .dept-summary-table td, .trilha-table th, .trilha-table td { /* Aplica a todas */ padding: 12px 15px; /* Padding PADRÃO */ text-align: left; vertical-align: middle; border: 1px solid #eee; font-size: 14px; }
+.data-table th, .status-table th, .ranking-table th, .summary-table th, .dept-summary-table th, .trilha-table th { /* Aplica a todas */ background-color: #f8f9fa; color: var(--text-light); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom-width: 2px; /* Borda inferior mais forte no header */ }
+.data-table tbody tr, .status-table tbody tr, .ranking-table tbody tr, .summary-table tbody tr, .dept-summary-table tbody tr, .trilha-table tbody tr { /* Aplica a todas */ transition: background-color 0.2s ease; }
+.data-table tbody tr:hover, .status-table tbody tr:hover, .ranking-table tbody tr:hover, .summary-table tbody tr:hover, .dept-summary-table tbody tr:hover, .trilha-table tbody tr:hover { /* Aplica a todas */ background-color: rgba(30, 144, 255, 0.04); /* Hover um pouco mais visível */ }
+.data-table tbody tr:last-child, .status-table tbody tr:last-child, .ranking-table tbody tr:last-child, .summary-table tbody tr:last-child, .dept-summary-table tbody tr:last-child, .trilha-table tbody tr:last-child { /* Aplica a todas */ border-bottom: none; }
+
+/* --- Estilos Específicos de Conteúdo/Linha --- */
+
+/* Linhas destacadas (Orçamentos) */
+.total-row td { background-color: #e9ecef; font-weight: bold; border-top: 2px solid #dee2e6; color: var(--dark); }
+.departamento-row td { background: #dfe6e9; font-weight: bold; color: var(--secondary); padding-top: 20px; padding-bottom: 10px; border-top: 2px solid #bdc3c7; }
+
+/* Tabela da Trilha (Ajuste de Espaçamento e Estilo) */
+.trilha-table { border: 1px solid #e9ecef; /* Borda externa sutil */ }
+.trilha-table th, .trilha-table td {
+    padding: 12px 20px; /* AUMENTADO padding horizontal para 20px */
+    border-color: #f1f3f5; /* Borda interna mais clara */
+}
+.trilha-table th { color: var(--primary); background-color: #f0f5ff; /* Fundo azul bem claro */ border-bottom-width: 1px; border-color: #dee2e6; /* Linha mais visível */ }
+.trilha-table tr:nth-child(even) { background-color: #fcfdff; /* Fundo quase branco para zebra */ }
+.trilha-table tr:nth-child(even):hover { background-color: rgba(30, 144, 255, 0.05); }
+
+
+/* Célula com barra de progresso (Dashboard) */
+.progress-cell { width: 30%; vertical-align: middle; }
+.progress-bar-container { width: calc(100% - 45px); height: 8px; background: #f1f1f1; border-radius: 4px; overflow: hidden; margin-bottom: 4px; display: inline-block; margin-right: 10px; }
+.progress-bar { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease; }
+
+/* Notas coloridas (Avaliação) */
+.avaliacao-nota { display: inline-block; padding: 5px 10px; border-radius: 15px; font-weight: 600; color: white; font-size: 13px; }
+.avaliacao-excelente { background-color: #4caf50; } .avaliacao-bom { background-color: #8bc34a; } .avaliacao-regular { background-color: #ff9800; } .avaliacao-insatisfatorio { background-color: #f44336; }
+
+/* Botões de Ação Ícone (Geral) */
+.action-buttons { display: flex; gap: 5px; align-items: center; justify-content: flex-start; }
+.acao-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; transition: all 0.2s ease; background: transparent; border: none; color: var(--text-light); padding: 0; }
+.acao-icon:hover { transform: scale(1.15); background-color: rgba(0, 0, 0, 0.05); }
+.acao-icon.view:hover { color: var(--info); } .acao-icon.edit:hover { color: var(--warning); } .acao-icon.delete:hover { color: var(--danger); }
+
+/* Botões de Ação Texto (Desligamentos) */
+.action-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; margin: 2px; display: inline-flex; align-items: center; transition: var(--transition); text-decoration: none; color: white; }
+.action-btn i { margin-right: 5px; } .action-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+.edit-button { background-color: var(--warning); color: white; } .revert-button { background-color: var(--success); color: white; } .print-button { background-color: var(--info); color: white; }
+
+/* Badges Genéricos */
+.badge { display: inline-block; padding: 5px 10px; border-radius: 30px; font-size: 12px; font-weight: 600; font-family: 'Montserrat', sans-serif; }
+.badge-primary { background: rgba(30, 144, 255, 0.1); color: var(--primary); } .badge-success { background: rgba(46, 204, 113, 0.1); color: var(--success); } .badge-danger { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
+
+/* Ranking */
+.rank-number { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; margin-right: 10px; font-weight: 600; font-size: 12px; background: #f0f0f0; color: var(--text-main); font-family: 'Montserrat', sans-serif; }
+.rank-1 { background: linear-gradient(45deg, #FFD700, #FFA500); color: white; box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3); } .rank-2 { background: linear-gradient(45deg, #C0C0C0, #A9A9A9); color: white; box-shadow: 0 2px 5px rgba(192, 192, 192, 0.3); } .rank-3 { background: linear-gradient(45deg, #CD7F32, #A0522D); color: white; box-shadow: 0 2px 5px rgba(205, 127, 50, 0.3); } .rank-number.top-rank { background: var(--primary); color: white; }
+
+/* Status de Pontos */
+.points-badge { display: inline-block; padding: 6px 12px; border-radius: 30px; font-size: 11px; font-weight: 600; color: white; text-align: center; min-width: 80px; font-family: 'Montserrat', sans-serif; }
+.points-sufficient { color: var(--success); font-weight: 600; } .points-badge.points-sufficient { background: linear-gradient(45deg, var(--success), #27ae60); box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3); color: white; }
+.points-insufficient { color: var(--danger); font-weight: 600; } .points-badge.points-insufficient { background: linear-gradient(45deg, var(--danger), #c0392b); box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3); color: white; }
+
+/* Estado Vazio da Tabela */
+.empty-state td { text-align: center !important; padding: 40px 20px !important; color: var(--text-light); }
+.empty-state i { font-size: 48px; margin-bottom: 15px; color: #ddd; }
+.empty-state p { font-size: 16px; margin-bottom: 0; }
+
+/* --- Responsivo Específico para Tabelas --- */
+@media (max-width: 768px) {
+    .data-table th, .data-table td, .status-table th, .status-table td, .ranking-table th, .ranking-table td, .summary-table th, .summary-table td, .dept-summary-table th, .dept-summary-table td, .trilha-table th, .trilha-table td { padding: 10px 8px; font-size: 13px; }
+    .action-buttons { gap: 2px; }
+    .acao-icon { width: 28px; height: 28px; font-size: 14px;}
+    .action-btn { padding: 5px 10px; font-size: 12px; }
+    .action-btn i { font-size: 12px; margin-right: 4px; }
+    input[type="number"].form-control { width: 60px; padding: 6px 8px; }
+    /* Ajuste específico para trilha table no mobile */
+    .trilha-table { display: block; width: 100%; /* Força tabela a não estourar o wrapper */ }
+    .trilha-table th, .trilha-table td { white-space: normal; /* Permite quebra de linha no mobile */ }
+}
+
+/* Animação (deve estar no estilo-principal.css) */
+/* .animate-fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; } */

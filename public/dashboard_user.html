@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pessoal - Hospital Santorini Prime</title> <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/dashboard.css"> <link rel="stylesheet" href="./css/widgets.css"> </head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+             <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+             <h2 id="welcomeHeader">Carregando...</h2>
+             <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+             <button id="collapseMenuBtn" class="menu-collapse-btn">
+                 <i class="fas fa-chevron-left"></i>
+             </button>
+             <a href="#" id="logoutBtn" class="menu-item"> <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
+             </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"> <i class="fas fa-tachometer-alt"></i> Dashboard Pessoal </h1>
+            <p class="page-subtitle">Acompanhe suas informações e performance no Hospital Santorini Prime</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+        <div class="card-grid">
+            <div class="info-card">
+                <h3><i class="fas fa-id-card"></i> Dados do Funcionário</h3>
+                <div class="info-value-light" id="nickHabbo"><i class="fas fa-user"></i> Nick: Carregando...</div>
+                <div class="info-value-light" id="cargo"><i class="fas fa-briefcase"></i> Cargo: Carregando...</div>
+                <div class="info-value-light" id="nivelHierarquico"><i class="fas fa-layer-group"></i> Nível: Carregando...</div>
+            </div>
+            <div class="info-card">
+                <h3><i class="fas fa-star"></i> Total de Pontos</h3>
+                <div class="info-value" id="totalPontos">0</div>
+                <div class="progress-text">
+                    <span id="progressLabel">Progresso para Meta Mínima</span>
+                    <span id="progressText">0 de 0</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="pontosProgress" style="width: 0%"></div>
+                </div>
+                <div class="info-value-light" id="pontosRestantes"><i class="fas fa-arrow-right"></i> Faltam: 0 pontos</div>
+            </div>
+            <div class="info-card">
+                <h3><i class="fas fa-money-bill-wave"></i> Status para Pagamento</h3>
+                <div class="info-value" id="statusPagamento">Carregando...</div>
+                <div class="info-value-light"><i class="fas fa-info-circle"></i> Baseado na meta de pontos</div>
+            </div>
+        </div> <div class="info-card quinzena-progress-card">
+            <h3><i class="fas fa-calendar-alt"></i> Progresso da Quinzena Atual</h3>
+            <div class="quinzena-info">
+                <div class="quinzena-dates">
+                    <div><i class="fas fa-hourglass-start"></i> <span id="quinzenaInicio">-</span></div>
+                    <div><i class="fas fa-hourglass-end"></i> <span id="quinzenaFim">-</span></div>
+                </div>
+            </div>
+            <div class="progress-text">
+                <span id="progressLabelQuinzena">Progresso da Quinzena</span> <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-container quinzena-progress">
+                <div class="progress-bar quinzena-bar" id="quinzenaProgressBar" style="width: 0%;"></div> </div>
+            <div class="quinzena-tips">
+                <div class="tip-box"> <i class="fas fa-clock"></i> <p id="diasRestantes">Calculando dias restantes...</p> </div>
+                <div class="tip-box"> <i class="fas fa-chart-line"></i> <p id="metaDiaria">Calculando meta diária...</p> </div>
+            </div>
+        </div>
+
+        <div class="last-update-info" id="lastUpdateInfo">
+            <i class="fas fa-sync-alt"></i> Carregando última atualização... </div>
+
+    </div> <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // --- Variáveis Globais ---
+        let currentUserData = null; // Guarda dados do usuário logado
+        let unsubscribePontoListener = null; // Para cancelar o listener do Firestore
+
+        // --- Cache de Elementos DOM ---
+        const alertaContainer = document.getElementById('alertaContainer'); // Para showGlobalMessage
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const nickHabboEl = document.getElementById('nickHabbo');
+        const cargoEl = document.getElementById('cargo');
+        const nivelHierarquicoEl = document.getElementById('nivelHierarquico');
+        const totalPontosEl = document.getElementById('totalPontos');
+        const progressTextEl = document.getElementById('progressText');
+        const pontosProgressEl = document.getElementById('pontosProgress');
+        const pontosRestantesEl = document.getElementById('pontosRestantes');
+        const statusPagamentoEl = document.getElementById('statusPagamento');
+        const quinzenaInicioEl = document.getElementById('quinzenaInicio');
+        const quinzenaFimEl = document.getElementById('quinzenaFim');
+        const progressPercentEl = document.getElementById('progressPercent');
+        const quinzenaProgressBarEl = document.getElementById('quinzenaProgressBar');
+        const diasRestantesEl = document.getElementById('diasRestantes');
+        const metaDiariaEl = document.getElementById('metaDiaria');
+        const lastUpdateInfoEl = document.getElementById('lastUpdateInfo');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Auxiliares (Reutilizadas) ---
+        function formatarData(dataInput) {
+            if (!dataInput) return '-';
+            let data;
+            try {
+                if (dataInput.toDate) { data = dataInput.toDate(); }
+                else { data = new Date(dataInput); }
+                if (isNaN(data.getTime())) return '-';
+                const options = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' };
+                return data.toLocaleDateString('pt-BR', options);
+            } catch (e) { console.error("Erro ao formatar data:", e); return '?'; }
+        }
+
+        // --- Funções Específicas do Dashboard do Usuário ---
+
+        /**
+         * Carrega os dados do funcionário (baseado no nickHabbo) e inicia o listener de pontos.
+         * @param {string} nickHabbo - O nick do usuário logado.
+         */
+        async function loadUserDashboardData(nickHabbo) {
+            if (!nickHabbo) {
+                console.error('loadUserDashboardData: nickHabbo não fornecido');
+                showGlobalMessage("error", "Não foi possível identificar seu usuário no sistema de funcionários.");
+                // Limpar campos para indicar erro
+                if(nickHabboEl) nickHabboEl.innerHTML = `<i class="fas fa-user"></i> Nick: Erro`;
+                if(cargoEl) cargoEl.innerHTML = `<i class="fas fa-briefcase"></i> Cargo: Erro`;
+                if(nivelHierarquicoEl) nivelHierarquicoEl.innerHTML = `<i class="fas fa-layer-group"></i> Nível: Erro`;
+                return;
+            }
+            console.log(`--- loadUserDashboardData: Carregando dados para ${nickHabbo}`);
+
+            // Remove listener antigo antes de criar um novo
+             if (unsubscribePontoListener) {
+                 console.log("--- Cancelando listener de pontos anterior.");
+                 unsubscribePontoListener();
+                 unsubscribePontoListener = null;
+             }
+
+            // Query para encontrar o funcionário ATIVO pelo nickHabbo
+            const query = db.collection('funcionarios')
+                            .where('nickHabbo', '==', nickHabbo)
+                            .where('ativo', '==', true) // Garante que está ativo
+                            .limit(1);
+
+            // Configura o listener em tempo real (onSnapshot)
+            unsubscribePontoListener = query.onSnapshot((snapshot) => {
+                console.log(`--- onSnapshot: Recebidos ${snapshot.size} documentos para ${nickHabbo}.`);
+                if (snapshot.empty) {
+                    // Funcionário não encontrado ou inativo
+                    console.error(`Funcionário ativo não encontrado para o nick: ${nickHabbo}. Verifique cadastro ou status.`);
+                    showGlobalMessage("error", "Seu registro de funcionário não foi encontrado ou está inativo.");
+                    // Limpar campos
+                    if(nickHabboEl) nickHabboEl.innerHTML = `<i class="fas fa-user"></i> Nick: Não encontrado`;
+                    if(cargoEl) cargoEl.innerHTML = `<i class="fas fa-briefcase"></i> Cargo: N/A`;
+                    if(nivelHierarquicoEl) nivelHierarquicoEl.innerHTML = `<i class="fas fa-layer-group"></i> Nível: N/A`;
+                    if(totalPontosEl) totalPontosEl.textContent = '-';
+                    if(statusPagamentoEl) statusPagamentoEl.textContent = 'Indefinido';
+                    if(lastUpdateInfoEl) lastUpdateInfoEl.innerHTML = `<i class="fas fa-sync-alt"></i> Erro ao carregar`;
+
+                    // Cancela o listener se não encontrou
+                    if (unsubscribePontoListener) unsubscribePontoListener();
+                    return;
+                }
+
+                // Encontrou o funcionário
+                const funcionarioDoc = snapshot.docs[0];
+                const funcionarioData = funcionarioDoc.data();
+                funcionarioData.totalPontos = Number(funcionarioData.totalPontos) || 0; // Garante que é número
+
+                console.log("--- Dados do funcionário recebidos do snapshot:", funcionarioData);
+
+                // Atualiza os cards com os dados mais recentes
+                if(nickHabboEl) nickHabboEl.innerHTML = `<i class="fas fa-user"></i> Nick: ${funcionarioData.nickHabbo || '-'}`;
+                if(cargoEl) cargoEl.innerHTML = `<i class="fas fa-briefcase"></i> Cargo: ${funcionarioData.cargo || '-'}`;
+                if(nivelHierarquicoEl) nivelHierarquicoEl.innerHTML = `<i class="fas fa-layer-group"></i> Nível: ${funcionarioData.nivel || '-'}`;
+
+                atualizarCardsDePontos(funcionarioData); // Atualiza pontos e status
+
+                // Atualiza info de última atualização
+                if(lastUpdateInfoEl) {
+                    const lastUpdate = funcionarioData.ultimaAtualizacao || funcionarioData.dataCadastro; // Usa dataCadastro como fallback
+                    if (lastUpdate && lastUpdate.toDate) {
+                        const date = lastUpdate.toDate();
+                        if (!isNaN(date.getTime())) {
+                             lastUpdateInfoEl.innerHTML = `<i class="fas fa-sync-alt"></i> Última atualização: ${date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                         } else { lastUpdateInfoEl.innerHTML = `<i class="fas fa-sync-alt"></i> Atualização: Inválida`; }
+                    } else { lastUpdateInfoEl.innerHTML = `<i class="fas fa-sync-alt"></i> Atualização: N/A`; }
+                }
+
+                // Sempre atualiza info da quinzena (datas podem mudar raramente, mas cálculo de progresso sim)
+                atualizarInformacoesQuinzena(funcionarioData);
+
+            }, (error) => {
+                console.error(`--- onSnapshot: Erro no listener para ${nickHabbo}:`, error);
+                showGlobalMessage("error", "Erro ao monitorar seus dados em tempo real.");
+                // Opcional: Limpar a UI em caso de erro contínuo no listener
+            });
+            console.log("--- loadUserDashboardData: Listener onSnapshot configurado.");
+        }
+
+        /**
+         * Atualiza os cards de Total de Pontos e Status de Pagamento.
+         * @param {object} funcionario - Objeto com os dados do funcionário (incluindo totalPontos e nivel).
+         */
+        function atualizarCardsDePontos(funcionario) {
+            if (!funcionario) return;
+            console.log("--- atualizarCardsDePontos: Atualizando com dados:", funcionario);
+
+            const totalPontos = Number(funcionario.totalPontos) || 0;
+            let pontosMinimos = 0; // Meta mínima para pagamento
+
+            // Define a meta de pontos baseado no NÍVEL HIERÁRQUICO (N1-N10)
+            // Idealmente, esta lógica viria de uma configuração central
+             switch(funcionario.nivel) { // Usa o 'nivel' (N1, N2...) do funcionário
+                 case 'N1': pontosMinimos = 15; break;
+                 case 'N2': pontosMinimos = 25; break;
+                 case 'N3': pontosMinimos = 35; break;
+                 case 'N4': pontosMinimos = 40; break;
+                 case 'N5': pontosMinimos = 45; break;
+                 case 'N6': case 'N7': pontosMinimos = 50; break; // Agrupado conforme regimento
+                 case 'N8': case 'N9': pontosMinimos = 55; break; // Agrupado
+                 case 'N10': pontosMinimos = 0; break; // Fundador isento
+                 default: pontosMinimos = 15; // Padrão seguro
+             }
+             console.log(`--- Nível ${funcionario.nivel}, Pontos Mínimos: ${pontosMinimos}`);
+
+            // Atualiza Card de Pontos
+            if(totalPontosEl) totalPontosEl.textContent = totalPontos;
+            if(progressTextEl) progressTextEl.textContent = `${totalPontos} de ${pontosMinimos}`;
+            const pontosRestantes = Math.max(0, pontosMinimos - totalPontos);
+            if(pontosRestantesEl) pontosRestantesEl.innerHTML = `<i class="fas fa-arrow-right"></i> Faltam: <strong>${pontosRestantes}</strong> pontos para o mínimo`;
+
+            // Atualiza Barra de Progresso (baseado na meta mínima)
+            const progressPercent = pontosMinimos > 0 ? Math.min((totalPontos / pontosMinimos) * 100, 100) : (funcionario.nivel === 'N10' ? 100 : 0);
+            if(pontosProgressEl) {
+                // Força reflow para reiniciar animação se valor não mudou muito
+                 pontosProgressEl.style.width = '0%';
+                 requestAnimationFrame(() => {
+                     pontosProgressEl.style.width = `${progressPercent}%`;
+                 });
+            }
+
+            // Atualiza Status de Pagamento
+            const isApto = funcionario.nivel === 'N10' || totalPontos >= pontosMinimos;
+            if(statusPagamentoEl) {
+                statusPagamentoEl.textContent = isApto ? 'APTO' : 'NÃO APTO';
+                // Remove classes antigas antes de adicionar a nova
+                statusPagamentoEl.classList.remove('status-apto', 'status-nao-apto');
+                statusPagamentoEl.classList.add(isApto ? 'status-apto' : 'status-nao-apto');
+            }
+        }
+
+        /**
+         * Atualiza o card de Progresso da Quinzena.
+         * @param {object} funcionario - Dados do funcionário (para calcular meta diária).
+         */
+        function atualizarInformacoesQuinzena(funcionario) {
+            console.log("--- Atualizando informações da quinzena...");
+            const hoje = new Date();
+            const diaAtual = hoje.getDate();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+
+            let dataInicio, dataFim;
+            if (diaAtual <= 15) { // Primeira quinzena
+                dataInicio = new Date(anoAtual, mesAtual, 1, 0, 0, 0, 0);
+                dataFim = new Date(anoAtual, mesAtual, 15, 23, 59, 59, 999);
+            } else { // Segunda quinzena
+                dataInicio = new Date(anoAtual, mesAtual, 16, 0, 0, 0, 0);
+                // Último dia do mês
+                dataFim = new Date(anoAtual, mesAtual + 1, 0, 23, 59, 59, 999);
+            }
+
+            // Atualiza datas na UI
+            if(quinzenaInicioEl) quinzenaInicioEl.textContent = formatarData(dataInicio);
+            if(quinzenaFimEl) quinzenaFimEl.textContent = formatarData(dataFim);
+
+            // Calcula progresso da quinzena em %
+            const totalMsQuinzena = dataFim.getTime() - dataInicio.getTime();
+            const msDecorridos = Math.max(0, hoje.getTime() - dataInicio.getTime());
+            const percentualCompletado = Math.min(100, Math.max(0, Math.round((msDecorridos / totalMsQuinzena) * 100)));
+
+            if(progressPercentEl) progressPercentEl.textContent = `${percentualCompletado}%`;
+            if(quinzenaProgressBarEl) {
+                // Força reflow para animação
+                quinzenaProgressBarEl.style.width = '0%';
+                requestAnimationFrame(() => {
+                    quinzenaProgressBarEl.style.width = `${percentualCompletado}%`;
+                });
+            }
+
+            // Calcula dias restantes
+            const diffFimHoje = dataFim.getTime() - hoje.getTime();
+            const diasRestantesCalc = Math.max(0, Math.ceil(diffFimHoje / (1000 * 60 * 60 * 24)));
+            if (diasRestantesEl) diasRestantesEl.innerHTML = `Faltam <strong>${diasRestantesCalc}</strong> dias para a quinzena acabar.`;
+
+            // Calcula meta diária necessária
+            if (funcionario) {
+                const totalPontos = Number(funcionario.totalPontos) || 0;
+                let pontosMinimos = 0;
+                switch(funcionario.nivel) { case 'N1': pontosMinimos = 15; break; case 'N2': pontosMinimos = 25; break; case 'N3': pontosMinimos = 35; break; case 'N4': pontosMinimos = 40; break; case 'N5': pontosMinimos = 45; break; case 'N6': case 'N7': pontosMinimos = 50; break; case 'N8': case 'N9': pontosMinimos = 55; break; default: pontosMinimos = 15; }
+                const pontosRestantesMeta = Math.max(0, pontosMinimos - totalPontos);
+
+                if (metaDiariaEl) {
+                    if (pontosRestantesMeta <= 0 && funcionario.nivel !== 'N10') {
+                        metaDiariaEl.innerHTML = `<strong>Parabéns!</strong> Meta mínima atingida!`;
+                    } else if (diasRestantesCalc > 0 && funcionario.nivel !== 'N10') {
+                        const mediaDiaria = Math.ceil(pontosRestantesMeta / diasRestantesCalc);
+                        metaDiariaEl.innerHTML = `Você precisa, em média, <strong>${mediaDiaria}</strong> pontos por dia para atingir o mínimo.`;
+                    } else if (funcionario.nivel === 'N10') {
+                         metaDiariaEl.innerHTML = `Você está isento da meta de pontos.`;
+                    } else {
+                        metaDiariaEl.innerHTML = `Acompanhe seu progresso diário.`; // Quinzena acabou, não calcula mais
+                    }
+                }
+            } else {
+                 if (metaDiariaEl) metaDiariaEl.innerHTML = `Carregando dados do funcionário...`;
+            }
+        }
+
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando dashboard_user.html ===");
+
+            // Listener de Autenticação Firebase
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+
+                try {
+                    // Usar fetchUserDataAndLevel para obter dados e nível hierárquico
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    if (!result) { throw new Error("Falha ao carregar dados do usuário"); } // Verifica se fetch falhou
+
+                    currentUserData = result.userData; // Guarda dados do usuário logado
+                    const userHierarchicalLevel = result.hierarchicalLevel; // Nível N1-N10
+
+                    console.log(`--- Usuário carregado: ${currentUserData.nome}, Nível Hierárquico: ${userHierarchicalLevel}, Nível Acesso: ${currentUserData.nivelAcesso}`);
+
+                    // Redireciona Admin/N10 para o dashboard principal
+                    if (userHierarchicalLevel === 'N10' || currentUserData.nivelAcesso >= 2) {
+                        console.log("--- Usuário é Admin/N10. Redirecionando para dashboard.html...");
+                        window.location.href = 'dashboard.html';
+                        return; // Para a execução aqui
+                    }
+
+                    // ---- Usuário é Colaborador (N1-N9) ----
+
+                    // Atualizar UI da Sidebar
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Colaborador";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Colaborador";
+                    const currentPage = window.location.pathname.split('/').pop();
+                     if (typeof generateSidebarMenu === 'function') {
+                         sidebarMenu.innerHTML = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                    } else { console.error("generateSidebarMenu não encontrada"); }
+
+                    // Inicializar Interações da Sidebar (inclui logout)
+                     if (typeof initializeSidebarInteractions === 'function') {
+                         initializeSidebarInteractions();
+                    } else { console.error("initializeSidebarInteractions não encontrada"); }
+
+                    // Carrega dados específicos do dashboard DO USUÁRIO
+                    if (currentUserData.nickHabbo) {
+                        await loadUserDashboardData(currentUserData.nickHabbo); // Carrega e configura listener
+                    } else {
+                        console.error("NickHabbo não encontrado no perfil do usuário. Não é possível carregar dados do dashboard.");
+                        showGlobalMessage("error", "Não foi possível encontrar seu NickHabbo. Contate um administrador.");
+                        // Limpa a UI para indicar falha
+                        if(nickHabboEl) nickHabboEl.innerHTML = `<i class="fas fa-user"></i> Nick: Erro`;
+                        if(cargoEl) cargoEl.innerHTML = `<i class="fas fa-briefcase"></i> Cargo: Erro`;
+                        if(nivelHierarquicoEl) nivelHierarquicoEl.innerHTML = `<i class="fas fa-layer-group"></i> Nível: Erro`;
+                    }
+
+                } catch (error) {
+                    console.error("Erro crítico na inicialização ou fetchUserDataAndLevel:", error);
+                    showGlobalMessage("error", "Erro ao carregar seus dados: " + error.message);
+                    // Poderia tentar deslogar ou mostrar mensagem mais persistente
+                }
+            }); // Fim onAuthStateChanged
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,743 @@
+        :root {
+            --primary: #1e90ff;
+            --primary-dark: #4682b4;
+            --white: #ffffff;
+            --light-gray: #f5f7fa;
+            --text-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--light-gray) 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            padding: 2rem 0;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .logo {
+            width: 180px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: var(--text-dark);
+        }
+
+        .hero-buttons {
+            margin-top: 2rem;
+        }
+
+        /* Buttons */
+        .cta-button {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.4);
+        }
+
+        .cta-secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .cta-secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .hero-buttons .cta-button {
+            margin: 10px;
+        }
+
+        /* About Section & Benefits Section - ajustes */
+        .about, .benefits {
+            padding: 6rem 0;  /* Aumentado de 4rem para 6rem */
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0; /* Adicionado margem vertical */
+        }
+
+        .section-title {
+            margin-top: 2rem;
+            margin-bottom: 2rem; /* Aumentado o espaço abaixo do título */
+            color: var(--primary);
+            text-align: center;
+        }
+
+        /* Benefits Section */
+        .benefits {
+            padding: 4rem 0;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .benefit-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .benefit-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Numbers Section */
+        .numbers {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .number-item h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Investment Section - Enhanced Styles */
+        .investment {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+        }
+
+        .investment-levels {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .level-card {
+            position: relative;
+            background: var(--white);
+            padding: 2rem 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-width: 0;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: visible;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(30, 144, 255, 0.2);
+        }
+
+        .level-card h3 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin: 1rem 0;
+        }
+
+        .level-card .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-card ul {
+            text-align: left;
+            margin: 1.5rem 0;
+            list-style: none;
+            padding: 0;
+        }
+
+        .level-card ul li {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        .level-card ul li i {
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+        }
+
+        /* Specific card styles */
+        .level-card.premium {
+            background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%);
+        }
+
+        .level-card.elite {
+            background: linear-gradient(145deg, #fff 0%, #f0f8ff 100%);
+        }
+
+        .level-card.master {
+            background: linear-gradient(145deg, #fff 0%, #e6f3ff 100%);
+        }
+
+        .level-card.prime {
+            background: linear-gradient(145deg, #fff 0%, #e1f0ff 100%);
+            border: 2px solid rgba(30, 144, 255, 0.3);
+        }
+
+        .level-card .cta-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-card .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.4);
+        }
+
+        .investment-intro {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .investment-intro strong {
+            color: var(--primary-dark);
+            font-weight: 700;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 2px;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--light-gray);
+        }
+
+        .contact h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .contact-info {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .benefits-grid, .numbers-grid, .investment-levels {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated {
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .timeline-item {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Departments */
+        .departments {
+            background: linear-gradient(to bottom, var(--white) 0%, var(--light-gray) 100%);
+            padding: 6rem 0;
+        }
+
+        .section-description {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .department-card.luxury-card {
+            border: none;
+            background: white;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem; /* Base font size aumentado */
+        }
+
+        .department-card.luxury-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(30, 144, 255, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .card-header h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 50%;
+            width: 5rem;
+            height: 5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .divider {
+            width: 50px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            margin: 1rem auto;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .dept-description {
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            font-size: 1.1rem; /* Aumentado de 0.95rem */
+            line-height: 1.6;
+        }
+
+        .department-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .department-card ul li {
+            margin: 1.2rem 0; /* Aumentado de 1rem */
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            font-size: 1.05rem; /* Aumentado de 0.9rem */
+        }
+
+        .department-card ul li i {
+            margin-right: 10px;
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .specialty-tag {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.6rem 1.2rem; /* Padding aumentado */
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 1.5rem;
+            font-size: 0.95rem; /* Aumentado de 0.8rem */
+            font-weight: 600;
+        }
+
+        /* Melhorias na responsividade */
+        @media (max-width: 768px) {
+            .departments-grid {
+                gap: 3rem;
+            }
+
+            .card-header i {
+                font-size: 2.5rem;
+                width: 4rem;
+                height: 4rem;
+            }
+        }
+
+        /* Investment Cards Enhancements */
+        .card-badge {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .level-card {
+            position: relative;
+            overflow: visible;
+        }
+
+        .level-card.premium { border-color: #4682b4; }
+        .level-card.elite { border-color: #1e90ff; }
+        .level-card.master { border-color: #0066cc; }
+
+        .level-card.prime {
+            border-color: #0066cc;
+            background: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(240,245,255,0.9) 100%);
+            box-shadow: 0 8px 32px rgba(30, 144, 255, 0.15);
+        }
+
+        .level-card.prime .card-badge {
+            background: linear-gradient(to right, #1e90ff, #0066cc);
+        }
+
+        .investment-intro strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Ajustes Responsivos */
+        @media (max-width: 1200px) {
+            .investment-levels {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .container {
+                padding: 0 40px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .departments-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .investment-levels {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .hero-buttons .cta-button {
+                width: 100%;
+                max-width: 300px;
+                margin: 5px 0;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            h1 {
+                font-size: 2rem !important;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logo {
+                width: 150px;
+            }
+
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .numbers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .level-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .level-card h3 {
+                font-size: 1.4rem;
+            }
+
+            .level-card .price {
+                font-size: 2rem;
+            }
+
+            .level-card ul li {
+                font-size: 0.9rem;
+            }
+
+            .card-badge {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .about, .benefits, .departments {
+                padding: 3rem 0;
+            }
+        }
+
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .level-card {
+                padding: 1.2rem 0.8rem;
+            }
+
+            .card-badge {
+                right: -8px;
+                top: -8px;
+                padding: 4px 8px;
+            }
+        }
+
+        /* Ajustes para orientação paisagem em dispositivos móveis */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .hero {
+                padding: 2rem 0;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero p {
+                margin-bottom: 1.5rem;
+            }
+
+            .investment-levels {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Ajustes para telas de alta resolução */
+        @media (min-width: 2000px) {
+            .container {
+                max-width: 1600px;
+            }
+
+            html {
+                font-size: 18px;
+            }
+        }
+
+        /* Ajustes para garantir que conteúdo seja visível em telas dobráveis */
+        @media (max-width: 320px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .level-card ul li {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Garantir que elementos interativos tenham área de toque adequada */
+        @media (hover: none) and (pointer: coarse) {
+            .cta-button, 
+            .level-card .cta-button {
+                min-height: 44px;
+                padding: 12px 20px;
+            }
+
+            .level-card ul li {
+                padding: 8px 0 8px 1.5rem;
+            }
+        }

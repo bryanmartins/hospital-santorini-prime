@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Em Manutenção - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-manutencao.css">
+</head>
+<body>
+    <!-- Background bubbles -->
+    <div id="bubbles"></div>
+    
+    <div class="maintenance-container">
+        <img src="./imagens/logo_santorini_colorido.png" alt="Hospital Santorini Prime" class="logo">
+        
+        <h1>Sistema em Manutenção</h1>
+        
+        <p>Estamos realizando melhorias em nosso sistema para proporcionar uma experiência ainda melhor para você!</p>
+        
+        <p>A equipe de TI do <span class="highlight">Hospital Santorini Prime</span> está trabalhando para que voltemos o mais rápido possível.</p>
+        
+        <div class="emoji-container">
+            <span class="emoji">🏥</span>
+            <span class="emoji">💉</span>
+            <span class="emoji">💊</span>
+        </div>
+        
+        <div class="countdown">
+            <span id="status-message">Previsão de Retorno: 07/04 às 18h</span>
+        </div>
+        
+        <p>Agradecemos pela compreensão e paciência!</p>
+        
+        <div class="footer">
+            Hospital Santorini Prime - Departamento de Tecnologia
+        </div>
+    </div>
+    
+    <script>
+        // Create animated bubbles in the background
+        document.addEventListener('DOMContentLoaded', function() {
+            const bubblesContainer = document.getElementById('bubbles');
+            
+            // Adjust bubble count based on screen size
+            const screenWidth = window.innerWidth;
+            const bubbleCount = screenWidth < 768 ? 8 : 15;
+            
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Adjust bubble size based on screen size
+                const maxSize = screenWidth < 480 ? 60 : 80;
+                const minSize = screenWidth < 480 ? 10 : 20;
+                const size = Math.random() * (maxSize - minSize) + minSize;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Random position
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.bottom = `${Math.random() * 100 - 100}px`;
+                
+                // Random opacity
+                bubble.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                // Random animation duration (faster on mobile)
+                const durationModifier = screenWidth < 768 ? 0.8 : 1;
+                const duration = (Math.random() * 20 + 10) * durationModifier;
+                bubble.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                const delay = Math.random() * 10;
+                bubble.style.animationDelay = `${delay}s`;
+                
+                bubblesContainer.appendChild(bubble);
+            }
+        });
+    </script>
+</body>
+</html>

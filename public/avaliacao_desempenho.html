@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Desempenho - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="./css/estilo-principal.css"> <link rel="stylesheet" href="./css/cards.css"> <link rel="stylesheet" href="./css/formularios.css"> <link rel="stylesheet" href="./css/widgets.css"> <link rel="stylesheet" href="./css/avaliacao-admin.css">
+
+    </head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"> <span class="hamburger-icon"></span> </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"> <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime"> <h2 id="welcomeHeader">Usuário</h2> <span class="user-role">Carregando...</span> </div>
+        <div class="sidebar-menu" id="sidebarMenu"> <div class="loading-state" style="padding: 20px; text-align: center;"> <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span> </div> </div>
+        <div class="sidebar-footer"> <button id="collapseMenuBtn" class="menu-collapse-btn"> <i class="fas fa-chevron-left"></i> </button> <a href="#" id="logoutBtn" class="menu-item"> <i class="fas fa-sign-out-alt"></i> <span>Sair</span> </a> </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header"> <h1 class="page-title"> <i class="fas fa-star"></i> Avaliação de Desempenho </h1> <p class="page-subtitle">Gerencie e acompanhe o desempenho dos funcionários.</p> </div>
+        <div id="successMessage" class="message success-message" style="display: none;"></div>
+        <div id="errorMessage" class="message error-message" style="display: none;"></div>
+
+        <div class="card">
+            <div class="card-header"> <div class="card-title"> <i class="fas fa-calendar-alt"></i> Período e Ações </div> </div>
+            <div class="card-body">
+                <div class="quinzena-select form-group" style="margin-bottom: 20px;"> <label class="form-label" for="quinzenaSelect">Selecione a Quinzena:</label> <div class="select-wrapper"> <select id="quinzenaSelect" class="form-control"> <option value="atual">Quinzena Atual</option> </select> </div> </div>
+                 <div class="options-container options-grid">
+                    <div class="option-card"> <div class="option-header"> <h3><i class="fas fa-edit"></i> Avaliar</h3> </div> <div class="option-body"> <p class="option-description">Realize avaliações de desempenho.</p> <a href="avaliar.html" class="btn btn-primary">Acessar</a> </div> </div>
+                    <div class="option-card"> <div class="option-header"> <h3><i class="fas fa-check-double"></i> Consolidar</h3> </div> <div class="option-body"> <p class="option-description">Revise e finalize as avaliações.</p> <a href="consolidar_avaliacao.html" class="btn btn-primary">Acessar</a> </div> </div>
+                    <div class="option-card"> <div class="option-header"> <h3><i class="fas fa-history"></i> Histórico</h3> </div> <div class="option-body"> <p class="option-description">Consulte o histórico de avaliações.</p> <a href="visualizar_historico.html" class="btn btn-primary">Acessar</a> </div> </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"> <div class="card-title"> <i class="fas fa-chart-bar"></i> Dashboard de Avaliações </div> </div>
+            <div class="card-body">
+                 <div class="dashboard-filters form-grid">
+                    <div class="filter-group form-group"> <label class="form-label" for="cargoFilter">Cargo:</label> <div class="select-wrapper"> <select id="cargoFilter" class="form-control"> <option value="todos">Todos</option> </select> </div> </div>
+                    <div class="filter-group form-group"> <label class="form-label" for="statusFilter">Status:</label> <div class="select-wrapper"> <select id="statusFilter" class="form-control"> <option value="todos">Todos</option> <option value="pendente">Pendente</option> <option value="avaliado">Avaliado</option> </select> </div> </div>
+                    <div class="form-actions" style="margin-top: 0;"> <button class="btn btn-secondary" id="applyFilters" style="margin-top: 25px;"> <i class="fas fa-filter"></i> Aplicar </button> </div>
+                </div>
+                 <div class="metrics-grid">
+                    <div class="metric-card"> <h4>Total Funcionários</h4> <div id="totalFuncionarios" class="metric-value">0</div> <div class="metric-comparison">Ativos (exceto N10)</div> </div>
+                    <div class="metric-card"> <h4>Avaliados</h4> <div id="funcionariosAvaliados" class="metric-value">0</div> <div class="metric-comparison"> <span id="percentAvaliados">0%</span> do total </div> <div class="progress-container"> <div id="progressBar" class="progress-bar" style="width: 0%"></div> </div> </div>
+                    <div class="metric-card"> <h4>Pendentes</h4> <div id="funcionariosPendentes" class="metric-value">0</div> <div class="metric-comparison">Aguardando avaliação</div> </div>
+                    <div class="metric-card"> <h4>Média Geral</h4> <div id="mediaAvaliacoes" class="metric-value">0</div> <div class="metric-comparison">Escala 1-5</div> </div>
+                </div>
+                 <div class="charts-grid">
+                    <div class="chart-card dashboard-card"> <div class="card-header chart-header"> <h3 class="card-title chart-title"><i class="fas fa-user-tie"></i> Distribuição por Cargo</h3> </div> <div class="card-body chart-body"> <div id="cargoChartContainer" class="simple-chart-container"> <div id="barChart" class="bar-chart"></div> <div id="cargoChartEmpty" class="chart-no-data" style="display:none;"> <i class="fas fa-chart-bar"></i> <p>Nenhum dado</p> </div> </div> </div> </div>
+                    <div class="chart-card dashboard-card"> <div class="card-header chart-header"> <h3 class="card-title chart-title"><i class="fas fa-star"></i> Distribuição de Notas</h3> </div> <div class="card-body chart-body"> <div id="notasChartContainer" class="simple-chart-container"> <div id="donutChart" class="donut-chart" style="display:none;"></div> <div class="notes-legends" id="notesLegend"></div> <div id="notasChartEmpty" class="chart-no-data"> <i class="fas fa-chart-pie"></i> <p>Nenhum dado</p> </div> </div> </div> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // Inicializa Firebase
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Elementos DOM, Variáveis Globais, Funções Auxiliares (mantidas)
+        const welcomeHeader = document.getElementById("welcomeHeader"); const userRoleEl = document.querySelector('.user-role'); const sidebarMenu = document.getElementById('sidebarMenu'); const quinzenaSelect = document.getElementById('quinzenaSelect'); const cargoFilter = document.getElementById('cargoFilter'); const statusFilter = document.getElementById('statusFilter'); const applyFiltersBtn = document.getElementById('applyFilters');
+        let todosOsFuncionarios = []; let todasAsAvaliacoes = []; let cargosUnicos = new Set();
+        function mostrarMensagem(m,t){const i=t==='success'?'fa-check-circle':t==='error'?'fa-exclamation-triangle':'fa-info-circle',o=document.getElementById(t==='success'?'successMessage':'errorMessage');o&&(o.innerHTML=`<i class="fas ${i}"></i> ${m}`,o.className=`message ${t}-message`,o.style.display='flex',o.style.opacity='1',o.style.transition='',setTimeout(()=>{o.style.opacity='0',o.style.transition='opacity .5s ease'},4500),setTimeout(()=>{o.style.display='none'},5e3))}
+        async function fetchUserDataAndLevel(id){console.log(`--- fetchUserDataAndLevel: ID ${id}`);let l="N0",t=null,n="Colaborador";try{const o=await db.collection("usuarios").doc(id).get();if(!o.exists)throw new Error("Usuário não encontrado.");if(t=o.data(),!t)throw new Error("Dados ausentes.");if(n=t.cargo||n,t.nickHabbo)try{const c=await db.collection("funcionarios").where("nickHabbo","==",t.nickHabbo).where("ativo","==",!0).limit(1).get();if(c.empty){const r=parseInt(t.nivel||0);r>=3&&(l="N10")}else{const a=c.docs[0].data();l=a.nivel||"N0",n=a.cargo||n}}catch(s){const d=parseInt(t.nivel||0);d>=3&&(l="N10")}else{const e=parseInt(t.nivel||0);e>=3&&(l="N10")}return console.log("--- fetchUserDataAndLevel: Nível:",l),{userData:{...t,uid:id,cargo:n},hierarchicalLevel:l}}catch(a){return console.error("--- fetchUserDataAndLevel Error:",a),mostrarMensagem("Erro dados usuário.","error"),null}}
+
+        // --- Funções Específicas da Página (Mantidas como antes) ---
+        async function carregarQuinzenas(){/* ... */ try{const t=await db.collection("quinzenas").doc("atual").get(),n=await db.collection("historicoQuinzenas").orderBy("dataFim","desc").limit(10).get();for(;quinzenaSelect.options.length>1;)quinzenaSelect.remove(1);if(n.empty||n.forEach(e=>{const o=e.data(),i=document.createElement("option");i.value=e.id;let l="Quinzena sem data";if(o.dataInicio&&o.dataFim){const c=o.dataInicio.toDate?o.dataInicio.toDate():new Date(o.dataInicio),r=o.dataFim.toDate?o.dataFim.toDate():new Date(o.dataFim),a=t=>t.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});l=`${a(c)} a ${a(r)}`}i.textContent=l,quinzenaSelect.appendChild(i)}),t.exists){const c=t.data();if(c.dataInicio&&c.dataFim){const d=c.dataInicio.toDate?c.dataInicio.toDate():new Date(c.dataInicio),u=c.dataFim.toDate?c.dataFim.toDate():new Date(c.dataFim),p=t=>t.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});quinzenaSelect.options[0].textContent=`Quinzena Atual (${p(d)} a ${p(u)})`}}else quinzenaSelect.options[0].disabled=!0,mostrarMensagem("Não há quinzena atual ativa.","error"),quinzenaSelect.options.length>1&&(quinzenaSelect.selectedIndex=1)}catch(a){console.error("Erro ao carregar quinzenas:",a),mostrarMensagem("Erro ao carregar quinzenas.","error")}}
+        async function carregarDadosDashboard(){/* ... */ console.log("Carregando dados dashboard...");try{let t=quinzenaSelect.value;if("atual"===t){const n=await db.collection("quinzenas").doc("atual").get();if(!n.exists)return console.error("Doc 'quinzenas/atual' não existe."),void mostrarMensagem("Erro: Quinzena atual não encontrada.","error");t="atual"}console.log("ID quinzena para query:",t);const e=await db.collection("funcionarios").where("ativo","==",!0).get();todosOsFuncionarios=e.docs.map(o=>({id:o.id,...o.data()})).filter(o=>"N10"!==o.nivel);const o=await db.collection("avaliacoes").where("quinzenaId","==",t).get();todasAsAvaliacoes=o.docs.map(i=>({id:i.id,...i.data()})),console.log(`Dados carregados: ${todosOsFuncionarios.length} funcionários (sem N10), ${todasAsAvaliacoes.length} avaliações`),preencherFiltrosCargo(),atualizarDashboard()}catch(i){console.error("Erro carregar dados:",i),mostrarMensagem("Erro carregar dados.","error")}}
+        function preencherFiltrosCargo(){/* ... */ cargosUnicos=new Set(todosOsFuncionarios.map(t=>t.cargo).filter(Boolean)),cargoFilter.innerHTML='<option value="todos">Todos</option>',Array.from(cargosUnicos).sort().forEach(t=>{const n=document.createElement("option");n.value=t,n.textContent=t,cargoFilter.appendChild(n)})}
+        function atualizarDashboard(){/* ... */ console.log("Atualizando UI...");const t=cargoFilter.value,n=statusFilter.value;let e=todosOsFuncionarios;"todos"!==t&&(e=todosOsFuncionarios.filter(o=>o.cargo===t));const o=new Set(todasAsAvaliacoes.map(i=>i.funcionarioId)),l=e.filter(c=>o.has(c.id)),r=e.filter(a=>!o.has(a.id));let s=e;"pendente"===n?s=r:"avaliado"===n&&(s=l);const d=s.length,u=l.length,p=r.length,h=e.length;document.getElementById("totalFuncionarios").textContent=h,document.getElementById("funcionariosAvaliados").textContent=u,document.getElementById("funcionariosPendentes").textContent=p;const m=h>0?Math.round(u/h*100):0;document.getElementById("percentAvaliados").textContent=m+"%",document.getElementById("progressBar").style.width=m+"%";let v=0;todasAsAvaliacoes.length>0&&(v=(todasAsAvaliacoes.reduce((g,f)=>g+(parseFloat(f.nota)||0),0)/todasAsAvaliacoes.length).toFixed(1)),document.getElementById("mediaAvaliacoes").textContent=v,renderizarGraficoBarras(e,l),renderizarGraficoNotas(todasAsAvaliacoes)}
+        function renderizarGraficoBarras(t,n){/* ... */ const e=document.getElementById("barChart"),o=document.getElementById("cargoChartEmpty");e.innerHTML="";const i={};t.filter(a=>"N10"!==a.nivel).forEach(r=>{const s=r.cargo||"Não Definido";i[s]||(i[s]={total:0,avaliados:0}),i[s].total+=1}),n.filter(d=>"N10"!==d.nivel).forEach(u=>{const p=u.cargo||"Não Definido";i[p]&&(i[p].avaliados+=1)});const l=Object.entries(i);if(0===l.length)return e.style.display="none",void(o.style.display="flex");e.style.display="flex",o.style.display="none",l.sort((h,m)=>m[1].total-h[1].total);const c=Math.max(1,...l.map(([g,f])=>f.total)),r=l.slice(0,5);r.forEach(([a,s])=>{const d=(s.total/c)*100,u=s.avaliados>0?(s.avaliados/c)*100:0,p=document.createElement("div");p.className="bar-row";const h=document.createElement("div");h.className="bar-label",h.textContent=a,h.title=a;const m=document.createElement("div");m.className="bar-container";const v=document.createElement("div");v.className="bar bar-total",v.style.width=`${d}%`;const g=document.createElement("div");g.className="bar bar-avaliados",g.style.width=`${u}%`;const f=document.createElement("div");f.className="bar-value",f.textContent=`${s.avaliados}/${s.total}`,m.appendChild(v),m.appendChild(g),p.appendChild(h),p.appendChild(m),p.appendChild(f),e.appendChild(p)}),l.length>5&&(b=document.createElement("div"),b.className="bar-row",w=document.createElement("div"),w.className="bar-label",w.textContent="...",y=document.createElement("div"),y.className="bar-value",y.style.width="85%",y.style.textAlign="center",y.textContent=`e mais ${l.length-5} outros cargos`,b.appendChild(w),b.appendChild(y),e.appendChild(b))}var b,w,y;
+        function renderizarGraficoNotas(t){/* ... */ const n=document.getElementById("donutChart"),e=document.getElementById("notasChartEmpty"),o=document.getElementById("notesLegend"),i=document.getElementById("donutTotal");if(n.innerHTML='<div class="donut-hole" id="donutTotal">0</div>',o.innerHTML="",!t||0===t.length)return n.style.display="none",void(e.style.display="flex");const l={"1★":0,"2★":0,"3★":0,"4★":0,"5★":0};t.forEach(r=>{const s=parseFloat(r.nota)||0,d=Math.max(1,Math.min(5,Math.round(s)));l[`${d}★`]+=1});const c={"1★":"#ff6384","2★":"#ff9f40","3★":"#ffcd56","4★":"#36a2eb","5★":"#4bc0c0"},r=t.length;n.style.display="block",e.style.display="none",i&&(i.textContent=r);const a=Object.entries(l),s=Object.values(a).reduce((u,p)=>u+p[1],0);let d=0;const u=[];a.forEach(([p,h],m)=>{const v=document.createElement("div");v.className="note-legend";const g=document.createElement("div");g.className="note-color",g.style.backgroundColor=c[p];const f=document.createElement("div");f.className="note-label";const x=r>0?Math.round(h/r*100):0;if(f.textContent=`${p}: ${h} (${x}%)`,v.appendChild(g),v.appendChild(f),o.appendChild(v),h>0){const k=h/s*100;u.push({percent:k,color:c[p]}),d+=k}}),d>100&&(d=100);let p=0;const h=u.map(m=>`${m.color} ${p}% ${p+m.percent}%`,p+=m.percent).join(",");n.style.background=`conic-gradient(${h})`}
+
+        async function initPage() { /* ... (código como antes) ... */ console.log("Inicializando página avaliacao_desempenho.html..."); await carregarQuinzenas(); await carregarDadosDashboard(); quinzenaSelect.addEventListener('change', carregarDadosDashboard); applyFiltersBtn.addEventListener('click', atualizarDashboard); }
+
+        // --- Inicialização Geral e Autenticação ---
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("DOM Carregado para avaliacao_desempenho.html");
+             if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); }
+             else { console.error("Erro: initializeSidebarInteractions() não encontrada."); }
+
+             auth.onAuthStateChanged(async (user) => {
+                  console.log("Auth state changed:", user ? user.uid : "No user");
+                  if (user) {
+                      try {
+                          const result = await fetchUserDataAndLevel(user.uid);
+                          if (!result) { throw new Error("Falha ao buscar dados."); }
+                          const fetchedUserData = result.userData;
+                          const userHierarchicalLevel = result.hierarchicalLevel;
+                          const accessLevel = parseInt(fetchedUserData.nivel || 0);
+                          if (accessLevel < 2) { window.location.href = 'dashboard_user.html'; return; }
+                          if(welcomeHeader) welcomeHeader.textContent = fetchedUserData.nome || "Usuário";
+                          if(userRoleEl) userRoleEl.textContent = fetchedUserData.cargo || `Nível ${userHierarchicalLevel}`;
+                          const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                          if (typeof generateSidebarMenu === 'function') { const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage); if(sidebarMenu) sidebarMenu.innerHTML = menuHtml; }
+                          else { console.error("Erro: generateSidebarMenu() não encontrada."); if(sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro menu.</p>'; }
+                          initPage(); // Chama o carregamento dos dados da página
+                      } catch (error) { console.error("Erro geral auth/load:", error); if(sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico.</p>'; }
+                  } else { console.log("Nenhum usuário logado."); window.location.href = 'login.html'; }
+             });
+        });
+    </script>
+
+</body>
+</html>

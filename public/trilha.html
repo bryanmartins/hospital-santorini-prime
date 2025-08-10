@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha de Carreira - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css"> 
+    <link rel="stylesheet" href="./css/trilhas.css">
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral (será carregado dinamicamente) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal Redesenhado -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-road"></i>
+                Trilha de Carreira
+            </h1>
+            <p class="page-subtitle">Conheça os níveis hierárquicos e o plano de carreira do Hospital Santorini Prime</p>
+        </div>
+
+        <!-- Introdução -->
+        <div class="trilha-section">
+            <div class="trilha-header">
+                <div class="trilha-title">
+                    <i class="fas fa-info-circle"></i>
+                    Introdução
+                </div>
+            </div>
+            <div class="trilha-body">
+                <div class="trilha-content">
+                    <p>A Trilha de Carreira do Hospital Santorini Prime foi desenvolvida para proporcionar um caminho claro de crescimento profissional para todos os colaboradores. Esta estrutura organiza os diferentes cargos em níveis hierárquicos, cada um com suas próprias responsabilidades, requisitos e benefícios.</p>
+                    <p>Este documento apresenta detalhadamente cada nível da trilha, os requisitos para progressão e as competências esperadas em cada etapa da sua jornada profissional conosco.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visão Geral dos Níveis -->
+        <div class="trilha-section">
+            <div class="trilha-header">
+                <div class="trilha-title">
+                    <i class="fas fa-layer-group"></i>
+                    Visão Geral dos Níveis Hierárquicos
+                </div>
+            </div>
+            <div class="trilha-body">
+                <div class="trilha-content">
+                    <div class="section-header"> </div>
+                    <table class="trilha-table">
+                        <thead>
+                            <tr>
+                                <th>Nível</th>
+                                <th>Descrição</th>
+                                <th>Tempo Mínimo de Experiência</th>
+                                <th>Pontos Mínimos</th>
+                                <th>Faixa Salarial</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n1">N1</span></td>
+                                <td>Base: Colaboradores em fase inicial</td>
+                                <td>0 dias</td>
+                                <td>15 pontos</td>
+                                <td>30c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n2">N2</span></td>
+                                <td>Chefes de Ala</td>
+                                <td>15 dias</td>
+                                <td>25 pontos</td>
+                                <td>35c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n3">N3</span></td>
+                                <td>Analista</td>
+                                <td>45 dias</td>
+                                <td>35 pontos</td>
+                                <td>40c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n4">N4</span></td>
+                                <td>Supervisor</td>
+                                <td>60 dias</td>
+                                <td>40 pontos</td>
+                                <td>45c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n5">N5</span></td>
+                                <td>Coordenador</td>
+                                <td>90 dias</td>
+                                <td>45 pontos</td>
+                                <td>50c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n6">N6</span></td>
+                                <td>Vice-Diretor</td>
+                                <td>120 dias</td>
+                                <td>50 pontos</td>
+                                <td>55c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n7">N7</span></td>
+                                <td>Diretor</td>
+                                <td>150 dias</td>
+                                <td>50 pontos</td>
+                                <td>60c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n8">N8</span></td>
+                                <td>Vice-Presidente</td>
+                                <td>180 dias</td>
+                                <td>55 pontos</td>
+                                <td>65c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n9">N9</span></td>
+                                <td>Presidente</td>
+                                <td>210 dias</td>
+                                <td>55 pontos</td>
+                                <td>70c</td>
+                            </tr>
+                            <tr>
+                                <td><span class="nivel-badge nivel-n10">N10</span></td>
+                                <td>Fundador</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>Consultar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cargos por Níveis (com acordeões aninhados) -->
+        <div class="trilha-section">
+            <div class="trilha-header">
+                <div class="trilha-title">
+                    <i class="fas fa-layer-group"></i>
+                    Trilha de Carreira por Nível
+                </div>
+            </div>
+            <div class="trilha-body">
+                <!-- Nível 1 - Cargos Iniciais (acordeão principal) -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-user-alt"></i>
+                            <span class="nivel-badge nivel-n1">N1</span> Cargos Iniciais
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 1 (N1) representa o início da carreira no Hospital Santorini Prime. São cargos que não exigem experiência prévia e oferecem oportunidade de aprendizado e desenvolvimento. O salário inicial é de 30c quinzenais para todos os cargos N1.</p>
+                        
+                        <h3 class="section-title">Departamento Clínico (DECLIN)</h3>
+                        
+                        <!-- Clínico Geral (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-stethoscope"></i>
+                                    Clínico Geral
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Clínico Geral (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Atendimento médico geral a pacientes</li>
+                                            <li>Realização de exames clínicos</li>
+                                            <li>Prescrição de medicamentos</li>
+                                            <li>Diagnóstico de doenças comuns</li>
+                                            <li>Encaminhamento para especialistas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Comunicação clara e eficaz</li>
+                                            <li>Empatia com pacientes</li>
+                                            <li>Capacidade de trabalhar sob pressão</li>
+                                            <li>Tomada de decisões rápidas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento médico generalista</li>
+                                            <li>Capacidade de diagnóstico</li>
+                                            <li>Familiaridade com medicamentos comuns</li>
+                                            <li>Anamnese eficiente</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cirurgião (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-procedures"></i>
+                                    Cirurgião
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Cirurgião (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Realização de procedimentos cirúrgicos</li>
+                                            <li>Avaliação pré e pós-operatória</li>
+                                            <li>Atendimento de emergências cirúrgicas</li>
+                                            <li>Planejamento de intervenções cirúrgicas</li>
+                                            <li>Elaboração de relatórios cirúrgicos</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Trabalho em equipe cirúrgica</li>
+                                            <li>Comunicação clara e eficaz</li>
+                                            <li>Tomada de decisão sob pressão</li>
+                                            <li>Concentração e precisão</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Técnicas cirúrgicas</li>
+                                            <li>Conhecimento anatômico avançado</li>
+                                            <li>Manejo de instrumentais</li>
+                                            <li>Procedimentos de assepsia</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Enfermeiro (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-user-nurse"></i>
+                                    Enfermeiro
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Enfermeiro (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Cuidados diretos ao paciente</li>
+                                            <li>Administração de medicamentos</li>
+                                            <li>Monitoramento de sinais vitais</li>
+                                            <li>Assistência em procedimentos médicos</li>
+                                            <li>Cuidados com curativos e sondas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Empatia e humanização</li>
+                                            <li>Comunicação acolhedora</li>
+                                            <li>Trabalho em equipe</li>
+                                            <li>Atenção aos detalhes</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Técnicas de enfermagem</li>
+                                            <li>Procedimentos de higienização</li>
+                                            <li>Processamento de materiais</li>
+                                            <li>Preparo e administração medicamentosa</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pediatra (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-baby"></i>
+                                    Pediatra
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Pediatra (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Atendimento clínico infantil</li>
+                                            <li>Avaliação do desenvolvimento</li>
+                                            <li>Diagnóstico de doenças pediátricas</li>
+                                            <li>Orientação a pais e responsáveis</li>
+                                            <li>Prescrição de tratamentos adequados</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Comunicação adaptada a crianças</li>
+                                            <li>Paciência e gentileza</li>
+                                            <li>Criatividade no atendimento</li>
+                                            <li>Habilidade para tranquilizar</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento em patologias infantis</li>
+                                            <li>Avaliação de crescimento e desenvolvimento</li>
+                                            <li>Farmacologia pediátrica</li>
+                                            <li>Protocolos de imunização</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Obstetra (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-baby-carriage"></i>
+                                    Obstetra
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Obstetra (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Acompanhamento pré-natal</li>
+                                            <li>Assistência ao parto</li>
+                                            <li>Cuidados pós-parto</li>
+                                            <li>Diagnóstico de complicações gestacionais</li>
+                                            <li>Orientação sobre planejamento familiar</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Empatia com gestantes</li>
+                                            <li>Comunicação tranquilizadora</li>
+                                            <li>Acolhimento humanizado</li>
+                                            <li>Escuta ativa</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento em fisiologia da gestação</li>
+                                            <li>Técnicas de assistência ao parto</li>
+                                            <li>Avaliação de risco gestacional</li>
+                                            <li>Farmacologia obstétrica</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title">Departamento de Operações e Performance Humana (DOPH)</h3>
+                        
+                        <!-- Psicólogo (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-brain"></i>
+                                    Psicólogo
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Psicólogo (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Atendimento psicológico</li>
+                                            <li>Avaliação psicológica</li>
+                                            <li>Suporte a pacientes internados</li>
+                                            <li>Intervenções em crise</li>
+                                            <li>Acolhimento psicológico</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Escuta ativa</li>
+                                            <li>Empatia e acolhimento</li>
+                                            <li>Comunicação terapêutica</li>
+                                            <li>Manejo de situações emocionais</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Técnicas psicoterápicas</li>
+                                            <li>Avaliação psicológica</li>
+                                            <li>Conhecimento em psicopatologia</li>
+                                            <li>Intervenções baseadas em evidências</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Psiquiatra (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-pills"></i>
+                                    Psiquiatra
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Psiquiatra (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Diagnóstico de transtornos mentais</li>
+                                            <li>Prescrição de tratamentos psiquiátricos</li>
+                                            <li>Acompanhamento de pacientes</li>
+                                            <li>Avaliação de riscos psiquiátricos</li>
+                                            <li>Atendimento a emergências psiquiátricas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Comunicação clara e empática</li>
+                                            <li>Manejo de situações de crise</li>
+                                            <li>Relação médico-paciente</li>
+                                            <li>Escuta qualificada</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento em psicopatologia</li>
+                                            <li>Farmacologia psiquiátrica</li>
+                                            <li>Avaliação de risco e urgência</li>
+                                            <li>Diagnóstico diferencial</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Segurança (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Segurança
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Segurança (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Controle de acesso às dependências</li>
+                                            <li>Rondas de segurança</li>
+                                            <li>Monitoramento de áreas</li>
+                                            <li>Contenção de situações de risco</li>
+                                            <li>Auxílio a pacientes e visitantes</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Comunicação clara e assertiva</li>
+                                            <li>Pró-atividade e vigilância</li>
+                                            <li>Atendimento educado</li>
+                                            <li>Controle emocional</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Técnicas de abordagem</li>
+                                            <li>Conhecimento em normas de segurança</li>
+                                            <li>Primeiros socorros básicos</li>
+                                            <li>Identificação de situações de risco</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Recepcionista (N1) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-concierge-bell"></i>
+                                    Recepcionista
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Recepcionista (N1)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Acolhimento de pacientes</li>
+                                            <li>Registro de informações</li>
+                                            <li>Direcionamento para especialidades</li>
+                                            <li>Organização do fluxo de atendimento</li>
+                                            <li>Esclarecimento de dúvidas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Comunicação acolhedora</li>
+                                            <li>Empatia e cordialidade</li>
+                                            <li>Organização e agilidade</li>
+                                            <li>Atendimento humanizado</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento do fluxo hospitalar</li>
+                                            <li>Registro e gestão de informações</li>
+                                            <li>Triagem básica de urgência</li>
+                                            <li>Familiaridade com especialidades médicas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>30c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 2 - Chefes de Ala -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-user-tie"></i>
+                            <span class="nivel-badge nivel-n2">N2</span> Chefes de Ala
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 2 (N2) representa a primeira evolução na carreira, onde o colaborador assume responsabilidades de liderança em uma área específica do hospital. Chefes de Ala coordenam equipes, implementam protocolos e garantem o padrão de qualidade nos serviços.</p>
+                        
+                        <h3 class="section-title">Departamento Clínico (DECLIN)</h3>
+                        
+                        <!-- Chefe de Clínica Geral (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-stethoscope"></i>
+                                    Chefe de Clínica Geral
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Clínica Geral (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe médica de Clínica Geral</li>
+                                            <li>Revisão de prontuários e condutas médicas</li>
+                                            <li>Implementação de protocolos clínicos</li>
+                                            <li>Participação nas discussões de casos complexos</li>
+                                            <li>Organização das escalas de trabalho</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança clínica</li>
+                                            <li>Gerenciamento de equipe</li>
+                                            <li>Comunicação eficaz</li>
+                                            <li>Tomada de decisão</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento médico avançado</li>
+                                            <li>Gestão de processos clínicos</li>
+                                            <li>Implementação de protocolos médicos</li>
+                                            <li>Análise e melhoria de indicadores assistenciais</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Cirurgia (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-procedures"></i>
+                                    Chefe de Cirurgia
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Cirurgia (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe cirúrgica</li>
+                                            <li>Organização das escalas cirúrgicas</li>
+                                            <li>Padronização de procedimentos operatórios</li>
+                                            <li>Gestão do centro cirúrgico</li>
+                                            <li>Acompanhamento de indicadores cirúrgicos</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança em ambiente cirúrgico</li>
+                                            <li>Coordenação de equipe multidisciplinar</li>
+                                            <li>Gestão de crises</li>
+                                            <li>Comunicação precisa</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento técnico-cirúrgico avançado</li>
+                                            <li>Gestão de processos cirúrgicos</li>
+                                            <li>Implementação de protocolos de segurança</li>
+                                            <li>Análise de eficiência operacional</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Enfermagem (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-user-nurse"></i>
+                                    Chefe de Enfermagem
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Enfermagem (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe de enfermagem</li>
+                                            <li>Organização das rotinas assistenciais</li>
+                                            <li>Implementação de protocolos de cuidado</li>
+                                            <li>Gestão de materiais e equipamentos</li>
+                                            <li>Treinamento e capacitação da equipe</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança assistencial</li>
+                                            <li>Gestão humanizada de equipe</li>
+                                            <li>Comunicação integrada</li>
+                                            <li>Orientação para qualidade</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Sistematização da assistência de enfermagem</li>
+                                            <li>Gestão de processos assistenciais</li>
+                                            <li>Implementação de protocolos de segurança</li>
+                                            <li>Auditoria de processos de enfermagem</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Pediatria (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-baby"></i>
+                                    Chefe de Pediatria
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Pediatria (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe pediátrica</li>
+                                            <li>Organização dos protocolos de atendimento infantil</li>
+                                            <li>Gestão da unidade pediátrica</li>
+                                            <li>Implementação de programas de humanização</li>
+                                            <li>Relacionamento com familiares</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança humanizada</li>
+                                            <li>Empatia e gentileza</li>
+                                            <li>Comunicação adaptada às crianças</li>
+                                            <li>Gestão de relacionamentos com familiares</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento avançado em pediatria</li>
+                                            <li>Gestão de processos pediátricos</li>
+                                            <li>Implementação de protocolos de segurança infantil</li>
+                                            <li>Desenvolvimento de programas de bem-estar infantil</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Obstetrícia (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-baby-carriage"></i>
+                                    Chefe de Obstetrícia
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Obstetrícia (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe obstétrica</li>
+                                            <li>Organização dos protocolos de assistência ao parto</li>
+                                            <li>Gestão da maternidade</li>
+                                            <li>Implementação de práticas humanizadas</li>
+                                            <li>Acompanhamento dos indicadores assistenciais</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança em ambiente materno-infantil</li>
+                                            <li>Gestão de momentos críticos</li>
+                                            <li>Comunicação sensível e empática</li>
+                                            <li>Promoção de ambiente acolhedor</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento avançado em obstetrícia</li>
+                                            <li>Gestão de processos em maternidade</li>
+                                            <li>Implementação de protocolos de parto seguro</li>
+                                            <li>Desenvolvimento de práticas obstétricas baseadas em evidências</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title">Departamento de Operações e Performance Humana (DOPH)</h3>
+                        
+                        <!-- Chefe de Psicologia (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-brain"></i>
+                                    Chefe de Psicologia
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Psicologia (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe de psicologia</li>
+                                            <li>Atendimento de casos complexos</li>
+                                            <li>Implementação de protocolos psicológicos</li>
+                                            <li>Desenvolvimento de programas de saúde mental</li>
+                                            <li>Supervisão clínica</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança de equipe</li>
+                                            <li>Gestão de casos complexos</li>
+                                            <li>Comunicação interdisciplinar</li>
+                                            <li>Mentoria e desenvolvimento profissional</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão em saúde mental</li>
+                                            <li>Psicologia clínica avançada</li>
+                                            <li>Avaliação de programas psicológicos</li>
+                                            <li>Supervisão clínica</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Psiquiatria (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-pills"></i>
+                                    Chefe de Psiquiatria
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Psiquiatria (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe psiquiátrica</li>
+                                            <li>Atendimento de casos complexos</li>
+                                            <li>Implementação de protocolos psiquiátricos</li>
+                                            <li>Gerenciamento de situações de crise</li>
+                                            <li>Desenvolvimento de programas de saúde mental</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança de equipe psiquiátrica</li>
+                                            <li>Gestão de casos refratários</li>
+                                            <li>Comunicação multiprofissional</li>
+                                            <li>Tomada de decisão em situações complexas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão em saúde mental</li>
+                                            <li>Psiquiatria complexa</li>
+                                            <li>Avaliação de serviços psiquiátricos</li>
+                                            <li>Implementação de diretrizes baseadas em evidências</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Segurança (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Chefe de Segurança
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Segurança (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe de segurança</li>
+                                            <li>Elaboração de escalas e protocolos</li>
+                                            <li>Gerenciamento de situações críticas</li>
+                                            <li>Implementação de medidas preventivas</li>
+                                            <li>Treinamento da equipe</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança de equipe</li>
+                                            <li>Gestão de crises</li>
+                                            <li>Comunicação institucional</li>
+                                            <li>Tomada de decisão sob pressão</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão de segurança hospitalar</li>
+                                            <li>Desenvolvimento de protocolos de segurança</li>
+                                            <li>Avaliação de riscos e vulnerabilidades</li>
+                                            <li>Gestão de equipe de segurança</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chefe de Recepção (N2) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-concierge-bell"></i>
+                                    Chefe de Recepção
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Chefe de Recepção (N2)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão da equipe de recepção</li>
+                                            <li>Organização de escalas e fluxos</li>
+                                            <li>Resolução de situações complexas</li>
+                                            <li>Implementação de protocolos de atendimento</li>
+                                            <li>Treinamento da equipe</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança de equipe</li>
+                                            <li>Gestão de conflitos</li>
+                                            <li>Comunicação eficaz</li>
+                                            <li>Organização de fluxos de trabalho</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão de atendimento ao público</li>
+                                            <li>Desenvolvimento de protocolos de acolhimento</li>
+                                            <li>Avaliação de qualidade no atendimento</li>
+                                            <li>Gestão de equipe de recepção</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>15 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>35c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 3 - Analistas -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-chart-bar"></i>
+                            <span class="nivel-badge nivel-n3">N3</span> Analistas
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 3 (N3) representa a evolução para cargos estratégicos na instituição. Os analistas são profissionais que combinam conhecimento técnico e administrativo, agregando valor através da análise e otimização de processos hospitalares.</p>
+                        
+                        <h3 class="section-title">Departamento de Operações e Performance Humana (DOPH)</h3>
+                        
+                        <!-- Analista (N3) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Analista
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Analista (N3)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Administração do sistema de pontos dos colaboradores</li>
+                                            <li>Organização e gerenciamento de grupos funcionais</li>
+                                            <li>Suporte à recepção e demais setores</li>
+                                            <li>Anúncios de abertura e fechamento do hospital</li>
+                                            <li>Monitoramento do cumprimento de protocolos</li>
+                                            <li>Análise de dados para otimização de processos</li>
+                                            <li>Participação em projetos de melhoria institucional</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Excelente organização</li>
+                                            <li>Atenção aos detalhes</li>
+                                            <li>Comunicação eficaz</li>
+                                            <li>Liderança</li>
+                                            <li>Responsabilidade</li>
+                                            <li>Resolução de problemas</li>
+                                            <li>Pensamento analítico</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento avançado do sistema hospitalar</li>
+                                            <li>Gestão de dados e informações</li>
+                                            <li>Análise de desempenho</li>
+                                            <li>Conhecimento amplo de diversos setores</li>
+                                            <li>Habilidade com relatórios e documentações</li>
+                                            <li>Gestão de cronogramas e escalas</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>45 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>40c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 4 - Supervisores -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-user-tie"></i>
+                            <span class="nivel-badge nivel-n4">N4</span> Supervisores
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 4 (N4) representa supervisores que coordenam operações interdepartamentais e atuam em áreas estratégicas. São responsáveis por garantir a execução dos protocolos institucionais e a qualidade dos serviços prestados.</p>
+                        
+                        <h3 class="section-title">Departamento Clínico (DECLIN)</h3>
+                        
+                        <!-- Supervisor Clínico (N4) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-user-md"></i>
+                                    Supervisor Clínico
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Supervisor Clínico (N4)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão dos departamentos de Clínica Geral, Cirurgia e Enfermagem</li>
+                                            <li>Implementação de protocolos clínicos institucionais</li>
+                                            <li>Gerenciamento de casos complexos e interconsultas</li>
+                                            <li>Coordenação das relações interdepartamentais</li>
+                                            <li>Auditoria da qualidade do atendimento médico</li>
+                                            <li>Participação em comitês de qualidade e segurança</li>
+                                            <li>Desenvolvimento de políticas de assistência clínica</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança estratégica</li>
+                                            <li>Gestão de conflitos</li>
+                                            <li>Comunicação interdisciplinar</li>
+                                            <li>Visão holística da instituição</li>
+                                            <li>Tomada de decisão em cenários complexos</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento avançado em gestão clínica</li>
+                                            <li>Implementação de diretrizes baseadas em evidências</li>
+                                            <li>Auditoria médica</li>
+                                            <li>Gestão de indicadores assistenciais</li>
+                                            <li>Análise de dados em saúde</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>60 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>45c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Supervisor Materno-Infantil (N4) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-child"></i>
+                                    Supervisor Materno-Infantil
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Supervisor Materno-Infantil (N4)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão dos departamentos de Pediatria e Obstetrícia</li>
+                                            <li>Gerenciamento dos processos assistenciais materno-infantis</li>
+                                            <li>Implementação de protocolos de humanização do parto e nascimento</li>
+                                            <li>Coordenação de programas de saúde infantil</li>
+                                            <li>Gestão da qualidade de atendimento à gestante e à criança</li>
+                                            <li>Promoção de educação continuada para a equipe</li>
+                                            <li>Desenvolvimento de políticas de melhoria contínua</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança humanizada</li>
+                                            <li>Sensibilidade ao lidar com famílias</li>
+                                            <li>Capacidade de coordenação multidisciplinar</li>
+                                            <li>Gestão orientada ao paciente</li>
+                                            <li>Inteligência emocional elevada</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento especializado em assistência materno-infantil</li>
+                                            <li>Gestão de protocolos pediátricos e obstétricos</li>
+                                            <li>Implementação de práticas baseadas em evidências</li>
+                                            <li>Auditoria de processos assistenciais</li>
+                                            <li>Análise de indicadores de qualidade materna e neonatal</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>60 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>45c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title">Departamento de Operações e Performance Humana (DOPH)</h3>
+                        
+                        <!-- Supervisor de Saúde Mental (N4) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-brain"></i>
+                                    Supervisor de Saúde Mental
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Supervisor de Saúde Mental (N4)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão dos departamentos de Psicologia e Psiquiatria</li>
+                                            <li>Coordenação de programas de saúde mental</li>
+                                            <li>Implementação de protocolos terapêuticos integrados</li>
+                                            <li>Gestão de casos de alta complexidade</li>
+                                            <li>Articulação com demais áreas assistenciais</li>
+                                            <li>Desenvolvimento de programas de prevenção</li>
+                                            <li>Supervisão clínica de equipes multidisciplinares</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança transformacional</li>
+                                            <li>Empatia avançada</li>
+                                            <li>Gestão de diferentes abordagens terapêuticas</li>
+                                            <li>Comunicação terapêutica</li>
+                                            <li>Habilidade para lidar com situações de crise</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento avançado em saúde mental</li>
+                                            <li>Gestão de serviços psicológicos e psiquiátricos</li>
+                                            <li>Supervisão clínica</li>
+                                            <li>Análise de indicadores de assistência em saúde mental</li>
+                                            <li>Desenvolvimento de linhas de cuidado em saúde mental</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>60 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>45c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Supervisor de Operações (N4) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-tasks"></i>
+                                    Supervisor de Operações
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Supervisor de Operações (N4)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Supervisão dos departamentos de Segurança, Recepção e Analistas</li>
+                                            <li>Gerenciamento dos processos operacionais do hospital</li>
+                                            <li>Coordenação da logística institucional</li>
+                                            <li>Implementação de protocolos de atendimento</li>
+                                            <li>Gestão do fluxo de pacientes e visitantes</li>
+                                            <li>Desenvolvimento de estratégias de segurança institucional</li>
+                                            <li>Otimização de recursos e processos</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança operacional</li>
+                                            <li>Gestão de crises</li>
+                                            <li>Pensamento estratégico</li>
+                                            <li>Comunicação institucional</li>
+                                            <li>Tomada de decisão ágil</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão de operações hospitalares</li>
+                                            <li>Implementação de protocolos de segurança</li>
+                                            <li>Análise de indicadores operacionais</li>
+                                            <li>Gestão de qualidade e fluxos</li>
+                                            <li>Conhecimento de logística hospitalar</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>60 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>45c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 5 - Coordenadores -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-sitemap"></i>
+                            <span class="nivel-badge nivel-n5">N5</span> Coordenadores
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 5 (N5) representa o topo da carreira técnica no Hospital Santorini Prime. Os coordenadores são responsáveis por liderar grandes áreas, conectando a estratégia executiva à execução operacional em cada departamento.</p>
+                        
+                        <h3 class="section-title">Departamento Clínico (DECLIN)</h3>
+                        
+                        <!-- Coordenador Clínico (N5) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-user-md"></i>
+                                    Coordenador Clínico
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Coordenador Clínico (N5)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança geral do Departamento Clínico (DECLIN)</li>
+                                            <li>Implementação do planejamento estratégico hospitalar na área assistencial</li>
+                                            <li>Coordenação dos supervisores clínicos e materno-infantil</li>
+                                            <li>Desenvolvimento de diretrizes clínicas institucionais</li>
+                                            <li>Gestão da qualidade e segurança da assistência</li>
+                                            <li>Participação nas decisões de alto nível junto ao Departamento Executivo</li>
+                                            <li>Representação do hospital em eventos externos relacionados à área clínica</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança estratégica avançada</li>
+                                            <li>Visão sistêmica e integrada</li>
+                                            <li>Excelência em comunicação institucional</li>
+                                            <li>Gestão de equipes multidisciplinares</li>
+                                            <li>Tomada de decisão em cenários complexos</li>
+                                            <li>Pensamento inovador</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão estratégica de serviços de saúde</li>
+                                            <li>Implementação e avaliação de modelos assistenciais</li>
+                                            <li>Análise avançada de indicadores assistenciais</li>
+                                            <li>Conhecimento profundo em políticas de saúde</li>
+                                            <li>Gerenciamento de projetos clínicos</li>
+                                            <li>Habilidades avançadas de negociação</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>90 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>50c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title">Departamento de Operações e Performance Humana (DOPH)</h3>
+                        
+                        <!-- Coordenador de Operações e Saúde Mental (N5) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-cogs"></i>
+                                    Coordenador de Operações e Saúde Mental
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Coordenador de Operações e Saúde Mental (N5)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança geral do Departamento de Operações e Performance Humana (DOPH)</li>
+                                            <li>Coordenação dos supervisores de saúde mental e operações</li>
+                                            <li>Gestão do funcionamento operacional de todo o hospital</li>
+                                            <li>Desenvolvimento do programa institucional de saúde mental</li>
+                                            <li>Implementação de programas de performance e desenvolvimento humano</li>
+                                            <li>Integração entre os fluxos operacionais e processos assistenciais</li>
+                                            <li>Participação nas decisões estratégicas junto ao Departamento Executivo</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança transformacional</li>
+                                            <li>Pensamento estratégico abrangente</li>
+                                            <li>Inteligência emocional elevada</li>
+                                            <li>Gestão de conflitos complexos</li>
+                                            <li>Habilidade em desenvolvimento organizacional</li>
+                                            <li>Capacidade de inspirar e engajar equipes</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão avançada de operações hospitalares</li>
+                                            <li>Conhecimento aprofundado em saúde mental organizacional</li>
+                                            <li>Desenvolvimento e implementação de protocolos institucionais</li>
+                                            <li>Análise avançada de indicadores de desempenho</li>
+                                            <li>Gestão de qualidade e segurança operacional</li>
+                                            <li>Implementação de programas de melhoria contínua</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>90 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>50c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 6 - Vice-Diretor -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-user-tie"></i>
+                            <span class="nivel-badge nivel-n6">N6</span> Vice-Diretor
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 6 (N6) representa o início da alta gestão no Hospital Santorini Prime. O Vice-Diretor atua como principal suporte ao Diretor, tendo responsabilidades executivas e estratégicas na instituição.</p>
+                        
+                        <h3 class="section-title">Departamento Executivo (DEX)</h3>
+                        
+                        <!-- Vice-Diretor (N6) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-chess-knight"></i>
+                                    Vice-Diretor
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Vice-Diretor (N6)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Assessoramento direto ao Diretor em decisões estratégicas</li>
+                                            <li>Supervisão dos Coordenadores (N5) de ambos os departamentos</li>
+                                            <li>Elaboração e implementação de políticas institucionais</li>
+                                            <li>Representação do hospital em eventos externos</li>
+                                            <li>Articulação entre departamentos e alta administração</li>
+                                            <li>Gestão de crises e situações extraordinárias</li>
+                                            <li>Substituição do Diretor em sua ausência</li>
+                                            <li>Desenvolvimento de projetos estratégicos</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança executiva</li>
+                                            <li>Negociação avançada</li>
+                                            <li>Pensamento estratégico</li>
+                                            <li>Gestão de conflitos de alto nível</li>
+                                            <li>Comunicação executiva</li>
+                                            <li>Visão sistêmica da organização</li>
+                                            <li>Diplomacia institucional</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão estratégica hospitalar</li>
+                                            <li>Elaboração e análise de indicadores executivos</li>
+                                            <li>Desenvolvimento de projetos institucionais</li>
+                                            <li>Planejamento estratégico</li>
+                                            <li>Gestão de resultados organizacionais</li>
+                                            <li>Domínio completo dos processos hospitalares</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>120 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>55c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 7 - Diretor -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-user-tie"></i>
+                            <span class="nivel-badge nivel-n7">N7</span> Diretor
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 7 (N7) representa a alta liderança do Hospital Santorini Prime. O Diretor possui ampla autonomia e autoridade, sendo responsável pela elaboração e execução das estratégias institucionais e pela garantia da excelência operacional.</p>
+                        
+                        <h3 class="section-title">Departamento Executivo (DEX)</h3>
+                        
+                        <!-- Diretor (N7) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-chess-king"></i>
+                                    Diretor
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Diretor (N7)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão estratégica e operacional do Hospital Santorini Prime</li>
+                                            <li>Liderança da equipe executiva e supervisão de todos os departamentos</li>
+                                            <li>Elaboração e implementação de diretrizes e políticas institucionais</li>
+                                            <li>Tomada de decisões executivas para garantir o alinhamento com a visão dos fundadores</li>
+                                            <li>Representação institucional perante outros hospitais e entidades</li>
+                                            <li>Aprovação final de admissões, desligamentos e promoções</li>
+                                            <li>Gestão de crises e situações críticas</li>
+                                            <li>Prestação de contas ao Conselho Executivo (Vice-Presidente e Presidente)</li>
+                                            <li>Desenvolvimento de parcerias estratégicas e iniciativas inovadoras</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança inspiradora e visionária</li>
+                                            <li>Capacidade de gestão avançada de equipes</li>
+                                            <li>Comunicação executiva e relações institucionais</li>
+                                            <li>Resiliência e estabilidade emocional sob pressão</li>
+                                            <li>Ética e integridade exemplares</li>
+                                            <li>Capacidade de resolução de conflitos de alto nível</li>
+                                            <li>Visão holística da instituição e seu contexto</li>
+                                            <li>Capacidade de desenvolver talentos e formar sucessores</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Expertise em administração hospitalar</li>
+                                            <li>Domínio de gestão estratégica organizacional</li>
+                                            <li>Conhecimento profundo de todos os processos hospitalares</li>
+                                            <li>Habilidade em análise de dados para tomada de decisões</li>
+                                            <li>Gestão financeira e orçamentária</li>
+                                            <li>Conhecimento das melhores práticas em saúde</li>
+                                            <li>Capacidade de planejamento estratégico de longo prazo</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>150 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>60c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 8 - Vice-Presidente -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-crown"></i>
+                            <span class="nivel-badge nivel-n8">N8</span> Vice-Presidente
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 8 (N8) representa a alta administração do Hospital Santorini Prime. O Vice-Presidente é uma posição de extrema confiança que participa diretamente das decisões estratégicas de maior impacto na instituição, atuando como principal apoio à Presidência.</p>
+                        
+                        <h3 class="section-title">Departamento Executivo (DEX)</h3>
+                        
+                        <!-- Vice-Presidente (N8) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-chess-queen"></i>
+                                    Vice-Presidente
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Vice-Presidente (N8)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Participação ativa no Conselho Executivo para decisões estratégicas</li>
+                                            <li>Supervisão direta da Diretoria (N7)</li>
+                                            <li>Autoridade sobre todos os processos administrativos e operacionais</li>
+                                            <li>Aprovação de projetos de expansão e reformulação institucional</li>
+                                            <li>Desenvolvimento da visão e diretrizes de longo prazo</li>
+                                            <li>Representação institucional em eventos de alto nível</li>
+                                            <li>Gestão de relacionamentos estratégicos externos</li>
+                                            <li>Implementação de políticas e normas corporativas</li>
+                                            <li>Substituição do Presidente em sua ausência</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança visionária e inspiradora</li>
+                                            <li>Visão estratégica de excelência</li>
+                                            <li>Capacidade diplomática em alto nível</li>
+                                            <li>Comunicação executiva impecável</li>
+                                            <li>Perspicácia política e institucional</li>
+                                            <li>Sabedoria na gestão de pessoas e conflitos</li>
+                                            <li>Habilidade para decisões de alta complexidade</li>
+                                            <li>Mentalidade inovadora e transformadora</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Domínio de planejamento estratégico corporativo</li>
+                                            <li>Expertise em governança organizacional</li>
+                                            <li>Conhecimento aprofundado de todos os processos e departamentos</li>
+                                            <li>Capacidade analítica de indicadores executivos</li>
+                                            <li>Gestão de recursos corporativos</li>
+                                            <li>Compreensão completa das políticas institucionais</li>
+                                            <li>Visão macro da posição do hospital no mercado</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>180 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>65c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 9 - Presidente -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-crown"></i>
+                            <span class="nivel-badge nivel-n9">N9</span> Presidente
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 9 (N9) representa o topo da hierarquia executiva do Hospital Santorini Prime. O Presidente possui máxima autoridade e responsabilidade na instituição, sendo o principal tomador de decisões estratégicas e representante oficial do hospital.</p>
+                        
+                        <h3 class="section-title">Departamento Executivo (DEX)</h3>
+                        
+                        <!-- Presidente (N9) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-chess-king"></i>
+                                    Presidente
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Presidente (N9)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança máxima do Hospital Santorini Prime</li>
+                                            <li>Definição das diretrizes estratégicas e visão institucional</li>
+                                            <li>Supervisão direta da Vice-Presidência e Diretoria</li>
+                                            <li>Representação oficial do hospital em eventos de alto nível</li>
+                                            <li>Aprovação final de políticas institucionais</li>
+                                            <li>Gestão dos relacionamentos externos e parcerias estratégicas</li>
+                                            <li>Condução do Conselho Executivo</li>
+                                            <li>Responsabilidade pela performance global da instituição</li>
+                                            <li>Promoção da cultura e valores organizacionais</li>
+                                            <li>Articulação com os Fundadores para alinhamento estratégico</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança excepcional e visionária</li>
+                                            <li>Capacidade de inspirar e motivar toda a organização</li>
+                                            <li>Excelência em comunicação e oratória</li>
+                                            <li>Pensamento estratégico de alto nível</li>
+                                            <li>Diplomacia e inteligência política</li>
+                                            <li>Capacidade de resolução de conflitos complexos</li>
+                                            <li>Habilidades de negociação avançadas</li>
+                                            <li>Tomada de decisão baseada em princípios</li>
+                                            <li>Resiliência e equilíbrio emocional exemplares</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Gestão estratégica organizacional</li>
+                                            <li>Administração de alto nível</li>
+                                            <li>Compreensão completa de governança corporativa</li>
+                                            <li>Análise de tendências de mercado e setor de saúde</li>
+                                            <li>Gestão de stakeholders múltiplos</li>
+                                            <li>Domínio de gestão financeira e orçamentária</li>
+                                            <li>Planejamento estratégico de longo prazo</li>
+                                            <li>Conhecimento profundo das políticas e estrutura do hospital</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Tempo de Experiência:</h5>
+                                        <p>210 dias totais no Hospital</p>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>70c quinzenal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nível 10 - Fundadores -->
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <i class="fas fa-chess-king"></i>
+                            <span class="nivel-badge nivel-n10">N10</span> Fundadores
+                        </div>
+                        <div class="accordion-icon">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>O Nível 10 (N10) representa os Fundadores do Hospital Santorini Prime, responsáveis pela concepção, criação e visão estratégica da instituição. São autoridades máximas da organização, cujas decisões definem o rumo e os valores do hospital.</p>
+                        
+                        <h3 class="section-title">Departamento Executivo (DEX)</h3>
+                        
+                        <!-- Fundador (N10) - Acordeão interno -->
+                        <div class="accordion nested-accordion">
+                            <div class="accordion-header nested-header">
+                                <div class="accordion-title">
+                                    <i class="fas fa-crown"></i>
+                                    Fundador
+                                </div>
+                                <div class="accordion-icon">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="accordion-content nested-content">
+                                <div class="cargo-card">
+                                    <h4 class="cargo-title">Fundador (N10)</h4>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Atribuições:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Autoridade máxima do Hospital Santorini Prime</li>
+                                            <li>Criação e definição da visão, missão e valores da instituição</li>
+                                            <li>Estabelecimento das diretrizes estratégicas de longo prazo</li>
+                                            <li>Supervisão de toda a estrutura organizacional</li>
+                                            <li>Decisões finais sobre políticas e rumos institucionais</li>
+                                            <li>Nomeação e destituição de cargos do Departamento Executivo</li>
+                                            <li>Aprovação de mudanças estruturais e organizacionais</li>
+                                            <li>Representação institucional nos mais altos níveis</li>
+                                            <li>Garantia da integridade e sustentabilidade do hospital</li>
+                                            <li>Preservação dos princípios e da essência da instituição</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Soft Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Liderança visionária</li>
+                                            <li>Pensamento estratégico excepcional</li>
+                                            <li>Capacidade de inspirar e transformar</li>
+                                            <li>Inteligência emocional e social elevada</li>
+                                            <li>Habilidade para construir legados duradouros</li>
+                                            <li>Visão de longo prazo</li>
+                                            <li>Capacidade de desenvolver novos líderes</li>
+                                            <li>Perspicácia política e institucional</li>
+                                            <li>Autoridade natural e influência</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Hard Skills:</h5>
+                                        <ul class="trilha-list">
+                                            <li>Conhecimento profundo de gestão estratégica</li>
+                                            <li>Visão holística e integrativa do negócio</li>
+                                            <li>Domínio avançado de governança corporativa</li>
+                                            <li>Compreensão profunda das dinâmicas organizacionais</li>
+                                            <li>Capacidade de identificar e desenvolver oportunidades</li>
+                                            <li>Gestão de processos decisórios complexos</li>
+                                            <li>Maestria em mediação e resolução de conflitos</li>
+                                            <li>Conhecimento do sistema de saúde e sua complexidade</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cargo-section">
+                                        <h5 class="cargo-section-title">Salário:</h5>
+                                        <p>A confirmar</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- Mensagens Explicativas sobre a Trilha de Carreira -->
+        <div class="trilha-section">
+            <div class="trilha-header">
+                <div class="trilha-title">
+                    <i class="fas fa-info-circle"></i>
+                    Informações Importantes
+                </div>
+            </div>
+            <div class="trilha-body">
+                <div class="trilha-content">
+                    <h3>Sobre a Progressão de Carreira</h3>
+                    <p>A Trilha de Carreira do Hospital Santorini Prime foi desenvolvida para proporcionar crescimento profissional estruturado e transparente a todos os colaboradores. A progressão ocorre com base em mérito, tempo de serviço e pontuação.</p>
+                    
+                    <h3>Requisitos para Progressão</h3>
+                    <p>Cada nível possui requisitos específicos de pontuação e tempo de experiência. Para ser promovido, o colaborador deve:</p>
+                    <ul>
+                        <li>Atingir o tempo mínimo de serviço indicado na descrição do cargo;</li>
+                        <li>Manter média de pontuação 4 (ou mais) na Avaliação de Desempenho (AVD);</li>
+                        <li>Demonstrar as competências (soft skills e hard skills) necessárias para o novo cargo.</li>
+                    </ul>
+                    
+                    
+                    <div class="alert-box">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Importante</h3>
+                        <p>A manutenção do status de <strong>APTO</strong> é fundamental para preservar os benefícios salariais. Funcionários que não atingirem a pontuação mínima exigida para seu nível serão considerados <strong>NÃO APTOS</strong> e estarão sujeitos às consequências previstas no regimento.</p>
+                        <br>
+                        <p>Para a promoção acontecer, é <strong>PRIMORDIAL</strong> ter vagas suficientes para a posição superior. Portanto, mesmo que os demais pré-requisitos sejam atendidos, o colaborador deverá permanecer no cargo atual até a disponibilidade de novas vagas.</p>
+                    </div>
+                    
+                    <h3>Remuneração e Benefícios</h3>
+                    <p>O Hospital Santorini Prime oferece remuneração competitiva que aumenta proporcionalmente ao nível do cargo. Além do salário base, funcionários podem receber:</p>
+                    <ul>
+                        <li>Gratificações por desempenho excepcional</li>
+                        <li>Aumento de cargo e salário progressivo com o tempo de casa e o desempenho</li>
+                    </ul>
+                    
+                    <h3>Departamentos</h3>
+                    <p>Nossa estrutura organizacional é dividida em três departamentos principais:</p>
+                    <ul>
+                        <li><strong>DECLIN (Departamento Clínico):</strong> Responsável pela assistência direta aos pacientes, incluindo médicos, cirurgiões e enfermeiros.</li>
+                        <li><strong>DOPH (Departamento de Operações e Performance Humana):</strong> Responsável por operações, segurança, saúde mental e atendimento ao público.</li>
+                        <li><strong>DEX (Departamento Executivo):</strong> Responsável pela direção estratégica, políticas institucionais e decisões de alto nível.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+                
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Elementos DOM ---
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const backToTop = document.getElementById('backToTop');
+
+        // --- Funções ---
+
+        // Função para configurar o botão "Voltar ao Topo"
+        function setupBackToTop() {
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                    if (window.pageYOffset > 300) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                });
+
+                backToTop.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        }
+
+        // Função SIMPLIFICADA para inicializar os acordeões (baseada no CSS)
+        function initializeSimpleAccordions() {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const accordionElement = this.closest('.accordion'); // Encontra o .accordion pai
+                    if (accordionElement) {
+                        // Alterna a classe 'active' no elemento .accordion
+                        accordionElement.classList.toggle('active');
+                    }
+                });
+            });
+        }
+
+        // --- Autenticação e Carregamento ---
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                if (!userDoc.exists) {
+                    console.error("Usuário não encontrado no Firestore. Deslogando.");
+                    auth.signOut();
+                    return;
+                }
+                const userData = userDoc.data();
+                const userSystemLevel = parseInt(userData.nivel || 0);
+
+                let userHierarchicalLevel = "N0";
+                let userCargo = userData.cargo || "Colaborador";
+
+                if (userData.nickHabbo) {
+                    try {
+                        const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", userData.nickHabbo).where("ativo", "==", true).limit(1).get();
+                        if (!funcQuery.empty) {
+                            const funcData = funcQuery.docs[0].data();
+                            userHierarchicalLevel = funcData.nivel || "N0";
+                            userCargo = funcData.cargo || userCargo;
+                        } else if (userSystemLevel >= 3) {
+                            userHierarchicalLevel = "N10";
+                            userCargo = "Fundador/Superuser";
+                        }
+                    } catch (funcError) {
+                        console.warn("Erro ao buscar dados do funcionário para o menu, usando fallback:", funcError);
+                        if (userSystemLevel >= 3) { userHierarchicalLevel = "N10"; userCargo = "Fundador/Superuser"; }
+                    }
+                } else if (userSystemLevel >= 3) {
+                    userHierarchicalLevel = "N10";
+                    userCargo = "Fundador/Superuser";
+                }
+
+                welcomeHeader.textContent = userData.nome || "Usuário";
+                userRoleEl.textContent = userCargo;
+
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                if (typeof generateSidebarMenu === 'function') {
+                    const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage, userSystemLevel);
+                    sidebarMenu.innerHTML = menuHtml;
+                } else {
+                    console.error("Erro: generateSidebarMenu() não encontrada.");
+                    sidebarMenu.innerHTML = '<p style="color:red;">Erro ao carregar menu.</p>';
+                }
+
+                initializeSimpleAccordions();
+
+            } catch (error) {
+                console.error("Erro na autenticação ou carregamento:", error);
+                if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro crítico.</p>';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para trilha.html");
+
+            if (typeof initializeSidebarInteractions === 'function') {
+                 initializeSidebarInteractions();
+            } else {
+                 console.error("Erro: initializeSidebarInteractions() não encontrada.");
+            }
+
+            setupBackToTop();
+        });
+
+    </script>
+</body>
+</html>

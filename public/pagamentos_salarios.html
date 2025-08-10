@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamentos de Salários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/pagamentos.css">
+    <link rel="stylesheet" href="./css/modal.css">
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-money-bill-wave"></i>
+                <span id="tituloQuinzena">Pagamentos de Salários</span>
+            </h1>
+            <p class="page-subtitle">Gerencie os pagamentos de salários dos funcionários do Hospital Santorini Prime</p>
+        </div>
+        <div id="messageDisplay" style="display:none;">
+            <div id="successMessage" class="message success-message"></div>
+            <div id="errorMessage" class="message error-message"></div>
+        </div>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="quinzenaAtual">Quinzena Atual</button>
+            <button class="tab-btn" data-tab="historicoQuinzenas">Histórico de Quinzenas</button>
+            <button class="tab-btn" data-tab="historicoDetalhado">Histórico Detalhado</button>
+        </div>
+        <div id="quinzenaAtual" class="tab-content active">
+            <div class="form-card" id="definirQuinzena" style="display: none;">
+                <div class="form-card-header">
+                    <div class="form-card-title">
+                        <i class="fas fa-calendar-plus"></i> Iniciar Nova Quinzena
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <form id="quinzenaForm">
+                        <div class="form-group">
+                            <label class="form-label" for="dataInicio">Data de Início:</label>
+                            <input type="date" id="dataInicio" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="dataFim">Data de Fim:</label>
+                            <input type="date" id="dataFim" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-play-circle"></i> Iniciar Quinzena
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div id="quinzenaAtivaContainer" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <i class="fas fa-users"></i> Lista de Funcionários
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="salariosTable">
+                            <thead>
+                                <tr>
+                                    <th>Nick do Habbo</th>
+                                    <th>Cargo</th>
+                                    <th>Nível</th>
+                                    <th>Salário (c)</th>
+                                    <th>Pontos</th>
+                                    <th>Status</th>
+                                    <th>Pagamento Efetuado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salariosBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="total-costs">
+                    <h3>Custo Total Estimado (Aptos)</h3>
+                    <p id="totalCustos">0c</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-success" id="finalizarBtn">
+                        <i class="fas fa-check-circle"></i> Finalizar Quinzena
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="historicoQuinzenas" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">
+                        <i class="fas fa-history"></i> Histórico de Quinzenas (Resumo)
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Período (ID)</th>
+                                <th>Datas</th>
+                                <th>Total Pago (c)</th>
+                                <th>Funcionários Pagos</th>
+                                <th>Finalizado Por</th>
+                                <th>Data Finalização</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoQuinzenasBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="historicoDetalhado" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">
+                        <i class="fas fa-receipt"></i> Histórico Detalhado de Pagamentos
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nick do Habbo</th>
+                                <th>Cargo</th>
+                                <th>Nível</th>
+                                <th>Pontos (na época)</th>
+                                <th>Status (na época)</th>
+                                <th>Salário Pago (c)</th>
+                                <th>Período</th>
+                                <th>Data Pagamento</th>
+                                <th>Pago Por</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historicoDetalhadoBody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="paginacaoHistoricoDetalhado"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px;">Erro crítico na configuração. Contacte o suporte.</p>';
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentUser = null;
+        let currentUserLevel = 0;
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const messageDisplay = document.getElementById('messageDisplay');
+        const definirQuinzenaForm = document.getElementById('definirQuinzena');
+        const quinzenaForm = document.getElementById('quinzenaForm');
+        const quinzenaAtivaContainer = document.getElementById('quinzenaAtivaContainer');
+        const salariosBody = document.getElementById('salariosBody');
+        const totalCustosElement = document.getElementById('totalCustos');
+        const finalizarBtn = document.getElementById('finalizarBtn');
+        const tituloQuinzenaEl = document.getElementById('tituloQuinzena');
+        const historicoQuinzenasBody = document.getElementById('historicoQuinzenasBody');
+        const historicoDetalhadoBody = document.getElementById('historicoDetalhadoBody');
+        const tabQuinzenaAtual = document.getElementById('quinzenaAtual');
+        const tabHistoricoQuinzenas = document.getElementById('historicoQuinzenas');
+        const tabHistoricoDetalhado = document.getElementById('historicoDetalhado');
+        const paginacaoHistoricoDetalhado = document.getElementById('paginacaoHistoricoDetalhado');
+
+        let currentQuinzenaId = null;
+        let funcionariosCache = {};
+
+        function showMessage(message, type = 'info') {
+            const msgDivId = type === 'success' ? 'successMessage' : 'errorMessage';
+            const msgDiv = document.getElementById(msgDivId);
+            const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+            document.getElementById('successMessage').innerHTML = '';
+            document.getElementById('errorMessage').innerHTML = '';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            if (msgDiv) {
+                msgDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${message}`;
+                msgDiv.style.display = 'block';
+                msgDiv.style.opacity = '1';
+                msgDiv.style.transition = '';
+            }
+
+            if (messageDisplay) {
+                messageDisplay.style.display = 'block';
+                messageDisplay.classList.add('show');
+                messageDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            setTimeout(() => {
+                if (msgDiv) {
+                    msgDiv.style.opacity = '0';
+                    msgDiv.style.transition = 'opacity 0.5s ease';
+                }
+                if (messageDisplay) {
+                    setTimeout(() => {
+                        if (msgDiv) msgDiv.style.display = 'none';
+                        const otherMsgId = type === 'success' ? 'errorMessage' : 'successMessage';
+                        const otherMsgDiv = document.getElementById(otherMsgId);
+                        if (!otherMsgDiv || otherMsgDiv.style.display === 'none' || otherMsgDiv.innerHTML === '') {
+                            messageDisplay.style.display = 'none';
+                            messageDisplay.classList.remove('show');
+                        }
+                        if (msgDiv) msgDiv.innerHTML = '';
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+        function formatarData(dataInput, includeTime = false) {
+            if (!dataInput) return 'N/A';
+            let data;
+            let isTimestamp = false;
+            const targetTimeZone = 'America/Sao_Paulo';
+
+            try {
+                if (dataInput.toDate) {
+                    data = dataInput.toDate();
+                    isTimestamp = true;
+                } else if (dataInput instanceof Date) {
+                    data = dataInput;
+                } else if (typeof dataInput === 'string' && dataInput.includes('-') && dataInput.length >= 10) {
+                    const parts = dataInput.substring(0, 10).split('-');
+                    data = new Date(Date.UTC(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])));
+                } else {
+                    data = new Date(dataInput);
+                }
+
+                if (isNaN(data.getTime())) return 'Inválida';
+
+                const optionsDate = {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    timeZone: targetTimeZone
+                };
+                let formattedDate = data.toLocaleDateString('pt-BR', optionsDate);
+
+                let formattedTime = '';
+                if (includeTime) {
+                    const optionsTime = {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        timeZone: targetTimeZone
+                    };
+                    try {
+                        formattedTime = ' às ' + data.toLocaleTimeString('pt-BR', optionsTime);
+                    } catch (timeError) {
+                        console.error("Error formatting time:", timeError);
+                        formattedTime = ' (Erro Hora)';
+                    }
+                }
+
+                return formattedDate + formattedTime;
+
+            } catch (e) {
+                console.error("Erro ao formatar data:", e, dataInput);
+                return 'Erro Data';
+            }
+        }
+
+        function formatarPeriodoString(inicioStr, fimStr) {
+            if (!inicioStr || !fimStr) return 'Período N/A';
+            return `${formatarData(inicioStr)} - ${formatarData(fimStr)}`;
+        }
+
+        function calcularCusto(salario) {
+            const sal = parseFloat(salario);
+            if (isNaN(sal)) return 0;
+            if (sal <= 30) return 32;
+            if (sal <= 35) return 38;
+            if (sal <= 40) return 42;
+            if (sal <= 45) return 48;
+            if (sal <= 50) return 52;
+            if (sal <= 55) return 58;
+            if (sal <= 60) return 63;
+            if (sal <= 65) return 69;
+            if (sal <= 70) return 74;
+            return Math.ceil(sal * 1.07);
+        }
+
+        async function verificarPermissao(nivelMinimo = 2) {
+            if (currentUserLevel >= nivelMinimo) {
+                return true;
+            }
+            showMessage("Permissão insuficiente.", "error");
+            return false;
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error("Erro ao fazer logout:", error);
+                showMessage("Erro ao sair: " + error.message, 'error');
+            });
+        }
+
+        function criarBotaoAcao(iconeHtml, titulo, classeTipo, callbackOnClick) {
+            const btn = document.createElement('button');
+            btn.className = `btn btn-sm btn-${classeTipo}`;
+            btn.innerHTML = `<i class="fas fa-${iconeHtml}"></i>`;
+            btn.title = titulo;
+            btn.onclick = callbackOnClick;
+            return btn;
+        }
+
+        async function carregarFuncionarios(ids) {
+            const idsUnicos = [...new Set(ids.filter(id => id && !funcionariosCache[id]))];
+            if (idsUnicos.length === 0) return;
+
+            console.log("[CACHE] Buscando dados para funcionários:", idsUnicos);
+            const promises = [];
+            for (let i = 0; i < idsUnicos.length; i += 10) {
+                const chunk = idsUnicos.slice(i, i + 10);
+                promises.push(
+                    db.collection("funcionarios").where(firebase.firestore.FieldPath.documentId(), "in", chunk).get()
+                        .then(snapshot => {
+                            snapshot.forEach(doc => {
+                                const data = doc.data();
+                                funcionariosCache[doc.id] = {
+                                    nome: data.nome || 'Nome Desconhecido',
+                                    nickHabbo: data.nickHabbo || data.nick || 'Nick Desconhecido',
+                                    cargo: data.cargo || 'Cargo Não Especificado',
+                                    nivel: data.nivel || 'N/A',
+                                    salario: data.salario || 0,
+                                };
+                            });
+                        })
+                        .catch(error => console.error(`[CACHE] Erro ao buscar chunk [${chunk.join(', ')}]:`, error))
+                );
+            }
+            try {
+                await Promise.all(promises);
+                console.log("[CACHE] Cache de funcionários atualizado.");
+            } catch (error) {
+                console.error("[CACHE] Erro ao aguardar busca de funcionários:", error);
+            }
+        }
+
+        async function verificarQuinzena() {
+            console.log("[DEBUG] verificarQuinzena: Iniciando verificação...");
+            try {
+                const doc = await db.collection("quinzenas").doc("atual").get();
+                if (doc.exists && !doc.data().finalizada) {
+                    console.log("[DEBUG] verificarQuinzena: Quinzena ativa encontrada:", doc.id);
+                    currentQuinzenaId = doc.id;
+                    exibirQuinzena(doc.id, doc.data());
+                } else {
+                    console.log("[DEBUG] verificarQuinzena: Nenhuma quinzena ativa ou já finalizada.");
+                    currentQuinzenaId = null;
+                    if (definirQuinzenaForm) definirQuinzenaForm.style.display = 'block';
+                    if (quinzenaAtivaContainer) quinzenaAtivaContainer.style.display = 'none';
+                    if (tituloQuinzenaEl) tituloQuinzenaEl.textContent = 'Pagamentos de Salários';
+                    if (quinzenaForm && !quinzenaForm.dataset.listenerAttached) {
+                        quinzenaForm.addEventListener('submit', iniciarQuinzena);
+                        quinzenaForm.dataset.listenerAttached = 'true';
+                        console.log("[DEBUG] verificarQuinzena: Listener adicionado ao formulário de iniciar quinzena.");
+                    }
+                }
+            } catch (error) {
+                console.error("[DEBUG] verificarQuinzena: Erro ao verificar quinzena:", error);
+                showMessage("Erro ao verificar estado da quinzena: " + error.message, "error");
+                if (definirQuinzenaForm) definirQuinzenaForm.style.display = 'block';
+                if (quinzenaAtivaContainer) quinzenaAtivaContainer.style.display = 'none';
+                if (tituloQuinzenaEl) tituloQuinzenaEl.textContent = 'Pagamentos de Salários';
+                if (quinzenaForm && !quinzenaForm.dataset.listenerAttached) {
+                    quinzenaForm.addEventListener('submit', iniciarQuinzena);
+                    quinzenaForm.dataset.listenerAttached = 'true';
+                    console.log("[DEBUG] verificarQuinzena (catch): Listener adicionado ao formulário.");
+                }
+            }
+        }
+
+        function exibirQuinzena(id, quinzena) {
+            console.log(`[DEBUG] exibirQuinzena: Exibindo dados para quinzena ${id}`);
+            if (tituloQuinzenaEl) tituloQuinzenaEl.textContent = `Pagamentos - Quinzena (${formatarPeriodoString(quinzena.dataInicio, quinzena.dataFim)})`;
+            if (definirQuinzenaForm) definirQuinzenaForm.style.display = 'none';
+            if (quinzenaAtivaContainer) quinzenaAtivaContainer.style.display = 'block';
+            carregarSalarios(id);
+        }
+
+        async function carregarSalarios(quinzenaId = "atual") {
+            console.log(`[DEBUG] carregarSalarios: Iniciando carregamento para quinzena ${quinzenaId}`);
+            if (!salariosBody) {
+                console.error("[DEBUG] carregarSalarios: Elemento salariosBody não encontrado!");
+                return;
+            }
+            salariosBody.innerHTML = '<tr><td colspan="7" class="empty-state text-center"><i class="fas fa-spinner fa-spin"></i><p>Carregando dados...</p></td></tr>';
+            totalCustosElement.textContent = 'Calculando...';
+            try {
+                console.log("[DEBUG] carregarSalarios: Buscando pagamentos...");
+                const pagamentosSnapshot = await db.collection("pagamentos").where("quinzenaId", "==", quinzenaId).get();
+                const pagosMap = new Set();
+                pagamentosSnapshot.forEach(doc => pagosMap.add(doc.data().funcionarioId));
+                console.log(`[DEBUG] carregarSalarios: Encontrados ${pagosMap.size} pagamentos para a quinzena ${quinzenaId}`);
+
+                console.log("[DEBUG] carregarSalarios: Buscando funcionários ativos...");
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get();
+
+                if (funcionariosSnapshot.empty) {
+                    console.log("[DEBUG] carregarSalarios: Nenhum funcionário ativo encontrado.");
+                    salariosBody.innerHTML = '<tr><td colspan="7" class="empty-state text-center"><i class="fas fa-info-circle"></i><p>Nenhum funcionário ativo encontrado.</p></td></tr>';
+                    totalCustosElement.textContent = '0c';
+                    return;
+                }
+
+                let totalCustosEstimado = 0;
+                const funcionariosArray = [];
+                funcionariosSnapshot.forEach(doc => funcionariosArray.push({ id: doc.id, ...doc.data() }));
+                funcionariosArray.sort((a, b) => (b.totalPontos || 0) - (a.totalPontos || 0));
+
+                salariosBody.innerHTML = '';
+                console.log(`[DEBUG] carregarSalarios: Processando ${funcionariosArray.length} funcionários...`);
+
+                funcionariosArray.forEach((funcionario, index) => {
+                    const funcionarioId = funcionario.id;
+                    const totalPontos = funcionario.totalPontos || 0;
+                    const nivel = funcionario.nivel || 'N/A';
+                    let pontosMinimos = 0;
+                    const pontosPorNivel = { 'N1': 15, 'N2': 25, 'N3': 35, 'N4': 40, 'N5': 45, 'N6': 50, 'N7': 50, 'N8': 55, 'N9': 55, 'N10': 0 };
+                    pontosMinimos = pontosPorNivel[nivel] || 0;
+                    const status = (nivel === 'N10' || totalPontos >= pontosMinimos) ? 'Apto' : 'Não Apto';
+                    const pagamentoEfetuado = pagosMap.has(funcionarioId);
+                    let custoCalculado = 0;
+
+                    if (status === 'Apto') {
+                        const salarioOriginal = funcionario.salario;
+                        const salarioNumerico = parseFloat(salarioOriginal);
+                        console.log(`[DEBUG] carregarSalarios: Funcionario ${funcionario.nickHabbo || funcionarioId}, Status: ${status}, Salario Original: ${salarioOriginal}, Salario Numerico: ${salarioNumerico}`);
+
+                        if (!isNaN(salarioNumerico)) {
+                            custoCalculado = calcularCusto(salarioNumerico);
+                            console.log(`[DEBUG] carregarSalarios: Funcionario ${funcionario.nickHabbo || funcionarioId}, Custo Unitário Calculado: ${custoCalculado}`);
+                            if (!isNaN(custoCalculado)) {
+                                totalCustosEstimado += custoCalculado;
+                            } else {
+                                console.warn(`[DEBUG] carregarSalarios: calcularCusto retornou NaN para ${funcionario.nickHabbo || funcionarioId} com salário ${salarioNumerico}`);
+                            }
+                        } else {
+                             console.warn(`[DEBUG] carregarSalarios: Salário inválido (NaN) para ${funcionario.nickHabbo || funcionarioId}. Salário original: ${salarioOriginal}`);
+                        }
+                    } else {
+                         console.log(`[DEBUG] carregarSalarios: Funcionario ${funcionario.nickHabbo || funcionarioId}, Status: ${status}. Não entra no custo estimado.`);
+                    }
+
+                    let medalhaHTML = '';
+                    if (index === 0) medalhaHTML = '<span class="medalha medalha-ouro">1</span>';
+                    else if (index === 1) medalhaHTML = '<span class="medalha medalha-prata">2</span>';
+                    else if (index === 2) medalhaHTML = '<span class="medalha medalha-bronze">3</span>';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${medalhaHTML}${funcionario.nickHabbo || 'Sem Nick'}</td><td>${funcionario.cargo || 'Sem Cargo'}</td><td>${nivel}</td><td>${funcionario.salario || 0}c</td><td>${totalPontos}</td><td><span class="status-badge ${status === 'Apto' ? 'badge-apto' : 'badge-nao-apto'}">${status}</span></td><td><label class="custom-checkbox"><input type="checkbox" data-funcionario-id="${funcionarioId}" ${pagamentoEfetuado ? 'checked' : ''} onchange="atualizarPagamento(this)"><span class="checkmark"></span></label></td>`;
+                    salariosBody.appendChild(tr);
+                });
+
+                console.log(`[DEBUG] carregarSalarios: Custo Total Estimado Final Calculado: ${totalCustosEstimado}`);
+                totalCustosElement.textContent = `${totalCustosEstimado}c`;
+                console.log("[DEBUG] carregarSalarios: Carregamento concluído com sucesso.");
+
+            } catch (error) {
+                console.error("[DEBUG] carregarSalarios: Erro ao carregar salários:", error);
+                salariosBody.innerHTML = `<tr><td colspan="7" class="empty-state text-danger"><i class="fas fa-exclamation-circle"></i><p>Erro ao carregar dados: ${error.message}</p></td></tr>`;
+                showMessage("Erro ao carregar dados dos salários: " + error.message, 'error');
+                totalCustosElement.textContent = 'Erro';
+            }
+        }
+
+        async function atualizarPagamento(checkboxElement) {
+            const funcionarioId = checkboxElement.dataset.funcionarioId;
+            const isChecked = checkboxElement.checked;
+            const quinzenaId = "atual";
+            console.log(`Atualizando pagamento para ${funcionarioId}, Quinzena: ${quinzenaId}, Marcado: ${isChecked}`);
+
+            const user = auth.currentUser;
+            if (!user) {
+                showMessage("Autenticação necessária.", 'error');
+                checkboxElement.checked = !isChecked;
+                return;
+            }
+
+            checkboxElement.disabled = true;
+
+            let salarioPago = 0;
+            try {
+                const funcDoc = await db.collection("funcionarios").doc(funcionarioId).get();
+                if(funcDoc.exists) {
+                     const salarioNumerico = parseFloat(funcDoc.data().salario) || 0;
+                     if (!isNaN(salarioNumerico)) {
+                         salarioPago = calcularCusto(salarioNumerico);
+                     }
+                }
+            } catch (e) {
+                console.error("Erro ao buscar salário para registro:", e);
+            }
+
+            const pagamentoDocId = `${quinzenaId}_${funcionarioId}`;
+            const pagamentoRef = db.collection("pagamentos").doc(pagamentoDocId);
+
+            try {
+                if (isChecked) {
+                    await pagamentoRef.set({
+                        funcionarioId: funcionarioId,
+                        quinzenaId: quinzenaId,
+                        dataPagamento: firebase.firestore.FieldValue.serverTimestamp(),
+                        pagoPorId: user.uid,
+                        pagoPorNome: welcomeHeader.textContent || 'Admin',
+                        valorPago: salarioPago
+                    }, { merge: true });
+                    showMessage("Pagamento registrado!", 'success');
+                } else {
+                    await pagamentoRef.delete();
+                    showMessage("Registro de pagamento removido.", 'success');
+                }
+            } catch (error) {
+                console.error(`Erro ao ${isChecked ? 'registrar' : 'remover'} pagamento:`, error);
+                showMessage(`Erro ao ${isChecked ? 'registrar' : 'remover'} pagamento: ${error.message}`, 'error');
+                checkboxElement.checked = !isChecked;
+            } finally {
+                checkboxElement.disabled = false;
+            }
+        }
+
+        async function iniciarQuinzena(event) { /* ... */ }
+        async function finalizarQuinzena() { /* ... */ }
+        async function carregarHistoricoQuinzenas() {
+            console.log("[DEBUG] carregarHistoricoQuinzenas: Iniciando carregamento...");
+            const bodyElement = document.getElementById('historicoQuinzenasBody');
+            if (!bodyElement) {
+                console.error("[DEBUG] carregarHistoricoQuinzenas: Elemento historicoQuinzenasBody NÃO encontrado!");
+                return;
+            }
+            bodyElement.innerHTML = `<tr><td colspan="7" class="empty-state text-center"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>`;
+            try {
+                const quinzenasSnapshot = await db.collection("historicoQuinzenas")
+                    .orderBy("finalizadaEm", "desc")
+                    .limit(50)
+                    .get();
+
+                if (quinzenasSnapshot.empty) {
+                    bodyElement.innerHTML = `<tr><td colspan="7" class="empty-state text-center"><i class="fas fa-info-circle"></i> Nenhum histórico de quinzenas encontrado.</td></tr>`;
+                    return;
+                }
+
+                bodyElement.innerHTML = '';
+
+                quinzenasSnapshot.forEach(doc => {
+                    const quinzena = doc.data();
+                    const id = doc.id;
+
+                    const periodoFormatado = formatarPeriodoString(quinzena.dataInicio, quinzena.dataFim);
+                    const custoTotal = quinzena.custoTotal || 0;
+                    const funcionariosPagos = quinzena.totalFuncionariosPagos || 0;
+                    const finalizadoPor = quinzena.finalizadaPorNome || 'N/A';
+                    const dataFinalizacao = formatarData(quinzena.finalizadaEm, true);
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${id}</td>
+                        <td>${periodoFormatado}</td>
+                        <td>${custoTotal}c</td>
+                        <td>${funcionariosPagos}</td>
+                        <td>${finalizadoPor}</td>
+                        <td>${dataFinalizacao}</td>
+                        <td>
+                            ${criarBotaoAcao('search', 'Ver Detalhes', 'info', () => verDetalhesQuinzena(id)).outerHTML}
+                        </td>
+                    `;
+                    bodyElement.appendChild(tr);
+                });
+                console.log("[DEBUG] carregarHistoricoQuinzenas: Carregamento concluído.");
+            } catch (error) {
+                console.error("[DEBUG] carregarHistoricoQuinzenas: Erro ao carregar:", error);
+                bodyElement.innerHTML = `<tr><td colspan="7" class="empty-state text-danger"><i class="fas fa-exclamation-circle"></i> Erro: ${error.message}</td></tr>`;
+                showMessage('Erro ao carregar histórico de quinzenas.', 'error');
+            }
+        }
+
+        async function carregarHistoricoDetalhado(filtros = {}) {
+            console.log("[DEBUG] carregarHistoricoDetalhado: Iniciando carregamento com filtros:", filtros);
+            const bodyElement = document.getElementById('historicoDetalhadoBody');
+            if (!bodyElement) {
+                console.error("[DEBUG] carregarHistoricoDetalhado: Elemento historicoDetalhadoBody NÃO encontrado!");
+                return;
+            }
+            bodyElement.innerHTML = `<tr><td colspan="9" class="empty-state text-center"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>`;
+            if (paginacaoHistoricoDetalhado) paginacaoHistoricoDetalhado.innerHTML = '';
+            try {
+                let query = db.collection("historicoPagamentos");
+
+                if (filtros.quinzenaIdHistorico) {
+                    query = query.where("quinzenaIdHistorico", "==", filtros.quinzenaIdHistorico);
+                }
+
+                query = query.orderBy("dataFinalizacaoQuinzena", "desc").limit(100);
+
+                const pagamentosSnapshot = await query.get();
+
+                if (pagamentosSnapshot.empty) {
+                    const msg = filtros.quinzenaIdHistorico
+                        ? `Nenhum pagamento encontrado para a quinzena ${filtros.quinzenaIdHistorico}.`
+                        : `Nenhum pagamento encontrado no histórico detalhado.`;
+                    bodyElement.innerHTML = `<tr><td colspan="9" class="empty-state text-center"><i class="fas fa-info-circle"></i><p>${msg}</p></td></tr>`;
+                    return;
+                }
+
+                bodyElement.innerHTML = '';
+
+                const funcIdsNecessarios = [...new Set(pagamentosSnapshot.docs.map(doc => doc.data().funcionarioId).filter(id => id && !funcionariosCache[id]))];
+                if (funcIdsNecessarios.length > 0) {
+                    await carregarFuncionarios(funcIdsNecessarios);
+                }
+
+                const quinzenasIdsNecessarios = [...new Set(pagamentosSnapshot.docs.map(doc => doc.data().quinzenaIdHistorico).filter(id => id))];
+                const quinzenasHistMap = new Map();
+                if (quinzenasIdsNecessarios.length > 0) {
+                    for (let i = 0; i < quinzenasIdsNecessarios.length; i += 10) {
+                        const chunk = quinzenasIdsNecessarios.slice(i, i + 10);
+                        const qSnapshot = await db.collection("historicoQuinzenas").where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+                        qSnapshot.forEach(doc => quinzenasHistMap.set(doc.id, doc.data()));
+                    }
+                }
+
+                pagamentosSnapshot.forEach(doc => {
+                    const pagamento = doc.data();
+                    const funcInfo = funcionariosCache[pagamento.funcionarioId] || { nickHabbo: `ID: ${pagamento.funcionarioId || '??'}`, cargo: 'N/A', nivel: 'N/A' };
+                    const quinzenaHistInfo = quinzenasHistMap.get(pagamento.quinzenaIdHistorico);
+
+                    const tr = document.createElement('tr');
+                    const nick = pagamento.funcionarioNick || funcInfo.nickHabbo;
+                    const cargo = pagamento.funcionarioCargo || funcInfo.cargo;
+                    const nivel = pagamento.funcionarioNivel || funcInfo.nivel;
+                    const pontos = pagamento.pontosNaEpoca !== undefined ? pagamento.pontosNaEpoca : '-';
+                    const status = pagamento.statusNaEpoca || 'N/A';
+                    const valorPago = pagamento.valorPago || 0;
+                    const periodo = quinzenaHistInfo
+                        ? formatarPeriodoString(quinzenaHistInfo.dataInicio, quinzenaHistInfo.dataFim)
+                        : formatarPeriodoString(pagamento.periodoInicio, pagamento.periodoFim);
+                    const dataPagamento = formatarData(pagamento.dataPagamentoOriginal, true);
+                    const pagoPor = pagamento.pagoPorNome || 'N/A';
+
+                    tr.innerHTML = `
+                        <td>${nick}</td>
+                        <td>${cargo}</td>
+                        <td>${nivel}</td>
+                        <td>${pontos}</td>
+                        <td>${status}</td>
+                        <td>${valorPago}c</td>
+                        <td>${periodo} (${pagamento.quinzenaIdHistorico || 'ID N/A'})</td>
+                        <td>${dataPagamento}</td>
+                        <td>${pagoPor}</td>
+                    `;
+                    bodyElement.appendChild(tr);
+                });
+
+                console.log("[DEBUG] carregarHistoricoDetalhado: Carregamento concluído.");
+            } catch (error) {
+                console.error("[DEBUG] carregarHistoricoDetalhado: Erro ao carregar:", error);
+                bodyElement.innerHTML = `<tr><td colspan="9" class="empty-state text-danger"><i class="fas fa-exclamation-circle"></i> Erro: ${error.message}</td></tr>`;
+                showMessage('Erro ao carregar histórico detalhado.', 'error');
+            }
+        }
+
+        function verDetalhesQuinzena(quinzenaId) { /* ... */ }
+        function exportarRelatorio() { /* ... */ }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para pagamentos_salarios.html");
+
+            if (typeof initializeSidebarInteractions === 'function') {
+                initializeSidebarInteractions();
+            } else {
+                console.error("Erro: initializeSidebarInteractions() não encontrada em shared-ui.js.");
+            }
+
+            auth.onAuthStateChanged(async (user) => {
+                console.log("Auth state changed:", user ? user.uid : "No user");
+                if (user) {
+                    currentUser = user;
+                    try {
+                        const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                        if (!userDoc.exists) {
+                            throw new Error("Usuário não encontrado no Firestore. Saindo...");
+                        }
+                        const userData = userDoc.data();
+                        console.log("UserData:", userData);
+
+                        currentUserLevel = parseInt(userData.nivel || 0);
+                        const accessLevel = currentUserLevel;
+
+                        if (accessLevel < 2) {
+                            console.warn(`Usuário Nível ${accessLevel} tentou acessar Pagamentos. Redirecionando.`);
+                            showMessage("Você não tem permissão para acessar esta página.", "error");
+                            setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+                            return;
+                        }
+
+                        let userHierarchicalLevel = "N0";
+                        let userCargo = userData.cargo || "N/A";
+
+                        if (userData.nickHabbo && userData.nickHabbo !== "N/A") {
+                            try {
+                                const funcQuery = await db.collection("funcionarios")
+                                    .where("nickHabbo", "==", userData.nickHabbo)
+                                    .where("ativo", "==", true)
+                                    .limit(1).get();
+
+                                if (!funcQuery.empty) {
+                                    const funcData = funcQuery.docs[0].data();
+                                    userHierarchicalLevel = funcData.nivel || "N0";
+                                    userCargo = funcData.cargo || userCargo;
+                                    console.log("Nível Hierárquico (Funcionário):", userHierarchicalLevel);
+                                } else if (accessLevel >= 3) {
+                                    userHierarchicalLevel = "N10";
+                                    console.log("Superusuário sem registro de funcionário ativo, Nível Hierárquico: N10");
+                                } else {
+                                    console.log("Usuário com Nick Habbo, mas não encontrado como funcionário ativo.");
+                                }
+                            } catch (funcError) {
+                                console.error("Erro ao buscar dados do funcionário:", funcError);
+                                if (accessLevel >= 3) { userHierarchicalLevel = "N10"; }
+                            }
+                        } else if (accessLevel >= 3) {
+                            userHierarchicalLevel = "N10";
+                            console.log("Superusuário sem Nick Habbo, Nível Hierárquico: N10");
+                        }
+
+                        welcomeHeader.textContent = userData.nome || "Usuário";
+                        userRoleEl.textContent = userCargo;
+
+                        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                        if (typeof generateSidebarMenu === 'function') {
+                            const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                            sidebarMenu.innerHTML = menuHtml;
+                        } else {
+                            console.error("Erro: generateSidebarMenu() não encontrada em shared-ui.js.");
+                            sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro ao carregar menu.</p>';
+                        }
+
+                        setupTabNavigation();
+                        verificarQuinzena();
+
+                    } catch (error) {
+                        console.error("Erro durante autenticação ou carregamento inicial:", error);
+                        showMessage(`Erro crítico: ${error.message}`, "error");
+                        if (error.message.includes("não encontrado")) {
+                            auth.signOut();
+                            window.location.href = 'login.html';
+                        }
+                        if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro crítico ao carregar.</p>';
+                    }
+                } else {
+                    console.log("Nenhum usuário logado. Redirecionando para login.");
+                    currentUser = null;
+                    currentUserLevel = 0;
+                    window.location.href = 'login.html';
+                }
+            });
+
+            const logoutButton = document.getElementById('logoutBtn');
+            if (logoutButton) logoutButton.addEventListener('click', logout);
+            if (finalizarBtn) finalizarBtn.addEventListener('click', finalizarQuinzena);
+
+            window.atualizarPagamento = atualizarPagamento;
+            window.verDetalhesQuinzena = verDetalhesQuinzena;
+
+            console.log("Listeners específicos de pagamentos_salarios.html configurados.");
+        });
+
+        function setupTabNavigation() {
+            console.log("[DEBUG] setupTabNavigation: Configurando navegação por abas...");
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    console.log(`[DEBUG] setupTabNavigation: Aba clicada - ${tabId}`);
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    const targetContent = document.getElementById(tabId);
+                    if(targetContent) targetContent.classList.add('active');
+
+                    if (tabId === 'historicoQuinzenas') {
+                         console.log("[DEBUG] setupTabNavigation: Carregando histórico de quinzenas...");
+                         carregarHistoricoQuinzenas();
+                    } else if (tabId === 'historicoDetalhado') {
+                         console.log("[DEBUG] setupTabNavigation: Carregando histórico detalhado...");
+                         carregarHistoricoDetalhado();
+                    } else if(tabId === 'quinzenaAtual') {
+                         console.log("[DEBUG] setupTabNavigation: Verificando quinzena atual (aba Quinzena Atual)...");
+                         verificarQuinzena();
+                    }
+                });
+            });
+            console.log("[DEBUG] setupTabNavigation: Navegação configurada.");
+        }
+    </script>
+</body>
+</html>

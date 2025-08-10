@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Desempenho - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/cards.css">
+    <style>
+        .message { display: none; align-items: center; padding: 10px 15px; margin-bottom: 15px; border-radius: 6px; font-weight: 500; border-left-width: 4px; border-left-style: solid; }
+        .message i { margin-right: 10px; }
+        .success-message { background-color: rgba(46, 204, 113, 0.1); border-left-color: var(--success); color: var(--success); }
+        .error-message { background-color: rgba(231, 76, 60, 0.1); border-left-color: var(--danger); color: var(--danger); }
+        .info-message { background-color: rgba(52, 152, 219, 0.1); border-left-color: var(--info); color: var(--info); }
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .loading-state { text-align: center; padding: 40px; color: var(--text-light); }
+        .loading-spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary); animation: spin 1s ease infinite; margin: 0 auto 10px; }
+        .loading-text { font-size: 14px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header"> <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime"> <h2 id="welcomeHeader">Bem-vindo</h2> <span class="user-role">Colaborador</span> </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+             <button id="collapseMenuBtn" class="menu-collapse-btn"> <i class="fas fa-chevron-left"></i> </button>
+             <a href="#" id="logoutBtn" class="menu-item"> <i class="fas fa-sign-out-alt"></i> <span>Sair</span> </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-star-half-alt"></i> Avaliação de Desempenho
+            </h1>
+            <p id="pageSubtitle" class="page-subtitle">Realize ou consulte avaliações da quinzena atual.</p>
+        </div>
+
+        <div id="successMessage" class="message success-message" style="display: none;"></div>
+        <div id="errorMessage" class="message error-message" style="display: none;"></div>
+        <div id="infoMessage" class="message info-message" style="display: none;"></div>
+
+        <div id="optionsContainer" class="options-grid">
+            <div class="loading-state"> <div class="loading-spinner"></div> <div class="loading-text">Carregando opções...</div> </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script src="./js/firebase-config.js"></script>
+
+    <script src="./js/shared-ui.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Inicializa Firebase
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Variáveis Globais ---
+        let currentUser = null; // Objeto Auth do Firebase
+        let currentUserData = null; // Dados da coleção 'usuarios'
+        // let userNivelHierarquico = ''; // Removido daqui, será retornado pela função
+        let funcionariosCache = {}; // Cache simples para dados de funcionários
+        let currentQuinzenaId = null; // ID da quinzena atual ("atual" ou outro)
+        let currentQuinzenaData = null; // Dados da quinzena atual
+
+        // --- Cache de Elementos DOM ---
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        // const logoutBtnSidebar = document.getElementById('logoutBtnSidebar'); // Removido, usa logoutBtn do footer
+        const sidebarMenu = document.getElementById('sidebarMenu'); // Target para o menu
+        const successMessageEl = document.getElementById('successMessage');
+        const errorMessageEl = document.getElementById('errorMessage');
+        const infoMessageEl = document.getElementById('infoMessage');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+
+        // --- Funções Auxiliares (Mantidas) ---
+        function showMessage(elId, message, type = 'info') {
+            const messageEl = document.getElementById(elId); if (!messageEl) { console.warn(`Msg el ${elId} not found. Msg: ${message}`); return; }
+            const iconClass = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'; messageEl.innerHTML = `<i class="fas ${iconClass}"></i> ${message}`; messageEl.className = `message ${type}-message`; messageEl.style.display = 'flex'; messageEl.style.opacity = '1'; messageEl.style.transition = ''; setTimeout(() => { messageEl.style.opacity = '0'; messageEl.style.transition = 'opacity 0.5s ease'; }, 4500); setTimeout(() => { messageEl.style.display = 'none'; }, 5000);
+        }
+        function formatarData(dataInput, includeTime = false) { /* ... (função mantida) ... */ if (!dataInput) return 'N/A'; let data; let isDateOnlyString = false; try { if (dataInput.toDate) { data = dataInput.toDate(); } else if (dataInput instanceof Date) { data = dataInput; } else if (typeof dataInput === 'string' && dataInput.includes('-') && dataInput.length === 10) { isDateOnlyString = true; const parts = dataInput.split('-'); const year = parseInt(parts[0], 10); const month = parseInt(parts[1], 10); const day = parseInt(parts[2], 10); data = new Date(Date.UTC(year, month - 1, day)); data.setUTCHours(12, 0, 0, 0); } else { data = new Date(dataInput); } if (isNaN(data.getTime())) return 'Data Inválida'; const optionsDate = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo' }; let formatted = data.toLocaleDateString('pt-BR', optionsDate); if (includeTime && !isDateOnlyString) { const optionsTime = { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }; formatted += ' às ' + data.toLocaleTimeString('pt-BR', optionsTime); } return formatted; } catch (e) { console.error("Erro ao formatar data:", e, dataInput); return 'Erro Data'; } }
+        function formatarPeriodoString(inicioStr, fimStr) { if (!inicioStr || !fimStr) return 'Período N/A'; return `${formatarData(inicioStr, false)} - ${formatarData(fimStr, false)}`; }
+        function showErrorFeedback(message, detail = '') { console.error(">>> Exibindo erro:", message, detail); showMessage('errorMessage', `${message}${detail ? ` (${detail})` : ''}`, 'error'); if(optionsContainer) optionsContainer.innerHTML = ''; }
+        function showLoadingOptions() { console.log(">>> Exibindo loading state."); if(optionsContainer) { optionsContainer.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Carregando...</div></div>`; } else { console.error("showLoadingOptions: optionsContainer não encontrado!"); } }
+        // function logout() { // Removida, agora está em shared-ui.js }
+
+        /**
+         * Busca dados do usuário logado e seu nível hierárquico.
+         * @param {string} userId - O UID do usuário autenticado.
+         * @returns {Promise<{userData: object, hierarchicalLevel: string}>} - Objeto com dados do usuário e nível hierárquico ("N1"..."N10" ou "N0"). Retorna null em caso de erro fatal.
+         */
+        async function fetchUserDataAndLevel(userId) {
+            console.log(`--- fetchUserDataAndLevel: Iniciando para User ID: ${userId}`);
+            let hierarchicalLevel = "N0"; // Nível padrão
+            let userData = null;
+            let userCargo = "Colaborador"; // Cargo padrão
+
+            try {
+                // 1. Busca dados do usuário ('usuarios')
+                const userDoc = await db.collection('usuarios').doc(userId).get();
+                if (!userDoc.exists) { throw new Error("Usuário não encontrado no Firestore."); }
+                userData = userDoc.data();
+                if (!userData) { throw new Error("Dados do usuário estão ausentes."); }
+                console.log("--- fetchUserDataAndLevel: Dados de 'usuarios' obtidos:", userData);
+                userCargo = userData.cargo || userCargo; // Pega cargo inicial de 'usuarios'
+
+                // 2. Busca Nível Hierárquico ('funcionarios') se tiver nickHabbo
+                if (userData.nickHabbo) {
+                    console.log("--- fetchUserDataAndLevel: Buscando funcionário com nick:", userData.nickHabbo);
+                    try {
+                        const funcSnapshot = await db.collection('funcionarios')
+                            .where('nickHabbo', '==', userData.nickHabbo)
+                            .where('ativo', '==', true)
+                            .limit(1)
+                            .get();
+                        if (!funcSnapshot.empty) {
+                            const funcData = funcSnapshot.docs[0].data();
+                            hierarchicalLevel = funcData.nivel || "N0"; // Pega "N1", "N10" etc.
+                            userCargo = funcData.cargo || userCargo; // Atualiza com cargo do funcionário
+                            console.log(`--- fetchUserDataAndLevel: Funcionário ATIVO encontrado! Nível Hierárquico=${hierarchicalLevel}, Cargo=${userCargo}`);
+                            // Cache simples (opcional)
+                            funcionariosCache[funcSnapshot.docs[0].id] = { nome: funcData.nome || userData.nome, nick: userData.nickHabbo, cargo: userCargo, nivel: hierarchicalLevel };
+                        } else {
+                            console.warn(`--- fetchUserDataAndLevel: Funcionário ATIVO não encontrado para nick: ${userData.nickHabbo}.`);
+                             // Se for nível de acesso admin (ex: 3) e não achou funcionário, assume N10
+                             const accessLevel = parseInt(userData.nivel || 0);
+                             if (accessLevel >= 3) {
+                                 hierarchicalLevel = "N10";
+                                 console.log("--- fetchUserDataAndLevel: Assumindo Nível Hierárquico N10 (Admin sem func).");
+                             }
+                        }
+                    } catch (funcError) {
+                        console.error(`--- fetchUserDataAndLevel: ERRO ao buscar funcionário:`, funcError);
+                         const accessLevel = parseInt(userData.nivel || 0);
+                         if (accessLevel >= 3) { // Fallback para Admin em caso de erro
+                              hierarchicalLevel = "N10";
+                              console.log("--- fetchUserDataAndLevel: Assumindo Nível Hierárquico N10 (Erro busca func).");
+                          }
+                    }
+                } else {
+                     console.warn("--- fetchUserDataAndLevel: Usuário sem nickHabbo.");
+                      const accessLevel = parseInt(userData.nivel || 0);
+                      if (accessLevel >= 3) { // Se for Admin sem nick, é N10
+                           hierarchicalLevel = "N10";
+                           console.log("--- fetchUserDataAndLevel: Assumindo Nível Hierárquico N10 (Admin sem nick).");
+                       }
+                }
+
+                // 3. Atualiza dados globais e retorna
+                currentUserData = { ...userData, uid: userId, cargo: userCargo }; // Atualiza cargo global
+                 console.log("--- fetchUserDataAndLevel: Dados finais retornados:", { userData: currentUserData, hierarchicalLevel });
+                return { userData: currentUserData, hierarchicalLevel: hierarchicalLevel };
+
+            } catch (error) {
+                console.error(`--- fetchUserDataAndLevel: Erro fatal capturado para User ID ${userId}:`, error);
+                showErrorFeedback("Erro crítico ao carregar seus dados.", error.message);
+                currentUserData = null;
+                return null; // Indica erro
+            }
+        }
+
+        // --- Lógica Específica da Página (Mantida) ---
+        async function loadCurrentQuinzenaInfo() { /* ... (função mantida) ... */ console.log("--- loadCurrentQuinzenaInfo: Buscando quinzena atual..."); if (!optionsContainer || !pageSubtitle) { console.error("Elementos essenciais não encontrados."); showErrorFeedback("Erro interno ao carregar a página."); return; } showLoadingOptions(); try { const docRef = db.collection("quinzenas").doc("atual"); const docSnap = await docRef.get(); if (docSnap.exists) { currentQuinzenaData = docSnap.data(); currentQuinzenaId = "atual"; console.log("--- loadCurrentQuinzenaInfo: Quinzena atual encontrada:", currentQuinzenaData); const periodoTexto = formatarPeriodoString(currentQuinzenaData.dataInicio, currentQuinzenaData.dataFim); pageSubtitle.textContent = `Ações disponíveis para a quinzena atual (${periodoTexto}).`; displayAvaliacaoOptions(); updateAvaliacaoCounter(); } else { console.warn("--- loadCurrentQuinzenaInfo: Documento 'quinzenas/atual' não encontrado."); pageSubtitle.textContent = "Nenhuma quinzena ativa no momento."; optionsContainer.innerHTML = `<div class="message info-message" style="display:flex;"><i class="fas fa-info-circle"></i> Nenhuma quinzena está ativa para avaliação.</div>`; } } catch (error) { console.error("--- loadCurrentQuinzenaInfo: Erro ao buscar quinzena atual:", error); showErrorFeedback("Erro ao carregar dados da quinzena.", error.message); optionsContainer.innerHTML = ''; pageSubtitle.textContent = "Erro ao carregar quinzena."; } }
+        function displayAvaliacaoOptions() { /* ... (função mantida) ... */ if (!optionsContainer) return; optionsContainer.innerHTML = ` <div class="option-card"> <div class="option-header"><h3><i class="fas fa-edit"></i> Avaliar Funcionários</h3></div> <div class="option-body"> <p class="option-description"> Realize avaliações de desempenho dos funcionários sob sua gestão para a quinzena atual. <strong id="avaliacaoCounter">Carregando contagem...</strong> </p> <a href="avaliar.html" class="option-button">Acessar Avaliação</a> </div> </div>`; }
+        async function updateAvaliacaoCounter() { /* ... (função mantida) ... */ const counterEl = document.getElementById('avaliacaoCounter'); if (!counterEl || !currentUser || !currentQuinzenaId) { if(counterEl) counterEl.textContent = "Não foi possível carregar."; return; } console.log(`--- updateAvaliacaoCounter: Buscando avaliações Avaliador ${currentUser.uid} Quinzena ${currentQuinzenaId}`); try { const quinzenaRefId = "atual"; console.log(`--- updateAvaliacaoCounter: Usando quinzenaRefId = ${quinzenaRefId}`); const avaliacoesSnapshot = await db.collection("avaliacoes").where("quinzenaId", "==", quinzenaRefId).where("avaliadorId", "==", currentUser.uid).get(); const count = avaliacoesSnapshot.size; console.log(`--- updateAvaliacaoCounter: Encontradas ${count} avaliações.`); counterEl.textContent = `${count} avaliações realizadas por você nesta quinzena.`; } catch (error) { console.error("--- updateAvaliacaoCounter: Erro ao buscar contagem:", error); counterEl.textContent = "Erro ao carregar contagem."; if (error.code === 'failed-precondition') { console.error("--- ÍNDICE AUSENTE: 'avaliacoes' (quinzenaId, avaliadorId)."); showMessage('errorMessage', "Erro: Índice do Firestore ausente.", 'error'); } } }
+        function initAvaliacaoPage() { console.log("=== initAvaliacaoPage: Iniciando página ==="); loadCurrentQuinzenaInfo(); }
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("=== DOMContentLoaded: Iniciando inicialização ===");
+
+             // Inicializa interações da sidebar (do shared-ui.js)
+             if (typeof initializeSidebarInteractions === 'function') {
+                  initializeSidebarInteractions();
+             } else { console.error("Erro: initializeSidebarInteractions() não encontrada."); }
+
+             // Lógica de autenticação e carregamento
+             auth.onAuthStateChanged(async (user) => {
+                  console.log("=== onAuthStateChanged: Estado mudou ===");
+                  if (!user) { console.log("=== Usuário NÃO autenticado. Redirecionando..."); window.location.href = 'login.html'; return; }
+                  currentUser = user; console.log(`=== Usuário AUTENTICADO (UID: ${user.uid}). Buscando dados...`);
+                  if(optionsContainer) showLoadingOptions();
+
+                  // 1. BUSCAR DADOS DO USUÁRIO E NÍVEL HIERÁRQUICO
+                  const result = await fetchUserDataAndLevel(user.uid);
+                  if (!result) { console.error("=== Falha CRÍTICA ao buscar dados essenciais."); if(optionsContainer) optionsContainer.innerHTML = ''; return; }
+
+                  const fetchedUserData = result.userData;
+                  const userHierarchicalLevel = result.hierarchicalLevel; // Ex: "N1", "N5", "N10"
+
+                  // 2. ATUALIZAR HEADER DA SIDEBAR
+                  if (welcomeHeader) welcomeHeader.textContent = fetchedUserData.nome || "Usuário";
+                  if (userRoleEl) userRoleEl.textContent = fetchedUserData.cargo || `Nível ${userHierarchicalLevel}`;
+
+                  // 3. GERAR E INSERIR O MENU DA SIDEBAR
+                  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                  if (typeof generateSidebarMenu === 'function') {
+                       const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                       if (sidebarMenu) sidebarMenu.innerHTML = menuHtml;
+                  } else { console.error("Erro: generateSidebarMenu() não encontrada."); if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red;">Erro menu.</p>'; }
+
+                  // 4. VERIFICAR PERMISSÃO DE NÍVEL HIERÁRQUICO PARA ESTA PÁGINA ESPECÍFICA
+                  const permittedLevels = ['N2', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9']; // Apenas estes podem AVALIAR (segundo a regra do menu anterior)
+                  console.log(`=== Verificando permissão da página. Nível Hierárquico: ${userHierarchicalLevel}. Permitidos: ${permittedLevels.join(', ')}`);
+
+                  if (!userHierarchicalLevel || !permittedLevels.includes(userHierarchicalLevel)) {
+                       console.warn(`=== ACESSO NEGADO à página. Nível ${userHierarchicalLevel} não está na lista.`);
+                       if(optionsContainer) optionsContainer.innerHTML = '';
+                       if(pageSubtitle) pageSubtitle.textContent = 'Acesso Negado';
+                       showErrorFeedback("Acesso Negado", "Você não tem permissão para acessar esta funcionalidade.");
+                       // Opcional: Redirecionar
+                       // setTimeout(() => { window.location.href = 'dashboard_user.html'; }, 3000);
+                       return; // Para a execução
+                  }
+
+                  // 5. INICIALIZAR A LÓGICA DA PÁGINA (se tem permissão)
+                  console.log("=== Acesso PERMITIDO. Inicializando página de avaliação...");
+                  initAvaliacaoPage();
+
+                  console.log("=== Processamento onAuthStateChanged concluído.");
+             }); // Fim onAuthStateChanged
+
+             console.log("=== Fim DOMContentLoaded ===");
+         }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

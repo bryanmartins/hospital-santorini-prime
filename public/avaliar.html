@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliar Funcionários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/cards.css">
+    <link rel="stylesheet" href="./css/avaliacao-avaliar.css">
+    <link rel="stylesheet" href="./css/modal.css">
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state" style="padding: 20px; text-align: center;">
+                <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-clipboard-check"></i> Avaliar Funcionários
+            </h1>
+            <p class="page-subtitle">Realize avaliações de desempenho dos colaboradores sob sua liderança.</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+
+        <div class="card" id="evaluationCard" style="display: none;">
+             <div class="card-header">
+                <div class="card-title"><i class="fas fa-star"></i> Formulário de Avaliação</div>
+             </div>
+             <div class="card-body">
+                <div class="info-box" id="infoBox" style="display: none;"><p><strong>Importante:</strong> Só é permitida uma avaliação por funcionário por período ativo. Avaliações anteriores no mesmo período serão substituídas.</p></div>
+                <form id="avaliacaoForm">
+                    <div class="form-group"><label for="cargoSelect" class="form-label">Filtrar por Cargo:</label><div class="select-wrapper"><select id="cargoSelect" class="form-control form-select"><option value="todos">Todos os Cargos Liderados</option></select></div></div>
+                    <div class="form-group"><label for="funcionarioSelect" class="form-label required">Selecione o Funcionário:</label><div class="select-wrapper"><select id="funcionarioSelect" class="form-control form-select" required disabled><option value="">Primeiro selecione um cargo ou aguarde</option></select></div></div>
+                    <div class="form-group">
+                        <label class="form-label required">
+                            Avaliação:
+                            <button type="button" id="ratingGuideBtn" class="icon-btn info-btn" title="Ver Guia de Avaliação">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </label>
+                        <div class="rating-container">
+                            <div class="stars-container"><input type="radio" id="star1" name="rating" value="1" class="star-rating" required><label for="star1" class="star-label" data-value="1">★</label><input type="radio" id="star2" name="rating" value="2" class="star-rating"><label for="star2" class="star-label" data-value="2">★</label><input type="radio" id="star3" name="rating" value="3" class="star-rating"><label for="star3" class="star-label" data-value="3">★</label><input type="radio" id="star4" name="rating" value="4" class="star-rating"><label for="star4" class="star-label" data-value="4">★</label><input type="radio" id="star5" name="rating" value="5" class="star-rating"><label for="star5" class="star-label" data-value="5">★</label></div><div class="rating-value" id="ratingValue">Selecione uma nota</div></div><div class="feedback-box" id="feedbackContainer" style="display: none;"><div class="feedback-title" id="feedbackTitle"></div><p class="feedback-text" id="feedbackText"></p></div>
+                    </div>
+                    <div class="form-group"><label for="justificativaTextarea" class="form-label required">Justificativa:</label><textarea id="justificativaTextarea" class="form-control" required minlength="10" placeholder="Descreva os motivos para a nota atribuída..." rows="4"></textarea><small class="form-text">Mínimo de 10 caracteres.</small></div>
+                    <div class="form-actions btn-container"><button type="button" id="voltarBtn" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</button><button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane"></i> Enviar Avaliação</button></div>
+                </form>
+             </div>
+        </div>
+        <div id="periodoInativoContainer" style="display: none;"></div>
+    </div>
+
+    <div id="ratingGuideModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> Guia de Avaliação de Desempenho</h2>
+                <button class="modal-close close" onclick="fecharModal('ratingGuideModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="ratingGuideBody">
+                <p><strong>Objetivo:</strong> Avaliar o desempenho do colaborador durante o período considerado, levando em conta suas responsabilidades, metas e as competências esperadas para sua função. Utilize as descrições abaixo como guia para uma avaliação justa e fundamentada.</p>
+                <hr>
+
+                <h4>⭐⭐⭐⭐⭐ 5 Estrelas: Excepcional / Fora da Curva</h4>
+                <p><strong>Definição:</strong> O colaborador consistentemente supera todas as expectativas de forma significativa. Demonstra um nível de desempenho, iniciativa e impacto que o diferencia notavelmente dos demais. É uma referência e inspiração para a equipe.</p>
+                <ul>
+                    <li>Entrega resultados que excedem substancialmente as metas, muitas vezes de formas inovadoras.</li>
+                    <li>Demonstra altíssima proatividade, antecipando necessidades e propondo soluções eficazes.</li>
+                    <li>Traz ideias e implementa melhorias que geram impacto positivo significativo.</li>
+                    <li>Domina completamente suas responsabilidades e busca constantemente novos desafios.</li>
+                    <li>Atua como mentor ou referência para outros colegas.</li>
+                    <li>Demonstra autonomia excepcional, necessitando de pouquíssima supervisão.</li>
+                    <li>É um exemplo claro dos valores e cultura da empresa.</li>
+                </ul>
+
+                <h4>⭐⭐⭐⭐ 4 Estrelas: Ótimo / Supera as Expectativas</h4>
+                <p><strong>Definição:</strong> O colaborador consistentemente supera as expectativas na maioria das suas responsabilidades e metas. Demonstra proatividade e um alto nível de competência e engajamento.</p>
+                <ul>
+                    <li>Frequentemente entrega resultados acima das metas estabelecidas.</li>
+                    <li>Demonstra iniciativa regular, identificando oportunidades de melhoria.</li>
+                    <li>Apresenta alta qualidade em seu trabalho de forma consistente.</li>
+                    <li>Domina bem suas responsabilidades e demonstra boa autonomia.</li>
+                    <li>Colabora efetivamente com a equipe.</li>
+                    <li>Requer pouca supervisão nas tarefas rotineiras.</li>
+                    <li>Busca desenvolvimento e aplica novos conhecimentos.</li>
+                </ul>
+
+                <h4>⭐⭐⭐ 3 Estrelas: Bom / Atende às Expectativas (Padrão Esperado)</h4>
+                <p><strong>Definição:</strong> O colaborador cumpre de forma confiável e consistente o que é esperado para sua função. Atende às metas e demonstra as competências necessárias para o cargo. Este é o nível de desempenho sólido e esperado.</p>
+                <ul>
+                    <li>Entrega os resultados e cumpre as metas definidas de forma consistente.</li>
+                    <li>Realiza suas tarefas com a qualidade esperada e dentro dos prazos.</li>
+                    <li>Demonstra as competências técnicas e comportamentais necessárias.</li>
+                    <li>É confiável e executa suas responsabilidades com autonomia adequada.</li>
+                    <li>Colabora adequadamente com a equipe.</li>
+                    <li>Compreende e segue os processos e políticas.</li>
+                </ul>
+
+                <h4>⭐⭐ 2 Estrelas: Abaixo da Expectativa / Precisa Melhorar</h4>
+                <p><strong>Definição:</strong> O colaborador não atende consistentemente às expectativas mínimas em uma ou mais áreas importantes. Seu desempenho é irregular ou demonstra lacunas significativas. Necessita de acompanhamento e desenvolvimento direcionado.</p>
+                <ul>
+                    <li>Frequentemente não atinge as metas ou entrega resultados abaixo do esperado.</li>
+                    <li>A qualidade do trabalho é inconsistente ou abaixo do padrão mínimo.</li>
+                    <li>Necessita de supervisão e orientação mais frequentes do que o esperado.</li>
+                    <li>Demonstra dificuldade em dominar responsabilidades ou competências essenciais.</li>
+                    <li>Pode ter dificuldades na colaboração ou comunicação.</li>
+                    <li>Há necessidade clara de um plano de desenvolvimento.</li>
+                </ul>
+
+                <h4>⭐ 1 Estrela: Insuficiente / Desempenho Crítico</h4>
+                <p><strong>Definição:</strong> O colaborador consistentemente falha em atender às expectativas mínimas e essenciais. Seu desempenho tem um impacto negativo. Requer intervenção imediata e um plano de ação corretivo rigoroso.</p>
+                <ul>
+                    <li>Falha consistentemente em atingir as metas e entregar o mínimo esperado.</li>
+                    <li>A qualidade do trabalho é persistentemente baixa e/ou erros são frequentes.</li>
+                    <li>Requer supervisão constante e direcionamento detalhado.</li>
+                    <li>Não demonstra as competências fundamentais necessárias.</li>
+                    <li>Pode apresentar comportamento desalinhado com os valores ou prejudicial à equipe.</li>
+                    <li>O desempenho atual é insustentável e necessita de melhoria urgente.</li>
+                </ul>
+                <hr>
+                <h4>Orientações Adicionais para Líderes:</h4>
+                <ul>
+                    <li><strong>Baseie-se em Fatos e Exemplos:</strong> Fundamente sua avaliação em observações concretas e dados.</li>
+                    <li><strong>Considere o Contexto:</strong> Leve em conta nível do cargo, tempo de experiência e desafios do período.</li>
+                    <li><strong>Avalie o "O Quê" e o "Como":</strong> Considere resultados e comportamentos/competências.</li>
+                    <li><strong>Seja Justo e Consistente:</strong> Aplique os mesmos critérios para posições similares. (3 estrelas = padrão esperado).</li>
+                    <li><strong>Foco no Desenvolvimento:</strong> Use a avaliação para conversas construtivas e planos de melhoria.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close" onclick="fecharModal('ratingGuideModal')">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script src="./js/hierarchy-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- Variáveis Globais e Elementos DOM ---
+        let currentUser = null; let currentUserData = null; let avaliadorId = null; let avaliadorNome = ''; let currentQuinzenaId = null; let todosFuncionariosLiderados = [];
+        const welcomeHeader = document.getElementById("welcomeHeader"); const userRoleEl = document.querySelector('.user-role'); const sidebarMenu = document.getElementById('sidebarMenu'); const alertaContainer = document.getElementById('alertaContainer'); const cargoSelect = document.getElementById('cargoSelect'); const funcionarioSelect = document.getElementById('funcionarioSelect'); const ratingValue = document.getElementById('ratingValue'); const feedbackContainer = document.getElementById('feedbackContainer'); const feedbackTitle = document.getElementById('feedbackTitle'); const feedbackText = document.getElementById('feedbackText'); const justificativaTextarea = document.getElementById('justificativaTextarea'); const submitBtn = document.getElementById('submitBtn'); const evaluationCard = document.getElementById('evaluationCard'); const periodoInativoContainer = document.getElementById('periodoInativoContainer'); const voltarBtn = document.getElementById('voltarBtn'); const form = document.getElementById('avaliacaoForm'); const infoBox = document.getElementById('infoBox'); const starLabels = document.querySelectorAll('.stars-container .star-label'); const starsContainer = document.querySelector('.stars-container');
+        const ratingGuideBtn = document.getElementById('ratingGuideBtn'); const ratingGuideModal = document.getElementById('ratingGuideModal');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); const auth = firebase.auth();
+
+        // --- Funções Auxiliares ---
+        function formatarData(dataInput) {
+            if (!dataInput) return 'N/A';
+            try {
+                const data = dataInput.toDate ? dataInput.toDate() : new Date(dataInput);
+                if (isNaN(data.getTime())) {
+                    return 'Data Inválida';
+                }
+                const dia = String(data.getDate()).padStart(2, '0');
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const ano = data.getFullYear();
+                return `${dia}/${mes}/${ano}`;
+            } catch (e) {
+                console.error("Erro ao formatar data:", e, "Input:", dataInput);
+                return 'Erro na Data';
+            }
+        }
+
+        // --- Funções Específicas da Página 'avaliar.html' ---
+
+        async function verificarPeriodoAtual() {
+            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            console.log(">>> DEBUG: Iniciando verificarPeriodoAtual...");
+            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            try {
+                const quinzenaAtualDoc = await db.collection("quinzenas").doc("atual").get();
+                if (!quinzenaAtualDoc.exists) { console.warn("--- DEBUG: Documento 'quinzenas/atual' NÃO encontrado."); mostrarInterfacePeriodoInativo("Não há período de avaliação ativo configurado."); return false; }
+                const quinzenaAtual = quinzenaAtualDoc.data();
+                console.log("--- DEBUG: Dados crus de 'quinzenas/atual':", JSON.stringify(quinzenaAtual, null, 2));
+                currentQuinzenaId = quinzenaAtual.quinzenaId || "atual";
+                console.log(`--- DEBUG: currentQuinzenaId definido como: ${currentQuinzenaId}`);
+                const isFinalizada = quinzenaAtual.finalizada === true; const isConsolidada = quinzenaAtual.avaliacoesConsolidadas === true;
+                console.log(`--- DEBUG: Verificando flags -> finalizada: ${isFinalizada}, consolidada: ${isConsolidada}`);
+                if (isFinalizada) { console.warn("--- DEBUG: Período marcado como FINALIZADO."); mostrarInterfacePeriodoInativo("O período de avaliação atual já foi finalizado."); return false; }
+                if (isConsolidada) { console.warn("--- DEBUG: Avaliações marcadas como CONSOLIDADAS."); mostrarInterfacePeriodoInativo("As avaliações deste período já foram consolidadas."); return false; }
+                const dataAtual = new Date();
+                console.log(`--- DEBUG: Data Atual (Cliente): ${dataAtual.toString()} (ISO: ${dataAtual.toISOString()})`);
+                let dataInicio = null; let dataFim = null; let inicioOk = false; let fimOk = false;
+                console.log("--- DEBUG: Verificando dataInicio...");
+                if (quinzenaAtual.dataInicio && typeof quinzenaAtual.dataInicio.toDate === 'function') { try { dataInicio = quinzenaAtual.dataInicio.toDate(); inicioOk = !isNaN(dataInicio.getTime()); console.log(`--- DEBUG: dataInicio convertida: ${inicioOk ? dataInicio.toString() : 'INVÁLIDA'} (ISO: ${inicioOk ? dataInicio.toISOString() : 'N/A'})`); } catch (e) { console.error("--- DEBUG: ERRO ao converter dataInicio:", e); inicioOk = false; } } else { console.warn(`--- DEBUG: dataInicio ausente, não é Timestamp ou falhou na conversão. Tipo: ${typeof quinzenaAtual.dataInicio}`); }
+                console.log("--- DEBUG: Verificando dataFim...");
+                if (quinzenaAtual.dataFim && typeof quinzenaAtual.dataFim.toDate === 'function') { try { dataFim = quinzenaAtual.dataFim.toDate(); fimOk = !isNaN(dataFim.getTime()); console.log(`--- DEBUG: dataFim convertida: ${fimOk ? dataFim.toString() : 'INVÁLIDA'} (ISO: ${fimOk ? dataFim.toISOString() : 'N/A'})`); } catch (e) { console.error("--- DEBUG: ERRO ao converter dataFim:", e); fimOk = false; } } else { console.warn(`--- DEBUG: dataFim ausente, não é Timestamp ou falhou na conversão. Tipo: ${typeof quinzenaAtual.dataFim}`); }
+                if (inicioOk && fimOk) {
+                    console.log("--- DEBUG: Ambas as datas são válidas. Realizando comparações...");
+                    const antesDoInicio = dataAtual < dataInicio; const depoisDoFim = dataAtual > dataFim;
+                    console.log(`------ DEBUG: Comparação dataAtual < dataInicio -> ${dataAtual.toISOString()} < ${dataInicio.toISOString()} = ${antesDoInicio}`);
+                    console.log(`------ DEBUG: Comparação dataAtual > dataFim   -> ${dataAtual.toISOString()} > ${dataFim.toISOString()} = ${depoisDoFim}`);
+                    const periodoFormatado = `${formatarData(dataInicio)} a ${formatarData(dataFim)}`;
+                    if (antesDoInicio) { console.warn(`--- DEBUG: Resultado = Fora do período (Antes do Início).`); mostrarInterfacePeriodoInativo(`Período de avaliação (${periodoFormatado}) ainda não começou.`); return false; }
+                    if (depoisDoFim) { console.warn(`--- DEBUG: Resultado = Fora do período (Depois do Fim).`); mostrarInterfacePeriodoInativo(`Período de avaliação (${periodoFormatado}) já encerrado.`); return false; }
+                    console.log(">>> DEBUG: Resultado = Dentro do período!");
+                    if(infoBox) infoBox.style.display = 'block'; if(evaluationCard) evaluationCard.style.display = 'block'; if(periodoInativoContainer) periodoInativoContainer.style.display = 'none';
+                    return true;
+                } else { console.error("--- DEBUG: FALHA na validação/conversão das datas. Período considerado INATIVO."); mostrarInterfacePeriodoInativo("Configuração de datas do período atual está inválida ou ilegível."); return false; }
+            } catch (error) { console.error("--- DEBUG: Erro GERAL CATCH em verificarPeriodoAtual:", error); mostrarInterfacePeriodoInativo(`Erro ao verificar período: ${error.message}`); return false;
+            } finally { console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"); console.log(">>> DEBUG: Saindo de verificarPeriodoAtual..."); console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"); }
+        }
+
+        function mostrarInterfacePeriodoInativo(mensagem) {
+            console.warn("--- DEBUG: Mostrando interface de período INATIVO. Mensagem:", mensagem);
+            if (evaluationCard) evaluationCard.style.display = 'none';
+            if (infoBox) infoBox.style.display = 'none';
+            if (periodoInativoContainer) {
+                periodoInativoContainer.innerHTML = `
+                    <div class="period-inactive">
+                        <div class="period-inactive-icon"><i class="fas fa-calendar-times"></i></div>
+                        <h3 class="period-inactive-title">Período de Avaliação Indisponível</h3>
+                        <p class="period-inactive-message">${mensagem || 'Não há um período de avaliação ativo no momento ou ele já foi encerrado.'}</p>
+                        <button id="voltarBtnInativo" class="btn btn-secondary" onclick="window.history.back();"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    </div>
+                `;
+                periodoInativoContainer.style.display = 'block';
+            } else {
+                console.error("Elemento 'periodoInativoContainer' não encontrado!");
+                showGlobalMessage('warning', `Período Indisponível: ${mensagem}`);
+            }
+        }
+
+        async function carregarFuncionariosLiderados(leaderCargo) {
+            console.log(`>>> DEBUG-CARGA: Iniciando carregarFuncionariosLiderados para Líder: ${leaderCargo}`);
+            if (!cargoSelect || !funcionarioSelect) { console.error(">>> DEBUG-CARGA: Dropdowns não encontrados!"); return; }
+            if (typeof canEvaluate !== 'function') { console.error(">>> DEBUG-CARGA: Função 'canEvaluate' NÃO encontrada!"); showGlobalMessage('error', "Erro interno: Função de hierarquia ausente."); return; }
+            cargoSelect.innerHTML = '<option value="todos">Todos os Cargos Liderados</option>'; funcionarioSelect.innerHTML = '<option value="">Carregando...</option>'; funcionarioSelect.disabled = true; todosFuncionariosLiderados = [];
+            try {
+                console.log(">>> DEBUG-CARGA: Executando query: funcionarios where ativo == true");
+                const funcionariosSnapshot = await db.collection("funcionarios").where("ativo", "==", true).get();
+                console.log(`>>> DEBUG-CARGA: Query retornou ${funcionariosSnapshot.size} documentos ativos.`);
+                const cargosUnicosLiderados = new Set(); const avaliadorUID = currentUser?.uid; let countConsiderados = 0; let countAdicionados = 0;
+                funcionariosSnapshot.forEach(doc => {
+                    countConsiderados++; const func = doc.data(); const funcId = doc.id; const subordinateCargo = func.cargo;
+                    if (!leaderCargo || !subordinateCargo) { console.warn(`>>> DEBUG-CARGA: [${countConsiderados}] Skipping ${func.nickHabbo || funcId} - Cargo líder/subordinado ausente.`); return; }
+                    const isNotSelf = funcId !== avaliadorUID;
+                    const canBeEvaluated = isNotSelf ? canEvaluate(leaderCargo, subordinateCargo) : false;
+                    console.log(`--- [${countConsiderados}] Verificando: ${func.nickHabbo} (Cargo: ${subordinateCargo}) | Avaliador: ${leaderCargo} | isNotSelf=${isNotSelf} | canBeEvaluated=${canBeEvaluated}`);
+                    if (isNotSelf && canBeEvaluated) {
+                        countAdicionados++; console.log(`    -> ADICIONADO à lista de liderados.`);
+                        todosFuncionariosLiderados.push({ id: funcId, ...func });
+                        if (func.cargo) cargosUnicosLiderados.add(func.cargo);
+                    }
+                });
+                console.log(`>>> DEBUG-CARGA: Total considerados: ${countConsiderados}. Total adicionados como liderados: ${countAdicionados}.`);
+                console.log(`>>> DEBUG-CARGA: Cargos únicos liderados encontrados:`, Array.from(cargosUnicosLiderados));
+                if (countAdicionados > 0) {
+                    const cargosOrdenados = Array.from(cargosUnicosLiderados).sort();
+                    cargosOrdenados.forEach(cargo => { const option = document.createElement('option'); option.value = cargo; option.textContent = cargo; cargoSelect.appendChild(option); });
+                    console.log(">>> DEBUG-CARGA: Dropdown de CARGOS populado.");
+                } else { console.warn(">>> DEBUG-CARGA: Nenhum funcionário liderado encontrado. Dropdown de cargos terá apenas 'Nenhum'."); const option = document.createElement('option'); option.disabled = true; option.textContent = "Nenhum funcionário liderado"; cargoSelect.appendChild(option); }
+                atualizarFuncionariosPorCargo();
+            } catch (error) { console.error(">>> DEBUG-CARGA: Erro CATCH em carregarFuncionariosLiderados:", error); showGlobalMessage('error', `Erro ao carregar funcionários: ${error.message}.`); funcionarioSelect.innerHTML = '<option value="">Erro</option>'; funcionarioSelect.disabled = true;
+            } finally { console.log(">>> DEBUG-CARGA: Finalizando carregarFuncionariosLiderados."); }
+        }
+
+        function atualizarFuncionariosPorCargo() {
+            console.log(">>> DEBUG-FUNC: Iniciando atualizarFuncionariosPorCargo...");
+            if (!cargoSelect || !funcionarioSelect) {
+                console.error(">>> DEBUG-FUNC: Dropdown de cargo ou funcionário NÃO encontrado!");
+                return;
+            }
+
+            const cargoSelecionado = cargoSelect.value;
+            console.log(`>>> DEBUG-FUNC: Cargo selecionado no dropdown: "${cargoSelecionado}"`);
+
+            funcionarioSelect.innerHTML = '<option value="">-- Selecione --</option>';
+            console.log(">>> DEBUG-FUNC: Dropdown de funcionários limpo.");
+
+            let funcionariosFiltrados = [];
+
+            if (!todosFuncionariosLiderados || todosFuncionariosLiderados.length === 0) {
+                 console.warn(">>> DEBUG-FUNC: A lista base 'todosFuncionariosLiderados' está vazia. Nada para filtrar.");
+            } else {
+                console.log(`>>> DEBUG-FUNC: Lista base 'todosFuncionariosLiderados' tem ${todosFuncionariosLiderados.length} funcionários.`);
+
+                if (cargoSelecionado === "todos") {
+                    funcionariosFiltrados = todosFuncionariosLiderados;
+                    console.log(">>> DEBUG-FUNC: Usando filtro 'todos'.");
+                } else {
+                    funcionariosFiltrados = todosFuncionariosLiderados.filter(func => func.cargo === cargoSelecionado);
+                    console.log(`>>> DEBUG-FUNC: Filtrando por cargo "${cargoSelecionado}".`);
+                }
+            }
+
+            console.log(`>>> DEBUG-FUNC: Número de funcionários após filtro: ${funcionariosFiltrados.length}`);
+
+            if (funcionariosFiltrados.length > 0) {
+                funcionariosFiltrados.sort((a, b) => (a.nome || a.nickHabbo || '').localeCompare(b.nome || b.nickHabbo || ''));
+                console.log(">>> DEBUG-FUNC: Iniciando loop para adicionar funcionários ao dropdown...");
+
+                funcionariosFiltrados.forEach((func, index) => {
+                    try {
+                        const option = document.createElement('option');
+                        option.value = func.id;
+                        const nome = func.nome || '';
+                        const nick = func.nickHabbo || '';
+                        option.textContent = nick ? `${nome} (${nick})` : nome;
+                        funcionarioSelect.appendChild(option);
+                    } catch (e) {
+                         console.error(`>>> DEBUG-FUNC: Erro ao adicionar opção para ${func.nickHabbo || func.id}:`, e);
+                    }
+                });
+                console.log(">>> DEBUG-FUNC: Loop de adição concluído.");
+                funcionarioSelect.disabled = false;
+                console.log(">>> DEBUG-FUNC: Dropdown de funcionários HABILITADO.");
+            } else {
+                console.warn(">>> DEBUG-FUNC: Nenhum funcionário encontrado para o filtro atual. Adicionando opção 'Nenhum'.");
+                const option = document.createElement('option');
+                option.disabled = true;
+                option.textContent = (cargoSelecionado === "todos" && todosFuncionariosLiderados.length === 0) ? `Nenhum funcionário liderado` : `Nenhum funcionário neste cargo`;
+                funcionarioSelect.appendChild(option);
+                funcionarioSelect.disabled = true;
+                console.log(">>> DEBUG-FUNC: Dropdown de funcionários DESABILITADO.");
+            }
+             console.log(">>> DEBUG-FUNC: Finalizando atualizarFuncionariosPorCargo.");
+        }
+
+        function resetarFormulario() {
+            console.log("--- Resetando formulário de avaliação ---");
+            if (form) form.reset();
+            if (cargoSelect) cargoSelect.value = 'todos';
+            if (funcionarioSelect) {
+                funcionarioSelect.innerHTML = '<option value="">Primeiro selecione um cargo ou aguarde</option>';
+                funcionarioSelect.disabled = true;
+            }
+            starLabels.forEach(label => {
+                label.classList.remove('selected');
+                label.style.color = '#ccc';
+            });
+            if (ratingValue) ratingValue.textContent = 'Selecione uma nota';
+            if (feedbackContainer) feedbackContainer.style.display = 'none';
+            if (feedbackTitle) feedbackTitle.textContent = '';
+            if (feedbackText) feedbackText.textContent = '';
+            if (justificativaTextarea) justificativaTextarea.value = '';
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação';
+            }
+            atualizarFuncionariosPorCargo();
+        }
+
+        async function enviarAvaliacao(event) {
+            event.preventDefault();
+            if (!submitBtn) return;
+
+            console.log("--- Tentando enviar avaliação ---");
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            const funcionarioId = funcionarioSelect.value;
+            const funcionarioNickElement = funcionarioSelect.options[funcionarioSelect.selectedIndex];
+            const funcionarioNick = funcionarioNickElement ? (funcionarioNickElement.textContent.match(/\(([^)]+)\)/)?.[1] || funcionarioNickElement.textContent) : 'Desconhecido';
+            const funcionarioCargo = todosFuncionariosLiderados.find(f => f.id === funcionarioId)?.cargo || 'N/A';
+            const ratingInput = document.querySelector('input[name="rating"]:checked');
+            const nota = ratingInput ? parseInt(ratingInput.value) : null;
+            const justificativa = justificativaTextarea.value.trim();
+
+            if (!funcionarioId) { mostrarMensagem('error', 'Selecione um funcionário.'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação'; return; }
+            if (!nota) { mostrarMensagem('error', 'Selecione uma nota (1 a 5 estrelas).'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação'; return; }
+            if (justificativa.length < 10) { mostrarMensagem('error', 'A justificativa deve ter pelo menos 10 caracteres.'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação'; return; }
+            if (!currentQuinzenaId) { mostrarMensagem('error', 'ID da quinzena atual não definido. Recarregue a página.'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação'; return; }
+            if (!avaliadorId || !avaliadorNome) { mostrarMensagem('error', 'Dados do avaliador não encontrados. Recarregue a página.'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação'; return; }
+
+            console.log("--- Dados da avaliação a ser salva:", { funcionarioId, funcionarioNick, funcionarioCargo, nota, justificativa, currentQuinzenaId, avaliadorId, avaliadorNome });
+
+            try {
+                const querySnapshot = await db.collection("avaliacoes")
+                    .where("funcionarioId", "==", funcionarioId)
+                    .where("quinzenaId", "==", currentQuinzenaId)
+                    .limit(1)
+                    .get();
+
+                const dataAvaliacao = firebase.firestore.FieldValue.serverTimestamp();
+                const dadosAvaliacao = {
+                    funcionarioId: funcionarioId,
+                    funcionarioNick: funcionarioNick,
+                    funcionarioCargo: funcionarioCargo,
+                    nota: nota,
+                    justificativa: justificativa,
+                    quinzenaId: currentQuinzenaId,
+                    avaliadorId: avaliadorId,
+                    avaliadorNome: avaliadorNome,
+                    dataAvaliacao: dataAvaliacao,
+                    ultimaAtualizacao: dataAvaliacao
+                };
+
+                if (!querySnapshot.empty) {
+                    const docId = querySnapshot.docs[0].id;
+                    console.log("--- Atualizando avaliação existente (Doc ID: ${docId}) ---");
+                    await db.collection("avaliacoes").doc(docId).update({
+                        nota: nota,
+                        justificativa: justificativa,
+                        avaliadorId: avaliadorId,
+                        avaliadorNome: avaliadorNome,
+                        ultimaAtualizacao: dataAvaliacao
+                    });
+                    showGlobalMessage('success', `Avaliação de ${funcionarioNick} atualizada com sucesso!`);
+                } else {
+                    console.log("--- Criando nova avaliação ---");
+                    await db.collection("avaliacoes").add(dadosAvaliacao);
+                    showGlobalMessage('success', `Avaliação de ${funcionarioNick} enviada com sucesso!`);
+                }
+
+                resetarFormulario();
+
+            } catch (error) {
+                console.error("Erro ao salvar avaliação:", error);
+                showGlobalMessage('error', `Erro ao salvar avaliação: ${error.message}`);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Avaliação';
+            }
+        }
+
+        function handleVoltarClick() {
+            window.history.back();
+        }
+
+        function handleStarHover(event) {
+            console.log("[DEBUG Stars] handleStarHover triggered");
+            const hoveredValue = parseInt(event.target.dataset.value);
+            starLabels.forEach(label => {
+                const labelValue = parseInt(label.dataset.value);
+                if (labelValue <= hoveredValue) {
+                    label.style.color = 'var(--primary)';
+                } else {
+                    label.style.color = '#ccc';
+                }
+            });
+        }
+
+        function resetStarColors() {
+            console.log("[DEBUG Stars] resetStarColors triggered");
+            const selectedRadio = document.querySelector('.star-rating:checked');
+            const selectedValue = selectedRadio ? parseInt(selectedRadio.value) : 0;
+
+            starLabels.forEach(label => {
+                const labelValue = parseInt(label.dataset.value);
+                if (labelValue <= selectedValue) {
+                    label.style.color = 'var(--primary)';
+                    label.classList.add('selected');
+                } else {
+                    label.style.color = '#ccc';
+                    label.classList.remove('selected');
+                }
+            });
+        }
+
+        function handleStarClick(event) {
+            console.log("[DEBUG Stars] handleStarClick triggered");
+            const clickedValue = parseInt(event.target.dataset.value);
+            const selectedRadio = document.getElementById(`star${clickedValue}`);
+
+            if (selectedRadio) {
+                selectedRadio.checked = true;
+                console.log(`[DEBUG Stars] Radio star${clickedValue} checked.`);
+            } else {
+                 console.error(`[DEBUG Stars] Radio button star${clickedValue} not found!`);
+            }
+
+            starLabels.forEach(label => {
+                const labelValue = parseInt(label.dataset.value);
+                if (labelValue <= clickedValue) {
+                    label.classList.add('selected');
+                    label.style.color = 'var(--primary)';
+                } else {
+                    label.classList.remove('selected');
+                    label.style.color = '#ccc';
+                }
+            });
+
+            ratingValue.textContent = `Nota: ${clickedValue} de 5 estrelas`;
+            updateFeedbackBox(clickedValue);
+        }
+
+        function updateFeedbackBox(rating) {
+            const feedbackMap = {
+                1: { title: "Insuficiente / Desempenho Crítico", text: "Requer intervenção imediata e plano de ação corretivo rigoroso." },
+                2: { title: "Abaixo da Expectativa / Precisa Melhorar", text: "Necessita de acompanhamento e desenvolvimento direcionado." },
+                3: { title: "Bom / Atende às Expectativas", text: "Desempenho sólido e esperado para a função." },
+                4: { title: "Ótimo / Supera as Expectativas", text: "Demonstra proatividade e alto nível de competência." },
+                5: { title: "Excepcional / Fora da Curva", text: "Consistentemente supera todas as expectativas de forma significativa." }
+            };
+            const feedback = feedbackMap[rating];
+            if (feedback && feedbackContainer && feedbackTitle && feedbackText) {
+                feedbackTitle.textContent = feedback.title;
+                feedbackText.textContent = feedback.text;
+                feedbackContainer.style.display = 'block';
+            } else if (feedbackContainer) {
+                feedbackContainer.style.display = 'none';
+            }
+        }
+
+        function abrirModal(modalId) {
+            console.log(`[MODAL] Tentando abrir modal: ${modalId}`);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.opacity = '1';
+                modal.style.visibility = 'visible';
+                console.log(`[MODAL] Modal ${modalId} display set to flex, opacity to 1, visibility to visible.`);
+            } else {
+                console.error(`[MODAL ERROR] Modal com ID ${modalId} não encontrado!`);
+            }
+        }
+
+        function fecharModal(modalId) {
+            console.log(`[MODAL] Tentando fechar modal: ${modalId}`);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.style.visibility = 'hidden';
+                    console.log(`[MODAL] Modal ${modalId} display set to none, visibility to hidden.`);
+                }, 300);
+            } else {
+                 console.error(`[MODAL ERROR] Modal com ID ${modalId} não encontrado ao fechar!`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando avaliar.html (v DEBUG Func Dropdown) ===");
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged: Estado mudou ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+                currentUser = user; avaliadorId = user.uid;
+                console.log(`--- Usuário AUTENTICADO (UID: ${user.uid}). Buscando dados...`);
+                try {
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    currentUserData = result.userData; const userHierarchicalLevel = result.hierarchicalLevel; const userCargo = currentUserData.cargo; avaliadorNome = currentUserData.nome || 'Avaliador';
+                    console.log(`--- Dados carregados: Nome=${avaliadorNome}, Cargo=${userCargo}, Nível Hierárquico=${userHierarchicalLevel}`);
+                    if(welcomeHeader) welcomeHeader.textContent = avaliadorNome; if(userRoleEl) userRoleEl.textContent = userCargo;
+                    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                    if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(userHierarchicalLevel, currentPage); } else { console.error("Erro: generateSidebarMenu() não encontrada."); }
+                    if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); } else { console.error("Erro: initializeSidebarInteractions() não encontrada."); }
+                    const permittedLevelsForThisPage = ['N2', 'N4', 'N5', 'N6', 'N7', 'N8', 'N9', 'N10'];
+                     if (!permittedLevelsForThisPage.includes(userHierarchicalLevel)) { console.warn(`ACESSO NEGADO a avaliar.html.`); mostrarInterfacePeriodoInativo(`Acesso Negado.`); if(evaluationCard) evaluationCard.style.display = 'none'; return; }
+                     if (!userCargo) { console.error("Erro crítico: Cargo do avaliador não encontrado."); showGlobalMessage('error', "Não foi possível identificar seu cargo."); return; }
+                    console.log(`--- Acesso PERMITIDO a avaliar.html para Nível ${userHierarchicalLevel} / Cargo ${userCargo}.`);
+
+                    const periodoAtivo = await verificarPeriodoAtual();
+
+                    if (periodoAtivo) {
+                        console.log("--- Período ATIVO. Tentando carregar funcionários...");
+                        console.log(`>>> LOG ANTES DA CHAMADA: Vai chamar carregarFuncionariosLiderados com cargo: ${userCargo}`);
+                        await carregarFuncionariosLiderados(userCargo);
+                        console.log(`>>> LOG DEPOIS DA CHAMADA: carregarFuncionariosLiderados terminou.`);
+
+                        console.log("--- Configurando listeners do formulário.");
+                        if(cargoSelect) cargoSelect.addEventListener('change', atualizarFuncionariosPorCargo);
+                        starLabels.forEach(label => { label.addEventListener('mouseenter', handleStarHover); label.addEventListener('click', handleStarClick); });
+                        if (starsContainer) { starsContainer.addEventListener('mouseleave', resetStarColors); }
+                        if(form) form.addEventListener('submit', enviarAvaliacao);
+                        if(voltarBtn) voltarBtn.addEventListener('click', handleVoltarClick);
+                        
+                        const ratingGuideBtnElement = document.getElementById('ratingGuideBtn');
+                        if (ratingGuideBtnElement) {
+                            console.log("[DEBUG] Botão ratingGuideBtn encontrado no DOM. Adicionando listener...");
+                            ratingGuideBtnElement.addEventListener('click', () => {
+                                console.log("[DEBUG] Botão ratingGuideBtn CLICADO!");
+                                abrirModal('ratingGuideModal');
+                            });
+                            console.log("[DEBUG] Listener adicionado ao ratingGuideBtn.");
+                        } else {
+                            console.error("[DEBUG ERROR] Botão ratingGuideBtn NÃO encontrado no DOM ao tentar adicionar listener!");
+                        }
+
+                        console.log(`[DEBUG Stars] Found ${starLabels.length} star labels.`);
+                        if (starLabels.length > 0) {
+                            starLabels.forEach(label => {
+                                label.addEventListener('mouseenter', handleStarHover);
+                                label.addEventListener('click', handleStarClick);
+                            });
+                            console.log("[DEBUG Stars] 'mouseenter' and 'click' listeners added to star labels.");
+                        } else {
+                             console.error("[DEBUG Stars ERROR] No star labels found to attach listeners!");
+                        }
+
+                        if (starsContainer) {
+                            starsContainer.addEventListener('mouseleave', resetStarColors);
+                            console.log("[DEBUG Stars] 'mouseleave' listener added to stars container.");
+                        } else {
+                             console.error("[DEBUG Stars ERROR] Stars container not found!");
+                        }
+
+                    } else {
+                        console.log("--- Período INATIVO. Formulário NÃO será carregado.");
+                    }
+
+                } catch (error) {
+                    console.error("=== Erro CRÍTICO no onAuthStateChanged ===", error);
+                    showGlobalMessage('error', `Erro ao carregar página: ${error.message || 'Verifique o console.'}`);
+                    if(evaluationCard) evaluationCard.style.display = 'none'; if(periodoInativoContainer) periodoInativoContainer.style.display = 'none';
+                } finally {
+                    console.log("=== Processamento onAuthStateChanged concluído ===");
+                }
+            });
+            console.log("=== Fim DOMContentLoaded ===");
+        });
+    </script>
+
+</body>
+</html>

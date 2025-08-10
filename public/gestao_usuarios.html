@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!-- Botão Hamburguer para Mobile -->
+    <button id="sidebarToggle" class="hamburger-btn">
+        <span class="hamburger-icon"></span>
+    </button>
+
+    <!-- Overlay para Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Menu Lateral Redesenhado (Estrutura Dinâmica) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Usuário</h2>
+            <span class="user-role">Carregando...</span> <!-- Atualizado dinamicamente -->
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+             <div class="loading-state" style="padding: 20px; text-align: center;">
+                 <span style="color: rgba(255,255,255,0.7); font-size: 13px;">Carregando menu...</span>
+             </div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <a href="#" id="logoutBtn" class="menu-item"> <!-- ID mantido para logout -->
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal Redesenhado -->
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-user-shield"></i>
+                Gestão de Usuários
+            </h1>
+            <p class="page-subtitle">Gerencie os usuários com acesso ao sistema administrativo</p>
+        </div>
+
+        <!-- Mensagem de Feedback -->
+        <div id="mensagem" style="display: none;"></div> <!-- Estilo display:none adicionado para consistência -->
+
+        <!-- Botão Adicionar Usuário -->
+        <button id="addUserBtn" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Adicionar Novo Usuário
+        </button>
+
+        <!-- Tabela de Usuários -->
+        <div class="table-card">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-users-cog"></i>
+                    Usuários do Sistema
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table" id="userTable">
+                    <thead>
+                        <tr>
+                            <th>NOME</th>
+                            <th>EMAIL</th>
+                            <th>CARGO</th>
+                            <th>NICK DO HABBO</th>
+                            <th>NÍVEL DE ACESSO</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Conteúdo carregado via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-edit"></i>
+                    Editar Usuário
+                </h5>
+                <span class="close-button" id="closeEditModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" class="modal-form">
+                    <input type="hidden" id="editUserId">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNome">Nome:</label>
+                        <input type="text" id="editNome" name="editNome" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editEmail">Email:</label>
+                        <input type="email" id="editEmail" name="editEmail" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCargo">Cargo:</label>
+                        <div class="select-wrapper">
+                            <select id="editCargo" name="editCargo" class="form-control" required>
+                                <!-- Opções carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNickHabbo">Nick do Habbo:</label>
+                        <div class="select-wrapper">
+                            <select id="editNickHabbo" name="editNickHabbo" class="form-control" required>
+                                <option value="">Selecione o Nick do Habbo</option>
+                                <!-- Opções carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editNivel">Nível de Acesso:</label>
+                        <div class="select-wrapper">
+                            <select id="editNivel" name="editNivel" class="form-control" required>
+                                <option value="1">Usuário Comum</option>
+                                <option value="2">Administrador</option>
+                                <option value="3">Superusuário</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="dynamicFieldsContainer">
+                        <!-- Campos dinâmicos serão adicionados aqui -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="addFieldBtn" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Campo
+                </button>
+                <button type="button" class="btn btn-sm btn-danger" id="cancelEdit">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" form="editForm" class="btn btn-sm btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Adição -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus"></i>
+                    Adicionar Novo Usuário
+                </h5>
+                <span class="close-button" id="closeAddModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addForm" class="modal-form">
+                    <div class="form-group">
+                        <label class="form-label" for="addNome">Nome:</label>
+                        <input type="text" id="addNome" name="addNome" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addEmail">Email:</label>
+                        <input type="email" id="addEmail" name="addEmail" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addCargo">Cargo:</label>
+                        <div class="select-wrapper">
+                            <select id="addCargo" name="addCargo" class="form-control" required>
+                                <!-- Opções carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addNickHabbo">Nick do Habbo:</label>
+                        <div class="select-wrapper">
+                            <select id="addNickHabbo" name="addNickHabbo" class="form-control" required>
+                                <option value="">Selecione o Nick do Habbo</option>
+                                <!-- Opções carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addNivel">Nível de Acesso:</label>
+                        <div class="select-wrapper">
+                            <select id="addNivel" name="addNivel" class="form-control" required>
+                                <option value="1">Usuário Comum</option>
+                                <option value="2">Administrador</option>
+                                <option value="3">Superusuário</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addSenha">Senha:</label>
+                        <input type="password" id="addSenha" name="addSenha" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="addConfirmSenha">Confirmar Senha:</label>
+                        <input type="password" id="addConfirmSenha" name="addConfirmSenha" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" id="cancelAdd">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" form="addForm" class="btn btn-sm btn-primary">
+                    <i class="fas fa-save"></i> Criar Usuário
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- Incluir Configuração do Firebase e UI Compartilhada -->
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+
+    <script>
+        // Inicializa Firebase usando a config do arquivo separado
+        if (typeof firebaseConfig === 'undefined') {
+            console.error("ERRO FATAL: firebaseConfig não definido.");
+            // Poderia mostrar um erro na tela ou redirecionar
+            document.body.innerHTML = '<p style="color:red; text-align:center; margin-top: 50px;">Erro crítico na configuração. Contacte o suporte.</p>';
+        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Variáveis Globais e Elementos DOM Específicos da Página ---
+        let currentUser = null; // Usuário autenticado global
+        let currentUserLevel = 0; // Nível de acesso do usuário logado
+        let currentEditingUserId = null; // ID do usuário sendo editado
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const mensagemDiv = document.getElementById('mensagem'); // Renomeado para consistência
+        const userTableBody = document.getElementById('userTableBody');
+        const addUserBtn = document.getElementById('addUserBtn');
+        const editModal = document.getElementById('editModal');
+        const addModal = document.getElementById('addModal');
+        const editForm = document.getElementById('editForm');
+        const addForm = document.getElementById('addForm');
+
+        // --- Funções Específicas da Página (Gestão de Usuários) ---
+
+        async function carregarUsuarios() {
+            userTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Carregando usuários...</td></tr>';
+
+            try {
+                if (!currentUser || currentUserLevel === 0) {
+                     console.warn("Tentando carregar usuários sem dados de usuário logado.");
+                     return;
+                }
+
+                const nivelUsuarioAtual = currentUserLevel;
+                const querySnapshot = await db.collection("usuarios").get();
+
+                if (querySnapshot.empty) {
+                    userTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;"><i class="fas fa-info-circle"></i> Nenhum usuário encontrado no sistema.</td></tr>';
+                    return;
+                }
+
+                const usuarios = [];
+                querySnapshot.forEach((doc) => {
+                    usuarios.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                usuarios.sort((a, b) => {
+                    if (b.nivel !== a.nivel) return b.nivel - a.nivel;
+                    return a.nome?.localeCompare(b.nome || '') || 0;
+                });
+
+                userTableBody.innerHTML = '';
+
+                usuarios.forEach((userData) => {
+                    const row = document.createElement('tr');
+
+                    const tdNome = document.createElement('td');
+                    tdNome.textContent = userData.nome || '-';
+                    tdNome.setAttribute('data-label', 'NOME');
+
+                    const tdEmail = document.createElement('td');
+                    tdEmail.textContent = userData.email || '-';
+                    tdEmail.setAttribute('data-label', 'EMAIL');
+
+                    const tdCargo = document.createElement('td');
+                    tdCargo.textContent = userData.cargo || '-';
+                    tdCargo.setAttribute('data-label', 'CARGO');
+
+                    const tdNickHabbo = document.createElement('td');
+                    tdNickHabbo.textContent = userData.nickHabbo || '-';
+                    tdNickHabbo.setAttribute('data-label', 'NICK DO HABBO');
+
+                    const tdNivel = document.createElement('td');
+                    let nivelTexto = '';
+                    let nivelBadge = '';
+                    switch(parseInt(userData.nivel) || 0) {
+                        case 1: nivelTexto = 'Comum'; nivelBadge = 'badge-primary'; break;
+                        case 2: nivelTexto = 'Admin'; nivelBadge = 'badge-success'; break;
+                        case 3: nivelTexto = 'Super'; nivelBadge = 'badge-danger'; break;
+                        default: nivelTexto = 'N/D'; nivelBadge = 'badge-secondary';
+                    }
+                    tdNivel.innerHTML = `<span class="badge ${nivelBadge}">${nivelTexto}</span>`;
+                    tdNivel.style.textAlign = 'center';
+                    tdNivel.setAttribute('data-label', 'NÍVEL');
+
+                    const tdAcoes = document.createElement('td');
+                    tdAcoes.style.textAlign = 'center';
+                    tdAcoes.setAttribute('data-label', 'AÇÕES');
+
+                    if (nivelUsuarioAtual >= 2 && (nivelUsuarioAtual >= (parseInt(userData.nivel) || 0) || userData.id === currentUser.uid)) {
+                        tdAcoes.innerHTML = `
+                            <div class="btn-group">
+                                <button onclick="abrirModalEdicao('${userData.id}')" class="btn btn-primary btn-sm" title="Editar Usuário">
+                                    <i class="fas fa-edit"></i> <span class="btn-text">Editar</span>
+                                </button>
+                                <button onclick="excluirUsuario('${userData.id}')" class="btn btn-danger btn-sm" title="Excluir Usuário">
+                                    <i class="fas fa-trash-alt"></i> <span class="btn-text">Excluir</span>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        tdAcoes.innerHTML = `<span class="badge badge-secondary">Sem permissão</span>`;
+                    }
+
+                    row.appendChild(tdNome);
+                    row.appendChild(tdEmail);
+                    row.appendChild(tdCargo);
+                    row.appendChild(tdNickHabbo);
+                    row.appendChild(tdNivel);
+                    row.appendChild(tdAcoes);
+
+                    userTableBody.appendChild(row);
+                });
+
+                console.log("Usuários carregados com sucesso:", usuarios.length);
+            } catch (error) {
+                console.error("Erro ao carregar usuários:", error);
+                userTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;"><i class="fas fa-exclamation-triangle"></i> Erro ao carregar usuários.</td></tr>';
+                mostrarMensagem("Erro ao carregar usuários: " + error.message, "error");
+            }
+        }
+
+        async function carregarCargos(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Carregando cargos...</option>';
+
+            try {
+                const departamentosConfigPadrao = {
+                    DECLIN: {
+                        nome: "Departamento Clínico",
+                        cargos: {
+                            N1: [
+                                {cargo: "Clinica Geral", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Cirurgia", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Enfermagem", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Pediatria", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Obstetrícia", salario: 30, pontos: 15, exp: 0}
+                            ],
+                            N2: [
+                                {cargo: "Chefe de Clínica Geral", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Cirurgia", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Enfermagem", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Pediatria", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Obstetrícia", salario: 35, pontos: 25, exp: 15}
+                            ],
+                            N4: [
+                                {cargo: "Supervisor Clínico", salario: 45, pontos: 40, exp: 60},
+                                {cargo: "Supervisor Materno-Infantil", salario: 45, pontos: 40, exp: 60}
+                            ],
+                            N5: [
+                                {cargo: "Coordenador Clinico", salario: 50, pontos: 45, exp: 90}
+                            ]
+                        }
+                    },
+                    DOPH: {
+                        nome: "Departamento de Operações e Performance Humana",
+                        cargos: {
+                            N1: [
+                                {cargo: "Psicologia", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Psiquiatria", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Segurança", salario: 30, pontos: 15, exp: 0},
+                                {cargo: "Recepção", salario: 30, pontos: 15, exp: 0}
+                            ],
+                            N2: [
+                                {cargo: "Chefe de Psicologia", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Psiquiatria", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Segurança", salario: 35, pontos: 25, exp: 15},
+                                {cargo: "Chefe de Recepção", salario: 35, pontos: 25, exp: 15}
+                            ],
+                            N3: [
+                                {cargo: "Analista", salario: 40, pontos: 35, exp: 45}
+                            ],
+                            N4: [
+                                {cargo: "Supervisor de Saúde Mental", salario: 45, pontos: 40, exp: 60},
+                                {cargo: "Supervisor de Operações", salario: 45, pontos: 40, exp: 60}
+                            ],
+                            N5: [
+                                {cargo: "Coordenador de Operações e Saúde Mental", salario: 50, pontos: 45, exp: 90}
+                            ]
+                        }
+                    },
+                    DEX: {
+                        nome: "Departamento Executivo",
+                        cargos: {
+                            N6: [{cargo: "Vice-Diretor", salario: 55, pontos: 50, exp: 120}],
+                            N7: [{cargo: "Diretor", salario: 60, pontos: 50, exp: 150}],
+                            N8: [{cargo: "Vice-Presidente", salario: 65, pontos: 55, exp: 180}],
+                            N9: [{cargo: "Presidente", salario: 70, pontos: 55, exp: 210}],
+                            N10: [{cargo: "Fundador", salario: 70, pontos: null, exp: null}]
+                        }
+                    }
+                };
+
+                const snapshot = await db.collection("orcamento").doc("estrutura").get();
+                let data = departamentosConfigPadrao;
+
+                if (snapshot.exists) {
+                    const firestoreData = snapshot.data();
+                    if (firestoreData && typeof firestoreData === 'object' && Object.keys(firestoreData).length > 0) {
+                         data = firestoreData;
+                         console.log("Usando estrutura de cargos do Firestore.");
+                    } else {
+                         console.log("Estrutura do Firestore vazia ou inválida, usando padrão.");
+                    }
+                } else {
+                     console.log("Documento 'estrutura' não encontrado no Firestore, usando padrão.");
+                }
+
+                const cargos = [];
+                for (const deptKey in data) {
+                    const dept = data[deptKey];
+                    if (dept && dept.cargos && typeof dept.cargos === 'object') {
+                        for (const nivel in dept.cargos) {
+                            if (Array.isArray(dept.cargos[nivel])) {
+                                dept.cargos[nivel].forEach(cargoInfo => {
+                                    if (cargoInfo && cargoInfo.cargo) {
+                                        cargos.push({
+                                            cargo: cargoInfo.cargo,
+                                            departamento: deptKey,
+                                            nivel: nivel,
+                                            salario: cargoInfo.salario
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    } else if (Array.isArray(dept)) {
+                         dept.forEach(cargoInfo => {
+                             if (cargoInfo && cargoInfo.cargo) {
+                                 cargos.push({
+                                     cargo: cargoInfo.cargo,
+                                     departamento: deptKey,
+                                     nivel: null,
+                                     salario: cargoInfo.salario
+                                 });
+                             }
+                         });
+                    }
+                }
+
+                cargos.sort((a, b) => a.cargo.localeCompare(b.cargo));
+
+                select.innerHTML = '<option value="">Selecione um cargo</option>';
+                cargos.forEach(cargoInfo => {
+                    const option = document.createElement('option');
+                    option.value = cargoInfo.cargo;
+                    option.textContent = `${cargoInfo.cargo} (${cargoInfo.departamento})`;
+                    option.setAttribute('data-salario', cargoInfo.salario || '');
+                    option.setAttribute('data-departamento', cargoInfo.departamento);
+                    if (cargoInfo.nivel) {
+                         option.setAttribute('data-nivel', cargoInfo.nivel);
+                    }
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error("Erro ao carregar cargos:", error);
+                mostrarMensagem("Erro ao carregar lista de cargos", "error");
+                select.innerHTML = '<option value="">Erro ao carregar</option>';
+            }
+        }
+
+        async function carregarNicksHabbo(selectId) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            select.innerHTML = '<option value="">Carregando nicks...</option>';
+
+            try {
+                const snapshot = await db.collection("funcionarios").where("ativo", "==", true).orderBy("nickHabbo").get();
+                select.innerHTML = '<option value="">Selecione o Nick do Habbo</option>';
+                snapshot.forEach(doc => {
+                    const nickHabbo = doc.data().nickHabbo;
+                    if (nickHabbo) {
+                        const option = document.createElement('option');
+                        option.value = nickHabbo;
+                        option.textContent = nickHabbo;
+                        select.appendChild(option);
+                    }
+                });
+                 const optionNenhum = document.createElement('option');
+                 optionNenhum.value = "N/A";
+                 optionNenhum.textContent = "Nenhum / Não Aplicável";
+                 select.appendChild(optionNenhum);
+
+            } catch (error) {
+                console.error("Erro ao carregar nicks:", error);
+                mostrarMensagem("Erro ao carregar lista de funcionários", "error");
+                select.innerHTML = '<option value="">Erro ao carregar</option>';
+            }
+        }
+
+        function mostrarMensagem(mensagem, tipo) {
+            const iconClass = tipo === 'success' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            mensagemDiv.innerHTML = `<i class="fas ${iconClass}"></i> ${mensagem}`;
+            mensagemDiv.className = `message ${tipo}-message`;
+            mensagemDiv.style.display = 'block';
+            mensagemDiv.style.opacity = '1';
+            mensagemDiv.style.transition = '';
+            mensagemDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            setTimeout(() => {
+                mensagemDiv.style.opacity = '0';
+                mensagemDiv.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => { mensagemDiv.style.display = 'none'; }, 500);
+            }, 5000);
+        }
+
+        async function verificarPermissao() {
+            if (currentUserLevel >= 2) {
+                return true;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Sem Permissão',
+                text: 'Você precisa ser Administrador ou Superusuário para realizar esta ação.'
+            });
+            return false;
+        }
+
+        async function abrirModalAdicao() {
+            if (!await verificarPermissao()) return;
+
+            try {
+                await carregarCargos('addCargo');
+                await carregarNicksHabbo('addNickHabbo');
+                addForm.reset();
+                addModal.style.display = 'block';
+            } catch (error) {
+                console.error('Erro ao abrir modal de adição:', error);
+                mostrarMensagem("Erro ao carregar dados para o formulário.", "error");
+            }
+        }
+
+        function fecharModalAdicao() {
+            addModal.style.display = 'none';
+            addForm.reset();
+        }
+
+        function fecharModalEdicao() {
+            editModal.style.display = 'none';
+            editForm.reset();
+            const dynamicContainer = document.getElementById('dynamicFieldsContainer');
+            if (dynamicContainer) dynamicContainer.innerHTML = '';
+        }
+
+        async function abrirModalEdicao(userId) {
+            if (!await verificarPermissao()) return;
+
+            currentEditingUserId = userId;
+
+            try {
+                await carregarCargos('editCargo');
+                await carregarNicksHabbo('editNickHabbo');
+
+                const doc = await db.collection("usuarios").doc(userId).get();
+
+                if (doc.exists) {
+                    const userData = doc.data();
+                    editForm.reset();
+
+                    document.getElementById('editUserId').value = userId;
+                    document.getElementById('editNome').value = userData.nome || '';
+                    document.getElementById('editEmail').value = userData.email || '';
+                    document.getElementById('editCargo').value = userData.cargo || '';
+                    document.getElementById('editNickHabbo').value = userData.nickHabbo || '';
+                    document.getElementById('editNivel').value = userData.nivel || 1;
+
+                    const dynamicFieldsContainer = document.getElementById('dynamicFieldsContainer');
+                    dynamicFieldsContainer.innerHTML = '';
+                    Object.keys(userData).forEach(key => {
+                        if (!['nome', 'email', 'cargo', 'nivel', 'nickHabbo', 'dataCriacao', 'uid'].includes(key)) {
+                            adicionarCampoDinamico(key, userData[key]);
+                        }
+                    });
+
+                    editModal.style.display = 'block';
+                } else {
+                    mostrarMensagem("Usuário não encontrado.", "error");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário para edição:", error);
+                mostrarMensagem("Erro ao buscar dados do usuário: " + error.message, "error");
+            }
+        }
+
+        function adicionarCampoDinamico(nomeCampo = '', valorCampo = '') {
+            const container = document.getElementById('dynamicFieldsContainer');
+            if (!container) return;
+
+            const fieldDiv = document.createElement('div');
+            fieldDiv.classList.add('dynamic-field', 'form-group');
+
+            const nameLabel = document.createElement('label');
+            nameLabel.textContent = 'Nome do Campo:';
+            nameLabel.classList.add('form-label', 'form-label-sm');
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'Nome do Campo (ex: idTelegram)';
+            nameInput.value = nomeCampo;
+            nameInput.classList.add('form-control', 'form-control-sm', 'dynamic-field-name');
+            nameInput.style.marginBottom = '5px';
+
+            const valueLabel = document.createElement('label');
+            valueLabel.textContent = 'Valor do Campo:';
+            valueLabel.classList.add('form-label', 'form-label-sm');
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.placeholder = 'Valor do Campo';
+            valueInput.value = (typeof valorCampo === 'object' && valorCampo !== null) ? JSON.stringify(valorCampo) : valorCampo;
+            valueInput.classList.add('form-control', 'form-control-sm', 'dynamic-field-value');
+            valueInput.style.flexGrow = '1';
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.innerHTML = '<i class="fas fa-times"></i>';
+            removeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-field-btn');
+            removeButton.title = 'Remover Campo';
+            removeButton.style.marginLeft = '5px';
+            removeButton.addEventListener('click', () => {
+                container.removeChild(fieldDiv);
+            });
+
+            const valueGroup = document.createElement('div');
+            valueGroup.style.display = 'flex';
+            valueGroup.style.alignItems = 'center';
+            valueGroup.appendChild(valueInput);
+            valueGroup.appendChild(removeButton);
+
+            fieldDiv.appendChild(nameLabel);
+            fieldDiv.appendChild(nameInput);
+            fieldDiv.appendChild(valueLabel);
+            fieldDiv.appendChild(valueGroup);
+
+            container.appendChild(fieldDiv);
+        }
+
+        async function handleEditSubmit(event) {
+            event.preventDefault();
+            if (!await verificarPermissao()) return;
+
+            const userId = document.getElementById('editUserId').value;
+            if (!userId) {
+                 mostrarMensagem("Erro: ID do usuário não encontrado.", "error");
+                 return;
+            }
+
+            const novoNome = document.getElementById('editNome').value.trim();
+            const novoEmail = document.getElementById('editEmail').value.trim();
+            const novoCargo = document.getElementById('editCargo').value;
+            const novoNickHabbo = document.getElementById('editNickHabbo').value;
+            const novoNivel = parseInt(document.getElementById('editNivel').value, 10);
+
+            if (!novoNome || !novoEmail || !novoCargo || !novoNickHabbo || isNaN(novoNivel)) {
+                 mostrarMensagem("Preencha todos os campos obrigatórios.", "error");
+                 return;
+            }
+
+            const submitButton = editForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+            try {
+                const userDoc = await db.collection("usuarios").doc(userId).get();
+                if (!userDoc.exists) throw new Error("Usuário não encontrado no Firestore.");
+                const emailAtual = userDoc.data().email;
+
+                if (emailAtual !== novoEmail) {
+                    console.warn("Tentativa de alterar email pelo frontend.");
+                    if (currentUser && currentUser.uid === userId) {
+                        try {
+                            await currentUser.updateEmail(novoEmail);
+                            console.log("Email no Auth atualizado.");
+                        } catch (error) {
+                            console.error("Erro ao atualizar email no Auth:", error);
+                            if (error.code === 'auth/requires-recent-login') {
+                                Swal.fire({ icon: 'warning', title: 'Reautenticação Necessária', text: 'Para alterar o email, você precisa fazer login novamente.' });
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Erro ao Atualizar Email', text: error.message });
+                            }
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = originalButtonText;
+                            return;
+                        }
+                    } else {
+                        mostrarMensagem("Não é possível alterar o email de outro usuário diretamente.", "warning");
+                    }
+                }
+
+                const updateData = {
+                    nome: novoNome,
+                    email: (currentUser && currentUser.uid === userId && emailAtual !== novoEmail) ? novoEmail : emailAtual,
+                    cargo: novoCargo,
+                    nickHabbo: novoNickHabbo,
+                    nivel: novoNivel
+                };
+
+                const dynamicFields = document.querySelectorAll('#dynamicFieldsContainer .dynamic-field');
+                dynamicFields.forEach((field) => {
+                    const nameInput = field.querySelector('.dynamic-field-name');
+                    const valueInput = field.querySelector('.dynamic-field-value');
+
+                    if (nameInput && valueInput && nameInput.value.trim() !== '') {
+                        const nomeCampo = nameInput.value.trim();
+                        if (!['nome', 'email', 'cargo', 'nivel', 'nickHabbo', 'dataCriacao', 'uid'].includes(nomeCampo)) {
+                             updateData[nomeCampo] = valueInput.value.trim();
+                        } else {
+                             console.warn(`Campo dinâmico ignorado por conflito com nome padrão: ${nomeCampo}`);
+                        }
+                    }
+                });
+
+                await db.collection("usuarios").doc(userId).update(updateData);
+                mostrarMensagem("Usuário atualizado com sucesso!", "success");
+                fecharModalEdicao();
+                await carregarUsuarios();
+            } catch (error) {
+                console.error("Erro ao atualizar usuário:", error);
+                mostrarMensagem("Erro ao atualizar usuário: " + error.message, "error");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        }
+
+        async function handleAddSubmit(event) {
+            event.preventDefault();
+            if (!await verificarPermissao()) return;
+
+            const nome = document.getElementById('addNome').value.trim();
+            const email = document.getElementById('addEmail').value.trim();
+            const cargo = document.getElementById('addCargo').value;
+            const nickHabbo = document.getElementById('addNickHabbo').value;
+            const nivel = document.getElementById('addNivel').value;
+            const senha = document.getElementById('addSenha').value;
+            const confirmSenha = document.getElementById('addConfirmSenha').value;
+
+            if (!nome || !email || !cargo || !nickHabbo || !nivel || !senha || !confirmSenha) {
+                mostrarMensagem("Por favor, preencha todos os campos obrigatórios.", "error");
+                return;
+            }
+            if (senha !== confirmSenha) {
+                mostrarMensagem("As senhas não coincidem.", "error");
+                return;
+            }
+            if (senha.length < 6) {
+                mostrarMensagem("A senha deve ter pelo menos 6 caracteres.", "error");
+                return;
+            }
+
+            const submitButton = addForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando...';
+
+            let secondaryApp = null;
+            try {
+                secondaryApp = firebase.initializeApp(firebaseConfig, `Secondary_${Date.now()}`);
+
+                const userCredential = await secondaryApp.auth().createUserWithEmailAndPassword(email, senha);
+                const newUser = userCredential.user;
+
+                if (!newUser) {
+                    throw new Error('Falha ao criar usuário no Firebase Authentication.');
+                }
+
+                await db.collection("usuarios").doc(newUser.uid).set({
+                    nome: nome,
+                    email: email,
+                    cargo: cargo,
+                    nickHabbo: nickHabbo,
+                    nivel: parseInt(nivel),
+                    dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                mostrarMensagem("Usuário criado com sucesso!", "success");
+                fecharModalAdicao();
+                await carregarUsuarios();
+
+            } catch (error) {
+                console.error("Erro ao criar usuário:", error);
+                let mensagemErro = "Erro desconhecido ao criar usuário.";
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        mensagemErro = 'Este email já está cadastrado.'; break;
+                    case 'auth/invalid-email':
+                        mensagemErro = 'O formato do email é inválido.'; break;
+                    case 'auth/weak-password':
+                        mensagemErro = 'A senha é muito fraca. Use pelo menos 6 caracteres.'; break;
+                    default:
+                        mensagemErro = error.message;
+                }
+                mostrarMensagem(`Erro ao criar usuário: ${mensagemErro}`, "error");
+            } finally {
+                if (secondaryApp) {
+                    try {
+                         await secondaryApp.auth().signOut();
+                         await secondaryApp.delete();
+                         console.log("Instância secundária do Firebase limpa.");
+                    } catch (cleanupError) {
+                         console.error("Erro ao limpar instância secundária:", cleanupError);
+                    }
+                }
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        }
+
+        async function excluirUsuario(userId) {
+            if (!await verificarPermissao()) return;
+
+            if (!currentUser || userId === currentUser.uid) {
+                Swal.fire({ icon: 'error', title: 'Operação Não Permitida', text: 'Você não pode excluir seu próprio usuário.' });
+                return;
+            }
+
+            try {
+                const result = await Swal.fire({
+                    title: 'Confirmar Exclusão',
+                    html: "Tem certeza que deseja excluir este usuário?<br><strong>Esta ação removerá o acesso ao sistema, mas não exclui o registro de autenticação (requer ação manual ou backend).</strong>",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e74c3c',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sim, Excluir do Firestore!',
+                    cancelButtonText: 'Cancelar'
+                });
+
+                if (result.isConfirmed) {
+                    await db.collection("usuarios").doc(userId).delete();
+
+                    mostrarMensagem("Usuário removido do Firestore com sucesso!", "success");
+                    await carregarUsuarios();
+                }
+            } catch (error) {
+                console.error("Erro ao excluir usuário do Firestore:", error);
+                mostrarMensagem("Erro ao excluir usuário: " + error.message, "error");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM Carregado para gestao_usuarios.html");
+
+            if (typeof initializeSidebarInteractions === 'function') {
+                 initializeSidebarInteractions();
+            } else {
+                 console.error("Erro: initializeSidebarInteractions() não encontrada em shared-ui.js.");
+            }
+
+            auth.onAuthStateChanged(async (user) => {
+                console.log("Auth state changed:", user ? user.uid : "No user");
+                if (user) {
+                    currentUser = user;
+                    try {
+                        const userDoc = await db.collection("usuarios").doc(user.uid).get();
+                        if (!userDoc.exists) {
+                            throw new Error("Usuário não encontrado no Firestore. Saindo...");
+                        }
+                        const userData = userDoc.data();
+                        console.log("UserData:", userData);
+
+                        currentUserLevel = parseInt(userData.nivel || 0);
+                        const accessLevel = currentUserLevel;
+
+                        if (accessLevel < 2) {
+                            console.warn(`Usuário Nível ${accessLevel} tentou acessar Gestão de Usuários. Redirecionando.`);
+                            mostrarMensagem("Você não tem permissão para acessar esta página.", "error");
+                            setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+                            return;
+                        }
+
+                        let userHierarchicalLevel = "N0";
+                        let userCargo = userData.cargo || "N/A";
+
+                        if (userData.nickHabbo && userData.nickHabbo !== "N/A") {
+                             try {
+                                 const funcQuery = await db.collection("funcionarios")
+                                     .where("nickHabbo", "==", userData.nickHabbo)
+                                     .where("ativo", "==", true)
+                                     .limit(1).get();
+
+                                 if (!funcQuery.empty) {
+                                     const funcData = funcQuery.docs[0].data();
+                                     userHierarchicalLevel = funcData.nivel || "N0";
+                                     userCargo = funcData.cargo || userCargo;
+                                     console.log("Nível Hierárquico (Funcionário):", userHierarchicalLevel);
+                                 } else if (accessLevel >= 3) {
+                                     userHierarchicalLevel = "N10";
+                                     console.log("Superusuário sem registro de funcionário ativo, Nível Hierárquico: N10");
+                                 } else {
+                                      console.log("Usuário com Nick Habbo, mas não encontrado como funcionário ativo.");
+                                 }
+                             } catch (funcError) {
+                                 console.error("Erro ao buscar dados do funcionário:", funcError);
+                                 if (accessLevel >= 3) { userHierarchicalLevel = "N10"; }
+                             }
+                         } else if (accessLevel >= 3) {
+                             userHierarchicalLevel = "N10";
+                             console.log("Superusuário sem Nick Habbo, Nível Hierárquico: N10");
+                         }
+
+                        welcomeHeader.textContent = `${userData.nome || "Usuário"}`;
+                        userRoleEl.textContent = userCargo;
+
+                        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                        if (typeof generateSidebarMenu === 'function') {
+                             const menuHtml = generateSidebarMenu(userHierarchicalLevel, currentPage);
+                             sidebarMenu.innerHTML = menuHtml;
+                        } else {
+                             console.error("Erro: generateSidebarMenu() não encontrada em shared-ui.js.");
+                             sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro ao carregar menu.</p>';
+                        }
+
+                        await carregarUsuarios();
+
+                    } catch (error) {
+                        console.error("Erro durante autenticação ou carregamento inicial:", error);
+                        mostrarMensagem(`Erro crítico: ${error.message}`, "error");
+                        if (error.message.includes("não encontrado")) {
+                             auth.signOut();
+                             window.location.href = 'login.html';
+                        }
+                        if (sidebarMenu) sidebarMenu.innerHTML = '<p style="color:red; padding: 15px;">Erro crítico ao carregar.</p>';
+                    }
+                } else {
+                    console.log("Nenhum usuário logado. Redirecionando para login.");
+                    currentUser = null;
+                    currentUserLevel = 0;
+                    window.location.href = 'login.html';
+                }
+            });
+
+            if (addUserBtn) {
+                 addUserBtn.addEventListener('click', abrirModalAdicao);
+            }
+
+            document.getElementById('closeAddModal')?.addEventListener('click', fecharModalAdicao);
+            document.getElementById('cancelAdd')?.addEventListener('click', fecharModalAdicao);
+            document.getElementById('closeEditModal')?.addEventListener('click', fecharModalEdicao);
+            document.getElementById('cancelEdit')?.addEventListener('click', fecharModalEdicao);
+
+            document.getElementById('addFieldBtn')?.addEventListener('click', () => adicionarCampoDinamico());
+
+            if (editForm) {
+                 editForm.addEventListener('submit', handleEditSubmit);
+            }
+            if (addForm) {
+                 addForm.addEventListener('submit', handleAddSubmit);
+            }
+
+            const setupNivelUpdateListener = (cargoSelectId, nivelSelectId) => {
+                const cargoSelect = document.getElementById(cargoSelectId);
+                const nivelSelect = document.getElementById(nivelSelectId);
+                if (cargoSelect && nivelSelect) {
+                    cargoSelect.addEventListener('change', function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const nivelHierarquico = selectedOption.getAttribute('data-nivel');
+
+                        if (nivelHierarquico) {
+                            let nivelAcesso = 1;
+                            const nivelNum = parseInt(nivelHierarquico.substring(1));
+                            if (nivelNum >= 6) {
+                                nivelAcesso = 3;
+                            } else if (nivelNum >= 4) {
+                                nivelAcesso = 2;
+                            }
+
+                            nivelSelect.value = nivelAcesso.toString();
+                            console.log(`Cargo ${this.value} (Nível ${nivelHierarquico}) -> Nível Acesso ${nivelAcesso}`);
+                        } else {
+                             console.log(`Cargo ${this.value} sem nível hierárquico definido.`);
+                        }
+                    });
+                }
+            };
+
+            setupNivelUpdateListener('addCargo', 'addNivel');
+            setupNivelUpdateListener('editCargo', 'editNivel');
+
+            window.abrirModalEdicao = abrirModalEdicao;
+            window.excluirUsuario = excluirUsuario;
+
+            console.log("Listeners específicos de gestao_usuarios.html configurados.");
+
+        });
+
+    </script>
+</body>
+</html>

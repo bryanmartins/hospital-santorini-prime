@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desligamento de Funcionários - Hospital Santorini Prime</title>
+    <link rel="icon" href="imagens/logo_santorini_colorido.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/estilo-principal.css">
+    <link rel="stylesheet" href="./css/formularios.css">
+    <link rel="stylesheet" href="./css/tabelas.css">
+    <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/cards.css"> <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+</head>
+<body>
+    <button id="sidebarToggle" class="hamburger-btn"><span class="hamburger-icon"></span></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="./imagens/logo_santorini.png" alt="Logo Hospital Santorini Prime">
+            <h2 id="welcomeHeader">Carregando...</h2>
+            <span class="user-role">...</span>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="loading-state"><span style="color: rgba(255,255,255,0.7); padding:20px;">Carregando...</span></div>
+        </div>
+        <div class="sidebar-footer">
+            <button id="collapseMenuBtn" class="menu-collapse-btn"><i class="fas fa-chevron-left"></i></button>
+            <a href="#" id="logoutBtn" class="menu-item"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-user-minus"></i> Desligamentos</h1>
+            <p class="page-subtitle">Gerencie o desligamento de colaboradores do Hospital Santorini Prime</p>
+        </div>
+
+        <div id="alertaContainer" class="message" style="display: none;"></div>
+
+        <div class="card animate-fade-in">
+            <div class="card-header"><h2 class="card-title"><i class="fas fa-file-alt"></i> Formulário de Desligamento</h2></div>
+            <div class="card-body">
+                <form id="desligamentoForm">
+                    <div class="form-group">
+                        <label class="form-label" for="funcionario">Funcionário Ativo:</label> <div class="select-wrapper"> <select id="funcionario" class="form-control" required>
+                                <option value="">Carregando funcionários...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="tipoDesligamento">Tipo de Desligamento:</label>
+                        <div class="select-wrapper">
+                            <select id="tipoDesligamento" class="form-control" required>
+                                <option value="">Selecione o tipo</option>
+                                <option value="Justa Causa">Desligamento por Justa Causa</option>
+                                <option value="Voluntário">Desligamento Voluntário</option>
+                                <option value="Sem Justa Causa">Desligamento Sem Justa Causa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="motivo">Motivo (Opcional):</label>
+                        <input type="text" id="motivo" class="form-control" placeholder="Descreva brevemente o motivo (se aplicável)">
+                    </div>
+                    <div class="form-actions"> <button type="submit" class="btn btn-danger"> <i class="fas fa-user-times"></i> Confirmar Desligamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="section-title"><i class="fas fa-history"></i> Histórico de Desligamentos</h2>
+        <div class="card">
+            <div class="card-header"><h2 class="card-title"><i class="fas fa-list"></i> Funcionários Desligados</h2></div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table" id="desligamentosTable">
+                        <thead>
+                            <tr>
+                                <th>Nick do Habbo</th>
+                                <th>Cargo</th>
+                                <th>Nível</th>
+                                <th>Salário (c)</th>
+                                <th>Tipo</th> <th>Motivo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="desligamentosTbody"> <tr class="empty-state" id="loading-row-hist">
+                                <td colspan="7"><i class="fas fa-spinner fa-spin"></i><p>Carregando histórico...</p></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> <div id="modalEditDesligamento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header"> <h3 class="modal-title"><i class="fas fa-edit"></i> Editar Desligamento</h3> <button type="button" class="close" onclick="fecharModalEdicao()">&times;</button> </div>
+            <div class="modal-body"> <form id="editDesligamentoForm"> <input type="hidden" id="editDesligamentoId"> <div class="form-group"> <label class="form-label" for="editNickHabbo">Nick Habbo:</label> <input type="text" id="editNickHabbo" class="form-control" required> </div> <div class="form-group"> <label class="form-label" for="editCargo">Cargo:</label> <input type="text" id="editCargo" class="form-control" required> </div> <div class="form-group"> <label class="form-label" for="editNivel">Nível:</label> <input type="text" id="editNivel" class="form-control" required> </div> <div class="form-group"> <label class="form-label" for="editSalario">Salário (c):</label> <input type="number" id="editSalario" class="form-control" required> </div> <div class="form-group"> <label class="form-label" for="editTipoDesligamento">Tipo:</label> <div class="select-wrapper"> <select id="editTipoDesligamento" class="form-control" required> <option value="">Selecione</option> <option value="Justa Causa">Justa Causa</option> <option value="Voluntário">Voluntário</option> <option value="Sem Justa Causa">Sem Justa Causa</option> </select> </div> </div> <div class="form-group"> <label class="form-label" for="editMotivo">Motivo:</label> <input type="text" id="editMotivo" class="form-control"> </div> </form> </div>
+            <div class="modal-footer"> <button type="button" class="btn btn-secondary" onclick="fecharModalEdicao()"> <i class="fas fa-times"></i> Cancelar </button> <button type="submit" form="editDesligamentoForm" class="btn btn-primary"> <i class="fas fa-save"></i> Salvar </button> </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="./js/firebase-config.js"></script>
+    <script src="./js/shared-ui.js"></script>
+    <script>
+        // --- Variáveis Globais ---
+        let currentUser = null; // Guarda o objeto do usuário autenticado
+        let currentUserData = null; // Guarda dados da coleção 'usuarios'
+        let currentUserHierarchicalLevel = 'N0'; // Guarda Nível N1-N10
+
+        // --- Cache de Elementos DOM ---
+        const alertaContainer = document.getElementById('alertaContainer');
+        const funcionarioSelect = document.getElementById('funcionario');
+        const desligamentosTbody = document.getElementById('desligamentosTbody');
+        const desligamentoForm = document.getElementById('desligamentoForm');
+        const editDesligamentoForm = document.getElementById('editDesligamentoForm');
+        const welcomeHeader = document.getElementById("welcomeHeader");
+        const userRoleEl = document.querySelector('.user-role');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+
+        // --- Inicialização Firebase ---
+        if (typeof firebaseConfig === 'undefined') { console.error("ERRO FATAL: firebaseConfig não definido."); document.body.innerHTML = '<h1>Erro Crítico</h1>'; }
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // --- Funções Auxiliares ---
+        function getDataHabboHotel() { const d=new Date(),n=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]; return `Habbo Hotel, ${d.getDate()} de ${n[d.getMonth()]} de ${d.getFullYear()}`; }
+        function getDisclaimer(d) { return "Justa Causa"===d.tipoDesligamento?"De acordo com o Regimento Interno, o funcionário desligado por justa causa não poderá ser readmitido.":d.reincidente?"De acordo com o Regimento Interno, o funcionário desligado por reincidência não poderá ser readmitido.":"De acordo com o Regimento Interno, o funcionário poderá ser readmitido apenas mais uma vez."; }
+        function fecharModalEdicao() { const m=document.getElementById('modalEditDesligamento'); if(m) m.style.display = 'none'; }
+        function abrirModalEdicao() { const m=document.getElementById('modalEditDesligamento'); if(m) m.style.display = 'flex'; }
+
+        // --- Funções Principais ---
+
+        // Carrega funcionários ATIVOS no dropdown
+        async function carregarFuncionariosAtivos() {
+            console.log("Carregando funcionários ativos...");
+            funcionarioSelect.innerHTML = '<option value="">Carregando...</option>';
+            funcionarioSelect.disabled = true;
+            try {
+                const snapshot = await db.collection("funcionarios").where("ativo", "==", true).orderBy("nickHabbo").get();
+                funcionarioSelect.innerHTML = '<option value="">Selecione um funcionário</option>';
+                if (snapshot.empty) { showGlobalMessage("info", "Nenhum funcionário ativo encontrado."); return; }
+
+                snapshot.forEach(doc => {
+                    const func = doc.data();
+                    const option = document.createElement('option');
+                    option.value = doc.id; // Guarda o ID do documento
+                    option.textContent = `${func.nickHabbo || 'N/A'} (${func.cargo || 'N/A'})`;
+                    funcionarioSelect.appendChild(option);
+                });
+                funcionarioSelect.disabled = false;
+            } catch (error) {
+                console.error("Erro ao carregar funcionários ativos:", error);
+                showGlobalMessage("error", "Erro ao carregar funcionários: " + error.message);
+                funcionarioSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+            }
+        }
+
+        // Carrega histórico de funcionários desligados
+        async function carregarDesligamentos() {
+            console.log("Carregando histórico de desligamentos...");
+            desligamentosTbody.innerHTML = `<tr class="empty-state" id="loading-row-hist"><td colspan="7"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></td></tr>`;
+            try {
+                const snapshot = await db.collection("desligamentos").orderBy("dataDesligamento", "desc").get();
+                if (snapshot.empty) {
+                    desligamentosTbody.innerHTML = `<tr class="empty-state"><td colspan="7"><i class="fas fa-info-circle"></i><p>Nenhum desligamento registrado.</p></td></tr>`;
+                    return;
+                }
+                desligamentosTbody.innerHTML = ''; // Limpa
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const row = desligamentosTbody.insertRow();
+                    row.insertCell().textContent = d.nickHabbo || 'N/A';
+                    row.insertCell().textContent = d.cargo || 'N/A';
+                    row.insertCell().textContent = d.nivel || 'N/A';
+                    row.insertCell().textContent = d.salario ? `${d.salario}c` : 'N/A'; // Formata salário
+                    row.insertCell().textContent = d.tipoDesligamento || 'N/A';
+                    row.insertCell().textContent = d.motivo || '-';
+                    const actionsCell = row.insertCell();
+                    actionsCell.style.textAlign = 'center'; // Centraliza botões
+                    // Adiciona botões (somente N10 pode editar/reverter)
+                    if (currentUserHierarchicalLevel === 'N10') {
+                         actionsCell.innerHTML = `
+                            <div class="action-buttons" style="justify-content: center;">
+                                <button class="action-btn edit-button" onclick="abrirModalParaEditar('${doc.id}')"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="action-btn revert-button" onclick="confirmarReverterDesligamento('${doc.id}')"><i class="fas fa-undo"></i> Reverter</button>
+                                <button class="action-btn print-button" onclick="imprimirCarta('${doc.id}')"><i class="fas fa-print"></i> Imprimir</button>
+                            </div>`;
+                    } else {
+                        actionsCell.innerHTML = `<button class="action-btn print-button" onclick="imprimirCarta('${doc.id}')"><i class="fas fa-print"></i> Imprimir</button>`; // Todos podem imprimir
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao carregar desligamentos:", error);
+                showGlobalMessage("error", "Erro ao carregar histórico: " + error.message);
+                desligamentosTbody.innerHTML = `<tr class="empty-state error"><td colspan="7"><i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar dados</p></td></tr>`;
+            }
+        }
+
+        // Processa o formulário de desligamento
+        async function confirmarDesligamento(event) {
+            event.preventDefault();
+             if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("error", "Apenas N10 pode desligar funcionários."); return; }
+
+            const funcionarioId = funcionarioSelect.value;
+            const tipoDesligamento = document.getElementById('tipoDesligamento').value;
+            const motivo = document.getElementById('motivo').value.trim();
+
+            if (!funcionarioId || !tipoDesligamento) { showGlobalMessage("warning", "Selecione o funcionário e o tipo."); return; }
+
+            // Confirmação visual
+            Swal.fire({
+                title: 'Confirmar Desligamento?',
+                text: `Desligar ${funcionarioSelect.options[funcionarioSelect.selectedIndex].text}? Esta ação marcará o funcionário como inativo e registrará o desligamento.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--danger)',
+                cancelButtonColor: 'var(--secondary)',
+                confirmButtonText: 'Sim, Desligar!',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    console.log(`Confirmado desligamento para ID: ${funcionarioId}`);
+                    const submitButton = desligamentoForm.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    submitButton.disabled = true; submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+                    try {
+                        const funcionarioRef = db.collection("funcionarios").doc(funcionarioId);
+                        const funcionarioDoc = await funcionarioRef.get();
+                        if (!funcionarioDoc.exists) throw new Error("Funcionário não encontrado.");
+
+                        const funcionarioData = funcionarioDoc.data();
+
+                        // Usar batch para garantir atomicidade
+                        const batch = db.batch();
+
+                        // 1. Adiciona registro em 'desligamentos'
+                        const desligamentoRef = db.collection("desligamentos").doc(); // Novo ID automático
+                        batch.set(desligamentoRef, {
+                            funcionarioOriginalId: funcionarioId, // Guarda ID original para reversão
+                            nickHabbo: funcionarioData.nickHabbo,
+                            cargo: funcionarioData.cargo,
+                            nivel: funcionarioData.nivel,
+                            salario: funcionarioData.salario || 0,
+                            discord: funcionarioData.discord || '', // Guarda info para carta/reversão
+                            whatsapp: funcionarioData.whatsapp || '', // Guarda info
+                            dataAdmissaoOriginal: funcionarioData.dataAdmissao || null, // Guarda info
+                            tipoDesligamento: tipoDesligamento,
+                            motivo: motivo,
+                            dataDesligamento: firebase.firestore.FieldValue.serverTimestamp(),
+                            desligadoPorId: currentUser.uid,
+                            desligadoPorNome: currentUserData.nome || 'Admin'
+                        });
+
+                        // 2. Marca funcionário como inativo em 'funcionarios'
+                        batch.update(funcionarioRef, {
+                            ativo: false,
+                            dataDesligamento: firebase.firestore.FieldValue.serverTimestamp() // Marca data no funcionário também
+                        });
+
+                        await batch.commit(); // Executa as operações
+
+                        showGlobalMessage("success", "Desligamento realizado com sucesso!");
+                        desligamentoForm.reset();
+                        await carregarDesligamentos(); // Recarrega histórico
+                        await carregarFuncionariosAtivos(); // Recarrega dropdown de ativos
+
+                    } catch (error) {
+                        console.error("Erro ao realizar desligamento:", error);
+                        showGlobalMessage("error", "Erro ao desligar: " + error.message);
+                    } finally {
+                        submitButton.disabled = false; submitButton.innerHTML = originalText;
+                    }
+                }
+            });
+        }
+
+        // Abre modal para edição
+        async function abrirModalParaEditar(desligamentoId) {
+             if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("error", "Apenas N10 pode editar."); return; }
+             console.log("Abrindo modal para editar ID:", desligamentoId);
+             try {
+                 const doc = await db.collection("desligamentos").doc(desligamentoId).get();
+                 if (!doc.exists) { throw new Error("Registro de desligamento não encontrado."); }
+                 const d = doc.data();
+                 // Preenche form do modal
+                 document.getElementById('editDesligamentoId').value = desligamentoId;
+                 document.getElementById('editNickHabbo').value = d.nickHabbo || '';
+                 document.getElementById('editCargo').value = d.cargo || '';
+                 document.getElementById('editNivel').value = d.nivel || '';
+                 document.getElementById('editSalario').value = d.salario || 0;
+                 document.getElementById('editTipoDesligamento').value = d.tipoDesligamento || '';
+                 document.getElementById('editMotivo').value = d.motivo || '';
+                 abrirModalEdicao(); // Abre o modal
+             } catch (error) { console.error("Erro ao carregar dados para edição:", error); showGlobalMessage("error", "Erro: " + error.message); }
+        }
+
+        // Salva edição do desligamento
+        async function salvarEdicaoDesligamento(event) {
+            event.preventDefault();
+             if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("error", "Apenas N10 pode salvar edições."); return; }
+            const desligamentoId = document.getElementById('editDesligamentoId').value;
+            if (!desligamentoId) { showGlobalMessage("error", "ID do desligamento inválido."); return; }
+
+            const dadosAtualizados = {
+                nickHabbo: document.getElementById('editNickHabbo').value.trim(),
+                cargo: document.getElementById('editCargo').value.trim(),
+                nivel: document.getElementById('editNivel').value.trim(),
+                salario: parseFloat(document.getElementById('editSalario').value) || 0,
+                tipoDesligamento: document.getElementById('editTipoDesligamento').value,
+                motivo: document.getElementById('editMotivo').value.trim(),
+                // Poderia adicionar um campo 'ultimaEdicaoPor', 'dataUltimaEdicao'
+            };
+
+            const saveButton = editDesligamentoForm.querySelector('button[type="submit"]');
+            const originalText = saveButton.innerHTML;
+            saveButton.disabled = true; saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+            try {
+                await db.collection("desligamentos").doc(desligamentoId).update(dadosAtualizados);
+                showGlobalMessage("success", "Desligamento atualizado com sucesso!");
+                fecharModalEdicao();
+                await carregarDesligamentos(); // Recarrega histórico
+            } catch (error) { console.error("Erro ao atualizar desligamento:", error); showGlobalMessage("error", "Erro: " + error.message);
+            } finally { saveButton.disabled = false; saveButton.innerHTML = originalText; }
+        }
+
+        // Pede confirmação antes de reverter
+        function confirmarReverterDesligamento(desligamentoId) {
+             if (currentUserHierarchicalLevel !== 'N10') { showGlobalMessage("error", "Apenas N10 pode reverter desligamentos."); return; }
+             Swal.fire({
+                 title: 'Reverter Desligamento?',
+                 text: "Isso irá remover o registro do histórico e marcar o funcionário como ativo novamente (se ele não existir mais, será recriado com os dados salvos). Deseja continuar?",
+                 icon: 'question',
+                 showCancelButton: true,
+                 confirmButtonColor: 'var(--success)',
+                 cancelButtonColor: 'var(--secondary)',
+                 confirmButtonText: 'Sim, Reverter!',
+                 cancelButtonText: 'Cancelar'
+             }).then((result) => {
+                 if (result.isConfirmed) {
+                     reverterDesligamento(desligamentoId);
+                 }
+             });
+        }
+
+
+        // Reverte o desligamento (Recria ou reativa funcionário)
+        async function reverterDesligamento(desligamentoId) {
+            console.log("Iniciando reversão do desligamento ID:", desligamentoId);
+            showGlobalMessage("info", "Processando reversão..."); // Feedback inicial
+            try {
+                const desligamentoDoc = await db.collection("desligamentos").doc(desligamentoId).get();
+                if (!desligamentoDoc.exists) throw new Error("Registro de desligamento não encontrado.");
+                const d = desligamentoDoc.data();
+
+                const funcionarioOriginalId = d.funcionarioOriginalId; // ID original salvo
+
+                // Tenta encontrar pelo ID original primeiro
+                let funcionarioRef = null;
+                if (funcionarioOriginalId) {
+                    funcionarioRef = db.collection("funcionarios").doc(funcionarioOriginalId);
+                    const funcDocById = await funcionarioRef.get();
+                    if (funcDocById.exists) {
+                         console.log("Funcionário encontrado pelo ID original:", funcionarioOriginalId);
+                    } else {
+                         console.log("Funcionário não encontrado pelo ID original, tentando pelo Nick...");
+                         funcionarioRef = null; // Reseta para buscar pelo nick
+                    }
+                }
+
+                // Se não encontrou pelo ID ou não tinha ID, busca pelo nick
+                if (!funcionarioRef) {
+                     const funcQuery = await db.collection("funcionarios").where("nickHabbo", "==", d.nickHabbo).limit(1).get();
+                     if (!funcQuery.empty) {
+                         funcionarioRef = funcQuery.docs[0].ref; // Pega a referência do encontrado
+                         console.log("Funcionário encontrado pelo Nick:", d.nickHabbo, "ID:", funcionarioRef.id);
+                     }
+                }
+
+                const batch = db.batch();
+
+                if (funcionarioRef) {
+                    // Se encontrou (por ID ou Nick), apenas reativa
+                    console.log("Reativando funcionário existente:", funcionarioRef.id);
+                    batch.update(funcionarioRef, {
+                        ativo: true,
+                        dataDesligamento: firebase.firestore.FieldValue.delete(), // Remove data de desligamento
+                        // Opcional: Restaurar outros dados? Por enquanto, só reativa.
+                        cargo: d.cargo, // Garante que o cargo está correto
+                        nivel: d.nivel, // Garante nível correto
+                        salario: d.salario // Garante salário correto
+                    });
+                } else {
+                    // Se não encontrou, recria o funcionário
+                    console.log("Funcionário não encontrado, recriando:", d.nickHabbo);
+                    const novoFuncRef = db.collection("funcionarios").doc(); // Gera novo ID
+                    batch.set(novoFuncRef, {
+                        nickHabbo: d.nickHabbo,
+                        cargo: d.cargo,
+                        nivel: d.nivel,
+                        salario: d.salario,
+                        discord: d.discord || '',
+                        whatsapp: d.whatsapp || '',
+                        dataAdmissao: d.dataAdmissaoOriginal || firebase.firestore.FieldValue.serverTimestamp(), // Usa original ou data atual
+                        totalPontos: 0,
+                        ativo: true,
+                        dataCadastro: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                // Remove o registro de desligamento
+                batch.delete(db.collection("desligamentos").doc(desligamentoId));
+                console.log("Registro de desligamento marcado para exclusão.");
+
+                await batch.commit(); // Executa as operações
+
+                showGlobalMessage("success", "Desligamento revertido com sucesso!");
+                await carregarDesligamentos();
+                await carregarFuncionariosAtivos();
+
+            } catch (error) {
+                console.error("Erro ao reverter desligamento:", error);
+                showGlobalMessage("error", "Erro ao reverter: " + error.message);
+            }
+        }
+
+        // Imprimir carta de desligamento
+        async function imprimirCarta(desligamentoId) {
+            console.log("Tentando gerar carta para ID:", desligamentoId);
+            try {
+                const doc = await db.collection("desligamentos").doc(desligamentoId).get();
+                if (!doc.exists) throw new Error("Registro de desligamento não encontrado.");
+                gerarCartaDesligamento(doc.data()); // Chama a função de geração
+            } catch (error) {
+                console.error("Erro ao buscar dados para carta:", error);
+                showGlobalMessage("error", "Erro ao gerar carta: " + error.message);
+            }
+        }
+
+        // Gerar PDF da carta (lógica mantida, verificar CSS/layout se necessário)
+        function gerarCartaDesligamento(desligamento) {
+             try {
+                 const content = document.createElement('div');
+                 content.style.width = '210mm'; content.style.height = '297mm'; content.style.margin = '0'; content.style.padding = '0'; content.style.position = 'relative'; content.style.backgroundColor = 'white'; content.style.boxSizing = 'border-box'; content.style.fontFamily = 'Montserrat, Arial, sans-serif'; content.style.overflow = 'hidden';
+                 content.innerHTML = `
+                     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding: 0; margin: 0;">
+                         <div style="background: linear-gradient(135deg, #1e90ff, #4682b4); height: 35mm; border-radius: 0 0 40% 0; display: flex; align-items: center; padding: 0 20mm;"> <div style="color: white; padding: 10px 0;"> <h1 style="margin: 0; font-size: 22pt; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Hospital Santorini Prime</h1> <p style="margin: 5px 0 0; font-size: 14pt; font-weight: 300; letter-spacing: 2px; text-transform: uppercase;">Carta de Desligamento</p> </div> </div>
+                         <div style="flex: 1; padding: 15mm 20mm; display: flex; flex-direction: column;"> <div>
+                             <p style="text-align: right; color: #4682b4; font-style: italic; font-size: 11pt; margin: 0 0 10mm 0;">${getDataHabboHotel()}</p>
+                             <p style="font-weight: 600; margin: 0 0 10mm 0; font-size: 12pt; color: #333;">Ao(À) Sr.(Sra). ${desligamento.nickHabbo}</p>
+                             <p style="margin: 0 0 7mm 0; font-size: 11pt; line-height: 1.6; color: #333; text-align: justify;">É com pesar que informamos o seu desligamento do <span style="color: #1e90ff; font-weight: 600;">Hospital Santorini Prime</span>, a partir desta data.</p>
+                             <div style="background: #f8f9fa; padding: 6mm; border-radius: 4mm; margin: 7mm 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05);"> <table style="width: 100%; border-collapse: collapse; font-size: 11pt;"> <tr> <td style="padding: 4mm; border-bottom: 1px solid #eee; width: 40%;"><strong>Tipo de Desligamento:</strong></td> <td style="padding: 4mm; border-bottom: 1px solid #eee; color: #e74c3c; font-weight: 600;">${desligamento.tipoDesligamento}</td> </tr> <tr> <td style="padding: 4mm;"><strong>Motivo:</strong></td> <td style="padding: 4mm;">${desligamento.motivo || 'Não especificado'}</td> </tr> </table> </div>
+                             <p style="margin: 7mm 0; font-size: 11pt; line-height: 1.6; color: #333; text-align: justify;">Agradecemos os serviços prestados durante o período em que fez parte de nossa equipe e desejamos sucesso em seus futuros empreendimentos.</p>
+                             <p style="margin: 7mm 0; font-size: 11pt; line-height: 1.6; color: #333; text-align: justify;">Colocamo-nos à disposição para quaisquer esclarecimentos necessários.</p>
+                             <div style="margin: 10mm 0; border-left: 4px solid #e74c3c; padding: 4mm 6mm; background-color: rgba(231, 76, 60, 0.05);"> <p style="margin: 0; font-weight: 500; font-size: 11pt; color: #333; line-height: 1.5;"> <span style="color: #e74c3c; font-weight: 700;">IMPORTANTE:</span> ${getDisclaimer(desligamento)} </p> </div>
+                             <div style="margin-top: 10mm;"> <p style="margin: 0 0 12mm; font-size: 11pt;">Atenciosamente,</p> <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10mm 15mm; max-width: 100%;"> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dr. Bryan dos Ouros</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundador</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Nyxalis Nogueira</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Mia Deusa</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> <div style="text-align: center;"> <div style="border-bottom: 1px solid #1e90ff; width: 80%; margin: 0 auto 3mm;"></div> <p style="font-weight: 600; margin: 0; font-size: 10pt;">Dra. Rafaela Schaefer</p> <p style="margin: 2mm 0 0; color: #4682b4; font-size: 9pt; font-style: italic;">Fundadora</p> </div> </div> </div> </div> </div>
+                         <div style="position: absolute; bottom: 5mm; left: 0; right: 0; text-align: center;"> <div style="display: flex; justify-content: space-evenly; width: 90%; margin: 0 auto; font-size: 8pt; color: #6c757d; border-top: 1px solid #eee; padding-top: 3mm;"> <span>Hospital Santorini Prime © ${new Date().getFullYear()}</span> <span style="color: #1e90ff; font-weight: 600; letter-spacing: 1px;">DOCUMENTO OFICIAL</span> <span>Habbo Hotel</span> </div> </div>
+                     </div>
+                     <div style="position: absolute; bottom: 80mm; right: 30mm; width: 28mm; height: 28mm; border: 1px solid #1e90ff; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0.2; transform: rotate(-15deg); pointer-events: none;"> <div style="text-align: center;"> <div style="color: #1e90ff; font-weight: bold; font-size: 8pt;">HSP</div> <div style="color: #1e90ff; font-weight: bold; font-size: 7pt;">PROCESSADO</div> <div style="color: #4682b4; font-size: 6pt; margin-top: 1px;">${new Date().toLocaleDateString('pt-BR')}</div> </div> </div>
+                 `;
+                 const opt = { margin: 0, filename: `Carta Desligamento - ${desligamento.nickHabbo}.pdf`, image: { type: 'jpeg', quality: 1.0 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollX: 0, scrollY: 0, windowWidth: 794, windowHeight: 1123, x: 0, y: 0 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true, precision: 16 } };
+                 html2pdf().set(opt).from(content).toPdf().get('pdf').then((pdf) => { const pageCount = pdf.internal.getNumberOfPages(); if (pageCount > 1) { for (let i = pageCount; i > 1; i--) pdf.deletePage(i); } pdf.save(); showGlobalMessage("success", "Carta gerada com sucesso"); });
+             } catch (error) { console.error('Erro ao gerar PDF:', error); showGlobalMessage('error', 'Erro ao gerar carta: ' + error.message); }
+         }
+
+
+        // --- Inicialização da Página ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("=== DOMContentLoaded: Iniciando desligamentos.html ===");
+
+            auth.onAuthStateChanged(async (user) => {
+                console.log("=== onAuthStateChanged ===");
+                if (!user) { window.location.href = 'login.html'; return; }
+                currentUser = user; // Define usuário global
+
+                try {
+                    const result = await fetchUserDataAndLevel(user.uid, db);
+                    currentUserData = result.userData; // Guarda dados do usuário
+                    currentUserHierarchicalLevel = result.hierarchicalLevel; // Guarda Nível N1-N10
+
+                    console.log(`--- Usuário: ${currentUserData.nome}, Nível Hierárquico: ${currentUserHierarchicalLevel}, Nível Acesso: ${currentUserData.nivelAcesso}`);
+
+                    // Permissão: Apenas N10 pode ver/gerenciar desligamentos
+                    if (currentUserHierarchicalLevel !== 'N10') {
+                        console.warn("Acesso Negado: Apenas N10.");
+                        document.body.innerHTML = `<div style='text-align: center; margin-top: 50px;'><h1>Acesso Negado</h1><p>Você não tem permissão.</p><a href='dashboard.html'>Voltar</a></div>`;
+                        return;
+                    }
+
+                    // Atualizar UI Sidebar
+                    if(welcomeHeader) welcomeHeader.textContent = currentUserData.nome || "Admin";
+                    if(userRoleEl) userRoleEl.textContent = currentUserData.cargo || "Administrador";
+                    const currentPage = window.location.pathname.split('/').pop();
+                    if (typeof generateSidebarMenu === 'function') { sidebarMenu.innerHTML = generateSidebarMenu(currentUserHierarchicalLevel, currentPage); }
+                    else { console.error("generateSidebarMenu não encontrada"); }
+                    if (typeof initializeSidebarInteractions === 'function') { initializeSidebarInteractions(); }
+                    else { console.error("initializeSidebarInteractions não encontrada"); }
+
+                    // Carrega dados da página
+                    await carregarFuncionariosAtivos();
+                    await carregarDesligamentos();
+
+                    // Adiciona listeners aos formulários DEPOIS de tudo carregado
+                    if(desligamentoForm) desligamentoForm.addEventListener('submit', confirmarDesligamento);
+                    if(editDesligamentoForm) editDesligamentoForm.addEventListener('submit', salvarEdicaoDesligamento);
+                     // Listener para fechar modal clicando fora
+                     window.addEventListener('click', (event) => { const modal=document.getElementById('modalEditDesligamento'); if (event.target === modal) { fecharModalEdicao(); } });
+
+
+                } catch (error) {
+                    console.error("Erro crítico na inicialização:", error);
+                    showGlobalMessage("error", "Erro ao carregar: " + error.message);
+                }
+            }); // Fim onAuthStateChanged
+        }); // Fim DOMContentLoaded
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+/* ==========================================================================
+   Estilos Específicos para o Layout do Dashboard Principal (Admin)
+   ========================================================================== */
+
+/* Grid Principal do Dashboard */
+.dashboard-grid {
+    display: grid;
+    /* Exemplo: 2 colunas, a primeira ocupando 2 frações, a segunda 1 fração */
+    /* Ajustado para funcionar melhor em vários tamanhos */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Card Container dentro do Grid */
+.dashboard-card {
+    background: white;
+    border-radius: var(--border-radius); /* Usa variável */
+    box-shadow: var(--shadow-sm);       /* Usa variável */
+    overflow: hidden; /* Para conter elementos internos */
+    transition: var(--transition);      /* Usa variável */
+    /* Animação de entrada */
+    animation: fadeInUp 0.5s ease forwards; /* Requer @keyframes fadeInUp */
+    /* animation-delay: 0.4s; */ /* Delay removido para aplicar individualmente se necessário */
+    opacity: 0; /* Começa invisível */
+    display: flex; /* Adicionado para controle interno */
+    flex-direction: column; /* Garante que header/body empilhem */
+}
+
+.dashboard-card:hover {
+    box-shadow: var(--shadow-md);       /* Usa variável */
+}
+
+/* Ações no Header do Card */
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.card-action {
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: var(--text-light);           /* Usa variável */
+    cursor: pointer;
+    transition: var(--transition);      /* Usa variável */
+    padding: 0;
+}
+
+.card-action:hover {
+    color: var(--primary);              /* Usa variável */
+}
+
+/* === NOVOS ESTILOS ADICIONADOS (Do CSS inline original) === */
+
+/* Dashboard Filters (Reforçando/Ajustando) */
+.dashboard-filters {
+    background: white; /* Pode remover se já estiver no card-body */
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end; /* Alinha itens na base */
+    /* box-shadow: var(--shadow-sm); */ /* Pode remover se já estiver no card */
+}
+
+.dashboard-filters .filter-group { /* Herdará de formularios.css */
+    flex: 1;
+    min-width: 180px; /* Ajuste min-width */
+}
+
+.dashboard-filters .filter-button { /* Usa a classe btn agora */
+     /* Estilos removidos, usar .btn .btn-secondary */
+     margin-top: 0; /* Remove margem superior padrão do botão */
+     height: 46px; /* Ajusta altura para alinhar com selects */
+}
+
+
+/* Metrics Grid (Reforçando/Ajustando) */
+/* .metrics-grid já definido em admin-dashboard.css ou widgets.css */
+/* .metric-card já definido em widgets.css */
+
+
+/* Charts Grid (Reforçando/Ajustando) */
+/* .charts-grid já definido em admin-dashboard.css */
+
+.chart-card { /* Herdará de .dashboard-card e .card */
+    min-height: 350px;
+}
+
+.chart-header { /* Herdará de .card-header */
+    padding: 15px 20px;
+}
+
+.chart-title { /* Herdará de .card-title */
+    font-size: 16px;
+    color: var(--primary);
+}
+
+.chart-body { /* Herdará de .card-body */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px; /* Altura mínima do corpo do gráfico */
+    position: relative; /* Para posicionar elementos internos */
+    flex-grow: 1; /* Para ocupar espaço no flex container do card */
+}
+
+/* Gráficos customizados específicos (Bar Chart) */
+.simple-chart-container {
+    height: 100%; /* Ocupa altura do chart-body */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.bar-chart {
+    flex: 1; /* Ocupa espaço disponível */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza barras verticalmente */
+    padding: 10px 0;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    margin: 8px 0; /* Espaçamento entre linhas */
+}
+
+.bar-label {
+    width: 30%; /* Ajuste de largura */
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: right;
+    padding-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0; /* Não encolher */
+}
+
+.bar-container {
+    flex-grow: 1; /* Ocupa espaço restante */
+    max-width: 60%; /* Limita largura máxima da barra */
+    background-color: #eee;
+    height: 18px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar { /* Barra interna */
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.bar-total {
+    background-color: rgba(54, 162, 235, 0.7); /* Azul */
+    z-index: 1;
+}
+
+.bar-avaliados {
+    background-color: rgba(75, 192, 192, 0.7); /* Verde água */
+    z-index: 2; /* Fica por cima da barra total */
+}
+
+.bar-value {
+    width: 15%;
+    min-width: 40px; /* Garante espaço mínimo */
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: left;
+    padding-left: 10px;
+    flex-shrink: 0; /* Não encolher */
+}
+
+/* Gráficos customizados específicos (Donut Chart) */
+.donut-chart {
+    position: relative;
+    width: 180px; /* Tamanho ajustado */
+    height: 180px;
+    margin: 0 auto; /* Centraliza */
+    border-radius: 50%;
+    background: #eee; /* Fundo base */
+}
+
+.donut-segment {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 50%); */ /* Técnica clip-path (alternativa) */
+    /* Técnica com clip: rect - pode precisar de ajustes cross-browser */
+     clip: rect(0, 90px, 180px, 0); /* Corta metade esquerda (width/2) */
+     /* A rotação será aplicada via JS */
+}
+
+.donut-segment .inner-circle { /* Elemento interno para criar o efeito de arco */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    clip: rect(0, 180px, 180px, 90px); /* Corta metade direita */
+    /* A rotação e cor serão aplicadas via JS */
+}
+
+
+.donut-hole {
+    position: absolute;
+    top: 40px; /* Ajusta posição do buraco */
+    left: 40px;
+    width: 100px; /* Diâmetro do buraco */
+    height: 100px;
+    border-radius: 50%;
+    background: white;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px; /* Tamanho do número central */
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.notes-legends {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 15px; /* Espaçamento entre legendas */
+}
+
+.note-legend {
+    display: flex;
+    align-items: center;
+    /* margin: 5px 10px; */ /* Removido para usar gap */
+}
+
+.note-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 8px; /* Aumenta espaço */
+    flex-shrink: 0;
+}
+
+.note-label {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+/* Estado de "Sem Dados" para Gráficos */
+.chart-no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Ocupa altura do chart-body */
+    min-height: 200px; /* Altura mínima */
+    color: var(--text-light);
+    text-align: center;
+    width: 100%;
+}
+
+.chart-no-data i {
+    font-size: 40px; /* Reduzido */
+    margin-bottom: 15px;
+    opacity: 0.4; /* Mais sutil */
+    color: #ccc; /* Cinza mais claro */
+}
+.chart-no-data p {
+    font-size: 14px;
+}
+
+/* --- FIM NOVOS ESTILOS ADICIONADOS --- */
+
+/* --- Responsivo Específico --- */
+@media (max-width: 1200px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 991px) {
+    .charts-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+     .dashboard-filters { flex-direction: column; align-items: stretch; }
+     .dashboard-filters .filter-group { min-width: 100%; }
+     .dashboard-filters .filter-button { margin-top: 10px; width: 100%; }
+     .metrics-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } /* Ajuste para mobile */
+     .metric-card .metric-value { font-size: 24px; }
+     .chart-card { min-height: 300px; }
+     .chart-body { padding: 15px; min-height: 240px; }
+     .donut-chart { width: 150px; height: 150px; }
+     .donut-hole { width: 70px; height: 70px; top: 40px; left: 40px; font-size: 18px; }
+     .bar-label { width: 35%; font-size: 11px; }
+     .bar-container { max-width: 55%; }
+     .bar-value { width: 10%; min-width: 30px; font-size: 11px; padding-left: 5px;}
+     .notes-legends { gap: 10px; }
+     .note-label { font-size: 11px; }
+}

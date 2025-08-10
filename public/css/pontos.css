@@ -1,0 +1,52 @@
+.rank-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-weight: 600;
+    font-size: 12px;
+    background: #f0f0f0;
+    color: var(--text-main);
+    font-family: 'Montserrat', sans-serif;
+}
+.rank-1 { background: linear-gradient(45deg, #FFD700, #FFA500); color: white; box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3); }
+.rank-2 { background: linear-gradient(45deg, #C0C0C0, #A9A9A9); color: white; box-shadow: 0 2px 5px rgba(192, 192, 192, 0.3); }
+.rank-3 { background: linear-gradient(45deg, #CD7F32, #A0522D); color: white; box-shadow: 0 2px 5px rgba(205, 127, 50, 0.3); }
+
+.points-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    min-width: 80px; /* Garante um tamanho mínimo */
+    font-family: 'Montserrat', sans-serif;
+}
+.points-sufficient { /* Classe para pontos suficientes */
+    background: linear-gradient(45deg, var(--success), #27ae60);
+    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
+}
+.points-insufficient { /* Classe para pontos insuficientes */
+    background: linear-gradient(45deg, var(--danger), #c0392b);
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.3);
+}
+
+/* Ajuste fino na tabela se necessário */
+ .data-table td .points-badge {
+    vertical-align: middle;
+ }
+ .data-table td .rank-number {
+     vertical-align: middle;
+ }
+ .data-table td {
+     font-size: 13px; /* Mantém o tamanho da fonte */
+ }
+  .data-table th {
+     font-size: 12px; /* Mantém o tamanho da fonte */
+     letter-spacing: 0.5px;
+ }

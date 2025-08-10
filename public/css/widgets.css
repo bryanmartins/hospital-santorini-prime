@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Estilos para Widgets / Stat Cards (Dashboard Principal e outros)
+   ========================================================================== */
+
+/* Container para os cards de estatísticas rápidas (Dashboard Principal) */
+.quick-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+
+/* Card de Estatística Individual (Base para todos) */
+.stat-card { background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: var(--shadow-sm); transition: var(--transition); animation: fadeInUp 0.5s ease forwards; opacity: 0; display: flex; /* Usa Flexbox para alinhar */ align-items: center; /* Alinha itens verticalmente ao centro por padrão */ overflow: hidden; position: relative; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+
+/* --- Estilos específicos para a estrutura do DASHBOARD (com ícone) --- */
+.quick-stats .stat-icon { background: rgba(30, 144, 255, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; }
+.quick-stats .stat-icon i { font-size: 24px; color: var(--primary); }
+.quick-stats .stat-content { flex-grow: 1; text-align: left; }
+.quick-stats .stat-value { font-size: 28px; font-weight: 700; color: var(--dark); margin-bottom: 5px; line-height: 1; }
+.quick-stats .stat-label { color: var(--text-light); font-size: 14px; font-weight: 500; }
+.quick-stats .stat-change { position: absolute; top: 20px; right: 20px; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 20px; display: inline-flex; align-items: center; }
+.quick-stats .stat-change i { margin-right: 4px; font-size: 10px; }
+.quick-stats .stat-up { background: rgba(46, 204, 113, 0.1); color: var(--success); }
+.quick-stats .stat-down { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
+/* --- FIM Estilos específicos para DASHBOARD --- */
+
+/* --- Estilos específicos para a estrutura do HISTÓRICO (sem ícone) --- */
+.stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stats-container .stat-card {
+    flex-direction: column; /* Itens empilhados */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: center; /* <<< ADICIONADO PARA CENTRALIZAR VERTICALMENTE >>> */
+    text-align: center;
+    padding: 20px;
+    border-left: 4px solid var(--primary);
+    min-height: 150px; /* Altura mínima para melhor visualização */
+}
+.stats-container .stat-title { color: var(--primary); font-size: 14px; font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; width: 100%; }
+.stats-container .stat-title i { margin-right: 8px; }
+.stats-container .stat-value { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 5px; min-height: 36px; line-height: 1.2; }
+.stats-container .stat-subtitle { color: var(--text-light); font-size: 12px; min-height: 16px; }
+/* --- FIM Estilos específicos para HISTÓRICO --- */
+
+/* Bloco de Informação Genérico (Pode mover para estilo-principal) */
+.info-block { background-color: rgba(52, 152, 219, 0.1); border-left: 4px solid var(--info); padding: 15px; margin-bottom: 20px; border-radius: 0 8px 8px 0; color: var(--text-main); }
+.info-block h3 { margin-top: 0; color: var(--primary); font-size: 16px; margin-bottom: 10px; }
+
+/* --- Responsivo para Widgets --- */
+@media (max-width: 992px) { .quick-stats { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+    .quick-stats, .stats-container { grid-template-columns: 1fr; }
+    .stat-card { padding: 15px; }
+    .quick-stats .stat-icon { width: 50px; height: 50px; margin-right: 15px; }
+    .quick-stats .stat-icon i { font-size: 20px; }
+    .quick-stats .stat-value { font-size: 24px; }
+    .quick-stats .stat-label { font-size: 13px; }
+    .quick-stats .stat-change { top: 15px; right: 15px; }
+    .stats-container .stat-title { font-size: 13px; }
+    .stats-container .stat-value { font-size: 24px; min-height: 30px; }
+    .stats-container .stat-subtitle { font-size: 11px; }
+}
